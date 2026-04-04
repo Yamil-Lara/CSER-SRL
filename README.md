@@ -1,29 +1,21 @@
-# CSER
+# CSER-SRL - Proyecto TIS
 
-### C → Compilando 
-### S → Sueños 
-### E → Ejecutando 
-### R → Realidades
+Estructura oficial con **Laravel 10** y **React 17**.
 
----
+## Requisitos
+* PHP >= 8.1 (XAMPP recomendado)
+* Composer
+* Node.js & npm
 
-### Estructura del Proyecto
+## Configuración del Backend
+1. Entrar a la carpeta: `cd backend`
+2. Instalar dependencias: `composer install`
+3. Copiar el archivo de entorno: `cp .env.example .env`
+4. Generar la clave de la app: `php artisan key:generate`
+5. Configurar la DB en el `.env` y correr: `php artisan migrate`
+6. Iniciar servidor: `php artisan serve`
 
-```
-CSER-S.R.L./
-├── .git/
-│
-├── backend/          # Lógica, API, base de datos (Node, Python, etc.)
-│   ├── src/
-│   ├── package.json  # Dependencias del backend
-│   └── .env
-│
-├── frontend/         # Interfaz de usuario (React, Vue, Angular, etc.)
-│   ├── src/
-│   ├── package.json  # Dependencias del frontend
-│   └── .env
-│
-├── .gitignore        # Ignorar node_modules de ambos
-├── README.md
-└── package.json      # Opcional: Scripts para iniciar ambos (concurrently)
-```
+## Configuración del Frontend
+1. Entrar a la carpeta: `cd frontend`
+2. Instalar dependencias: `npm install --legacy-peer-deps`
+3. Iniciar servidor: `npm run dev`
