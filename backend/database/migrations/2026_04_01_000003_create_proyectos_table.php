@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('restrict');
             $table->string('titulo');
             $table->text('descripcion');
-            $table->text('tecnologias'); // Guardaremos como string o JSON
+            $table->text('tecnologias');
             $table->text('herramientas')->nullable();
             $table->string('imagen')->nullable();
             $table->string('github')->nullable();
@@ -21,7 +21,6 @@ return new class extends Migration {
             $table->enum('estado', ['pendiente', 'aprobado', 'rechazado'])->default('pendiente');
             $table->timestamps();
             
-            // Índices para búsqueda rápida
             $table->index('estado');
         });
     }
