@@ -10,46 +10,14 @@ class CategoriaSeeder extends Seeder
     public function run(): void
     {
         $categorias = [
-            [
-                'nombre'      => 'Desarrollo Web',
-                'descripcion' => 'Aplicaciones y sitios web full-stack, frontend y backend.',
-                'icono'       => 'globe',
-            ],
-            [
-                'nombre'      => 'Desarrollo Móvil',
-                'descripcion' => 'Aplicaciones nativas e híbridas para iOS y Android.',
-                'icono'       => 'smartphone',
-            ],
-            [
-                'nombre'      => 'Diseño UX/UI',
-                'descripcion' => 'Diseño de interfaces centradas en la experiencia del usuario.',
-                'icono'       => 'layout',
-            ],
-            [
-                'nombre'      => 'Inteligencia Artificial',
-                'descripcion' => 'Modelos de machine learning, deep learning y procesamiento de datos.',
-                'icono'       => 'cpu',
-            ],
-            [
-                'nombre'      => 'Base de Datos',
-                'descripcion' => 'Diseño, administración y optimización de bases de datos.',
-                'icono'       => 'database',
-            ],
-            [
-                'nombre'      => 'DevOps y Cloud',
-                'descripcion' => 'Infraestructura, CI/CD, contenedores y despliegue en la nube.',
-                'icono'       => 'cloud',
-            ],
-            [
-                'nombre'      => 'Seguridad Informática',
-                'descripcion' => 'Ciberseguridad, pentesting, auditorías y protección de sistemas.',
-                'icono'       => 'shield',
-            ],
-            [
-                'nombre'      => 'Software de Escritorio',
-                'descripcion' => 'Aplicaciones de escritorio para Windows, Linux y macOS.',
-                'icono'       => 'monitor',
-            ],
+            ['nombre' => 'Desarrollo Web', 'icono' => 'globe', 'color' => '#3B82F6'],
+            ['nombre' => 'Desarrollo Móvil', 'icono' => 'smartphone', 'color' => '#10BD83'],
+            ['nombre' => 'Diseño UX/UI', 'icono' => 'layout', 'color' => '#8B5CF6'],
+            ['nombre' => 'Inteligencia Artificial', 'icono' => 'cpu', 'color' => '#EF4444'],
+            ['nombre' => 'Base de Datos', 'icono' => 'database', 'color' => '#F59E0B'],
+            ['nombre' => 'DevOps y Cloud', 'icono' => 'cloud', 'color' => '#06B6D4'],
+            ['nombre' => 'Seguridad Informática', 'icono' => 'shield', 'color' => '#14B8A6'],
+            ['nombre' => 'Software de Escritorio', 'icono' => 'monitor', 'color' => '#6366F1'],
         ];
 
         foreach ($categorias as $categoria) {

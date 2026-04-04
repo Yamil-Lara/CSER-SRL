@@ -2,34 +2,38 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Comentario extends Model
 {
-    use HasFactory;
-
     protected $table = 'comentarios';
 
     protected $fillable = [
         'proyecto_id',
-        'user_id',
+        'usuario_id',
         'contenido',
         'aprobado',
     ];
 
     protected $casts = [
-        'aprobado' => 'boolean',
+        'aprobado'    => 'boolean',
+        'usuario_id' => 'integer',
     ];
 
     public function proyecto(): BelongsTo
     {
-        return $this->belongsTo(Proyecto::class);
+        return $this->belongsTo(Proyecto::class, 'proyecto_id');
     }
 
-    public function user(): BelongsTo
+    // CORRECCIÓN: Ahora apunta a User::class
+    public function usuario(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'usuario_id');
+    }
+
+    public function autorEliminado(): bool
+    {
+        return is_null($this->usuario_id);
     }
 }

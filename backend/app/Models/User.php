@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,25 +10,32 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, Notifiable;
+
+    protected $table = 'usuarios';
+
+    public const ROLES_PERMITIDOS = ['usuario', 'admin', 'moderador'];
+    public const ESTADOS_PERMITIDOS = ['pendiente', 'aprobado', 'rechazado'];
 
     protected $fillable = [
-        'name',
+        'nombre',
+        'username',
         'email',
         'password',
-        'role',
+        'foto',
+        'rol',
+        'activo',
+        'estado',
         'profesion',
         'especialidad',
         'biografia',
         'ubicacion',
-        'foto_perfil',
         'linkedin',
-        'github',
+        'github_perfil',
         'sitio_web',
         'universidad',
-        'titulo_academico',
-        'anio_graduacion',
-        'activo',
+        'carrera',
+        'nivel_estudios',
     ];
 
     protected $hidden = [
@@ -37,23 +44,41 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password'          => 'hashed',
-        'activo'            => 'boolean',
+        'activo' => 'boolean',
     ];
+
+    public function isAdmin(): bool
+    {
+        return $this->rol === 'admin';
+    }
+
+    public function isModerador(): bool
+    {
+        return $this->rol === 'moderador';
+    }
+
+    public function estaAprobado(): bool
+    {
+        return $this->estado === 'aprobado';
+    }
 
     public function proyectos(): HasMany
     {
-        return $this->hasMany(Proyecto::class);
+        return $this->hasMany(Proyecto::class, 'usuario_id');
     }
 
     public function comentarios(): HasMany
     {
-        return $this->hasMany(Comentario::class);
+        return $this->hasMany(Comentario::class, 'usuario_id');
     }
 
-    public function isAdmin(): bool
+    public function scopeActivos(Builder $query): Builder
     {
-        return $this->role === 'admin';
+        return $query->where('activo', true);
+    }
+
+    public function scopeAprobados(Builder $query): Builder
+    {
+        return $query->where('estado', 'aprobado');
     }
 }

@@ -11,7 +11,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             CategoriaSeeder::class,
-            // ProyectoSeeder::class,  // ← Elimina o comenta esta línea
+            ProyectoSeeder::class,  
         ]);
     }
 }

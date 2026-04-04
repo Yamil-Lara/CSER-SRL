@@ -2,53 +2,64 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Proyecto extends Model
 {
-    use HasFactory;
-
     protected $table = 'proyectos';
 
+    public const ESTADOS = ['pendiente', 'aprobado', 'rechazado'];
+
     protected $fillable = [
-        'user_id',
+        'usuario_id',
         'categoria_id',
         'titulo',
         'descripcion',
         'tecnologias',
         'herramientas',
         'imagen',
-        'url_github',
-        'url_demo',
+        'github',
+        'demo',
         'cliente',
         'fecha_proyecto',
-        'publicado',
-        'activo',
+        'estado',
     ];
 
     protected $casts = [
-        'tecnologias'    => 'array',
-        'herramientas'   => 'array',
         'fecha_proyecto' => 'date',
-        'publicado'      => 'boolean',
-        'activo'         => 'boolean',
     ];
 
-    public function user(): BelongsTo
+    // CORRECCIÓN: Ahora apunta a User::class
+    public function usuario(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'usuario_id');
     }
 
     public function categoria(): BelongsTo
     {
-        return $this->belongsTo(Categoria::class);
+        return $this->belongsTo(Categoria::class, 'categoria_id');
     }
 
     public function comentarios(): HasMany
     {
-        return $this->hasMany(Comentario::class);
+        return $this->hasMany(Comentario::class, 'proyecto_id');
+    }
+
+    public function scopePublicos(Builder $query): Builder
+    {
+        return $query->where('estado', 'aprobado');
+    }
+
+    public function scopePendientes(Builder $query): Builder
+    {
+        return $query->where('estado', 'pendiente');
+    }
+
+    public function estaAprobado(): bool
+    {
+        return $this->estado === 'aprobado';
     }
 }
