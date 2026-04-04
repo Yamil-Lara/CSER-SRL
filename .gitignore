@@ -1,5 +1,67 @@
-backend/vendor/
-backend/.env
-frontend/node_modules/
+# Dependencies
+node_modules/
+vendor/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.backup
+.env.production
+
+# Build outputs
 frontend/dist/
+frontend/build/
+backend/public/build/
+backend/public/hot/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+
+# IDE and Editor folders
+.vscode/
+.idea/
+.fleet/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# PHP specific
+.phpunit.cache/
 .phpunit.result.cache
+auth.json
+Homestead.json
+Homestead.yaml
+
+# Laravel storage
+backend/storage/*.key
+backend/bootstrap/cache/*
+!backend/bootstrap/cache/.gitignore
+
+# Compiled files
+*.js.map
+*.css.map
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Lock files (uncomment if you don't want to track them)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
