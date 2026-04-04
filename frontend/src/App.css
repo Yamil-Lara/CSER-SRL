@@ -1,0 +1,40 @@
+/* Sidebar Styles */
+.sidebar {
+  min-width: 250px;
+  max-width: 250px;
+  background-color: #0f172a; /* Azul muy oscuro del mockup */
+  color: #ffffff;
+  min-height: 100vh;
+  transition: all 0.3s;
+}
+
+.sidebar .nav-link {
+  color: #94a3b8;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+  background-color: #1e293b;
+  color: #3b82f6; /* Azul brillante para el ítem activo */
+}
+
+.sidebar .nav-link i {
+  margin-right: 12px;
+  font-size: 1.1rem;
+}
+
+.sidebar .logo {
+  padding: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.main-content {
+  background-color: #f8fafc;
+  width: 100%;
+}
