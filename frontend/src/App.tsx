@@ -1,32 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-
-// Definimos la "Interface" para que TS sepa qué trae el JSON de Laravel
-interface StatusResponse {
-  status: string;
-  database: string;
-  mensaje: string;
-}
+import api from './api/axios';
 
 const App: React.FC = () => {
-  const [data, setData] = useState<StatusResponse | null>(null);
+  const [dbStatus, setDbStatus] = useState<string>("Cargando...");
+  const [proyectosCount, setProyectosCount] = useState<number>(0);
 
   useEffect(() => {
-    axios.get<StatusResponse>('http://127.0.0.1:8000/api/status')
-      .then(response => setData(response.data))
-      .catch(error => console.error("Error de conexión:", error));
+    api.get('/status')
+      .then(res => setDbStatus(res.data.mensaje))
+      .catch(() => setDbStatus("Error: Backend desconectado"));
+
+    api.get('/proyectos')
+      .then(res => setProyectosCount(res.data.length))
+      .catch(() => setProyectosCount(0));
   }, []);
 
   return (
-    <div className="container mt-5">
-      <div className="card shadow p-4 text-center">
-        <h1 className="text-primary">CSER-SRL (TypeScript)</h1>
-        <hr />
-        {data ? (
-          <h4 className="text-success">{data.mensaje}</h4>
-        ) : (
-          <p>Cargando datos del backend...</p>
-        )}
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Panel de Control, Backend corriendo exitosamente </h1>
+      <hr />
+      <div style={{ background: '#e3f2fd', padding: '15px', borderRadius: '8px' }}>
+        <p><strong>Estado de la API:</strong> {dbStatus}</p>
+        <p><strong>Proyectos en BD:</strong> {proyectosCount} detectados</p>
       </div>
     </div>
   );
