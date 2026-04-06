@@ -20,6 +20,9 @@ class ProyectoController extends Controller
     // Crear: Guardar un nuevo proyecto
     public function store(Request $request): JsonResponse
     {
+
+        $usuario_id = auth()->id();
+
         $validator = Validator::make($request->all(), [
             'usuario_id'     => 'required|exists:usuarios,id',
             'categoria_id'   => 'required|exists:categorias,id',
@@ -39,6 +42,7 @@ class ProyectoController extends Controller
         }
 
         $data = $validator->validated();
+        $data['usuario_id'] = $usuario_id;
         $data['estado'] = 'pendiente'; // Regla de negocio: inician pendientes
 
         // Manejo de la subida de imagen
