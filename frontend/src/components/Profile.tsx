@@ -37,102 +37,102 @@ const isValidUrl = (value: string): boolean => {
 const iconSet = {
   code: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M8.5 7L3.5 12L8.5 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M15.5 7L20.5 12L15.5 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M8.5 7L3.5 12L8.5 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M15.5 7L20.5 12L15.5 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   resume: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" strokeWidth="2"/>
-      <path d="M8 9H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M8 13H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M8 9H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M8 13H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   ),
   profile: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="2"/>
-      <path d="M5 20C5 16.6863 7.68629 14 11 14H13C16.3137 14 19 16.6863 19 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M5 20C5 16.6863 7.68629 14 11 14H13C16.3137 14 19 16.6863 19 20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   ),
   projects: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2"/>
-      <rect x="13" y="4" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2"/>
-      <rect x="4" y="13" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2"/>
-      <rect x="13" y="13" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2"/>
+      <rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+      <rect x="13" y="4" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+      <rect x="4" y="13" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+      <rect x="13" y="13" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
     </svg>
   ),
   skills: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 3L20 7.5V16.5L12 21L4 16.5V7.5L12 3Z" stroke="currentColor" strokeWidth="2"/>
-      <path d="M12 3V21" stroke="currentColor" strokeWidth="2"/>
-      <path d="M4 7.5L12 12" stroke="currentColor" strokeWidth="2"/>
-      <path d="M20 7.5L12 12" stroke="currentColor" strokeWidth="2"/>
+      <path d="M12 3L20 7.5V16.5L12 21L4 16.5V7.5L12 3Z" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M12 3V21" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M4 7.5L12 12" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M20 7.5L12 12" stroke="currentColor" strokeWidth="1.5"/>
     </svg>
   ),
   experience: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 7H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M8 7V4H16V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <rect x="4" y="7" width="16" height="14" rx="2" stroke="currentColor" strokeWidth="2"/>
+      <path d="M4 7H20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M8 7V4H16V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <rect x="4" y="7" width="16" height="14" rx="2" stroke="currentColor" strokeWidth="1.5"/>
     </svg>
   ),
   links: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M10 14L7 17C5.34315 18.6569 3.5 18.3284 3.5 16.5C3.5 14.6716 5.34315 14.3431 7 16L8.5 17.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M14 10L17 7C18.6569 5.34315 20.5 5.67157 20.5 7.5C20.5 9.32843 18.6569 9.65685 17 8L15.5 6.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M8.5 15.5L15.5 8.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M10 14L7 17C5.34315 18.6569 3.5 18.3284 3.5 16.5C3.5 14.6716 5.34315 14.3431 7 16L8.5 17.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M14 10L17 7C18.6569 5.34315 20.5 5.67157 20.5 7.5C20.5 9.32843 18.6569 9.65685 17 8L15.5 6.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M8.5 15.5L15.5 8.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   ),
   education: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 3L4 7L12 11L20 7L12 3Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-      <path d="M4 7V17C4 17.5304 4.21071 18.0391 4.58579 18.4142C4.96086 18.7893 5.46957 19 6 19H18C18.5304 19 19.0391 18.7893 19.4142 18.4142C19.7893 18.0391 20 17.5304 20 17V7" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-      <path d="M12 11V19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M12 3L4 7L12 11L20 7L12 3Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M4 7V17C4 17.5304 4.21071 18.0391 4.58579 18.4142C4.96086 18.7893 5.46957 19 6 19H18C18.5304 19 19.0391 18.7893 19.4142 18.4142C19.7893 18.0391 20 17.5304 20 17V7" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M12 11V19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   ),
   visibility: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" strokeWidth="2"/>
-      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
+      <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" strokeWidth="1.5"/>
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5"/>
     </svg>
   ),
   sun: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="5" stroke="currentColor" strokeWidth="2"/>
-      <path d="M12 1V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M12 21V23" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M4.22 4.22L5.64 5.64" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M18.36 18.36L19.78 19.78" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M1 12H3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M21 12H23" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M4.22 19.78L5.64 18.36" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M18.36 5.64L19.78 4.22" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <circle cx="12" cy="12" r="5" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M12 1V3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M12 21V23" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M4.22 4.22L5.64 5.64" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M18.36 18.36L19.78 19.78" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M1 12H3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M21 12H23" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M4.22 19.78L5.64 18.36" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M18.36 5.64L19.78 4.22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   ),
   moon: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M21 12.79C20.24 12.93 19.45 13 18.65 13C13.37 13 9 8.63 9 3.35C9 2.55 9.07 1.76 9.21 1C4.79 1.92 1.5 6.03 1.5 11.5C1.5 17.3 6.7 22 12.5 22C17.97 22 22.08 18.71 23 14.29C22.24 14.13 21.47 13.99 20.69 13.89C20.47 13.86 20.24 13.85 20 13.85C19.08 13.85 18.21 13.74 17.4 13.55" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M15.5 10.5C15.5 13.5376 13.0376 16 10 16C8.97056 16 7.99309 15.7646 7.1366 15.356" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M21 12.79C20.24 12.93 19.45 13 18.65 13C13.37 13 9 8.63 9 3.35C9 2.55 9.07 1.76 9.21 1C4.79 1.92 1.5 6.03 1.5 11.5C1.5 17.3 6.7 22 12.5 22C17.97 22 22.08 18.71 23 14.29C22.24 14.13 21.47 13.99 20.69 13.89C20.47 13.86 20.24 13.85 20 13.85C19.08 13.85 18.21 13.74 17.4 13.55" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M15.5 10.5C15.5 13.5376 13.0376 16 10 16C8.97056 16 7.99309 15.7646 7.1366 15.356" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   collapse: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M15 6L9 12L15 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M15 6L9 12L15 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   ),
   logout: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M16 17L21 12L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M9 5H5C4.44772 5 4 5.44772 4 6V18C4 18.5523 4.44772 19 5 19H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M16 17L21 12L16 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M21 12H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M9 5H5C4.44772 5 4 5.44772 4 6V18C4 18.5523 4.44772 19 5 19H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   ),
   hamburger: (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M3 6H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M3 12H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M3 18H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M3 6H21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M3 12H21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M3 18H21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   ),
 };
@@ -346,13 +346,12 @@ const Profile: React.FC = () => {
         <div className="separator" />
 
         <div className="bottom">
+          <button type="button" className="theme-toggle" onClick={toggleTheme} aria-label="Cambiar tema">
+            <span className="icon">{theme === 'light' ? iconSet.moon : iconSet.sun}</span>
+          </button>
           <button type="button" className="nav-action" onClick={() => window.open(window.location.href, '_blank')}>
             <span className="icon">{iconSet.visibility}</span>
             <span className="label">Ver Portafolio</span>
-          </button>
-          <button type="button" className="theme-toggle" onClick={toggleTheme}>
-            <span className="icon">{theme === 'light' ? iconSet.moon : iconSet.sun}</span>
-            <span className="label">{theme === 'light' ? 'Modo oscuro' : 'Modo claro'}</span>
           </button>
           <button type="button" className="nav-action" onClick={toggleSidebar}>
             <span className="icon">{iconSet.collapse}</span>
@@ -383,7 +382,7 @@ const Profile: React.FC = () => {
           {errors.submit && <div className="alert alert-danger">{errors.submit}</div>}
 
           <form onSubmit={handleSubmit} noValidate>
-            <section className="card-section profile-card">
+            <section className="card-section profile-card mb-4">
               <div className="card-section-header">
                 <div>
                   <span className="section-icon">{iconSet.profile}</span>
@@ -411,7 +410,7 @@ const Profile: React.FC = () => {
               </div>
             </section>
 
-            <section className="card-section profile-card">
+            <section className="card-section profile-card mb-4">
               <div className="card-section-header">
                 <div>
                   <span className="section-icon">{iconSet.resume}</span>
@@ -486,7 +485,7 @@ const Profile: React.FC = () => {
               </div>
             </section>
 
-            <section className="card-section profile-card">
+            <section className="card-section profile-card mb-4">
               <div className="card-section-header">
                 <div>
                   <span className="section-icon">{iconSet.skills}</span>
@@ -528,7 +527,7 @@ const Profile: React.FC = () => {
               </div>
             </section>
 
-            <section className="card-section profile-card">
+            <section className="card-section profile-card mb-4">
               <div className="card-section-header">
                 <div>
                   <span className="section-icon">{iconSet.education}</span>
@@ -569,7 +568,7 @@ const Profile: React.FC = () => {
               </div>
             </section>
 
-            <section className="card-section profile-card">
+            <section className="card-section profile-card mb-4">
               <div className="card-section-header">
                 <div>
                   <span className="section-icon">{iconSet.links}</span>
