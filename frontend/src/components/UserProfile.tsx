@@ -3,24 +3,18 @@ import axios from 'axios';
 import { ProfileData } from '../types';
 
 // 1. Obtenemos la URL del backend y evitamos el error de TypeScript con (import.meta as any)
-const API_URL = (import.meta as any).env.VITE_API_URL || 'http://127.0.0.1:8000';
+const API_URL = 'http://127.0.0.1:8000/api';
 
 const defaultProfile: ProfileData = {
-  name: '',
+  nombre: '',
   email: '',
-  profession: '',
-  specialty: '',
-  biography: '',
-  skills: '',
-  experience: '',
-  location: '',
-  phone: '',
+  profesion: '',
+  especialidad: '',
+  biografia: '',
+  ubicacion: '',
   linkedin: '',
-  github: '',
-  website: '',
-  university: '',
-  career: '',
-  education: '',
+  github_perfil: '',
+  sitio_web: '',
   image_url: null,
 };
 
@@ -147,7 +141,7 @@ const sidebarItems = [
   { id: 'visibilidad', label: 'Visibilidad', icon: iconSet.visibility },
 ];
 
-const Profile: React.FC = () => {
+const UserProfile: React.FC = () => {
   const [profile, setProfile] = useState<ProfileData>(defaultProfile);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -169,8 +163,13 @@ const Profile: React.FC = () => {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
     axios
-      .get<ProfileData>(`${API_URL}/api/profile`)
+      .get<ProfileData>(`${API_URL}/user`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         setProfile(response.data);
         if (response.data.image_url) {
@@ -198,21 +197,21 @@ const Profile: React.FC = () => {
   const validate = (): boolean => {
     const nextErrors: Record<string, string> = {};
 
-    if (!profile.name.trim()) nextErrors.name = 'El nombre es requerido.';
+    if (!profile.nombre.trim()) nextErrors.nombre = 'El nombre es requerido.';
     if (!profile.email.trim()) nextErrors.email = 'El correo es requerido.';
-    if (!profile.profession.trim()) nextErrors.profession = 'La profesión es requerida.';
-    if (!profile.specialty.trim()) nextErrors.specialty = 'La especialidad es requerida.';
+    if (!profile.profesion.trim()) nextErrors.profesion = 'La profesión es requerida.';
+    if (!profile.especialidad.trim()) nextErrors.especialidad = 'La especialidad es requerida.';
     if (profile.linkedin && !isValidUrl(profile.linkedin)) nextErrors.linkedin = 'LinkedIn no es una URL válida.';
-    if (profile.github && !isValidUrl(profile.github)) nextErrors.github = 'GitHub no es una URL válida.';
-    if (profile.website && !isValidUrl(profile.website)) nextErrors.website = 'El sitio web no es una URL válida.';
+    if (profile.github_perfil && !isValidUrl(profile.github_perfil)) nextErrors.github_perfil = 'GitHub no es una URL válida.';
+    if (profile.sitio_web && !isValidUrl(profile.sitio_web)) nextErrors.sitio_web = 'El sitio web no es una URL válida.';
 
     if (imageFile) {
       const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
       if (!allowedTypes.includes(imageFile.type)) {
         nextErrors.image = 'Solo se permiten JPG, PNG o WEBP.';
       }
-      if (imageFile.size > 10 * 1024 * 1024) {
-        nextErrors.image = 'El archivo no puede superar los 10MB.';
+      if (imageFile.size > 2 * 1024 * 1024) {
+        nextErrors.image = 'El archivo no puede superar los 2MB.';
       }
     }
 
@@ -263,21 +262,15 @@ const Profile: React.FC = () => {
     }
 
     const formData = new FormData();
-    formData.append('name', profile.name);
+    formData.append('nombre', profile.nombre);
     formData.append('email', profile.email);
-    formData.append('profession', profile.profession);
-    formData.append('specialty', profile.specialty);
-    formData.append('biography', profile.biography || '');
-    formData.append('skills', profile.skills || '');
-    formData.append('experience', profile.experience || '');
-    formData.append('location', profile.location || '');
-    formData.append('phone', profile.phone || '');
+    formData.append('profesion', profile.profesion);
+    formData.append('especialidad', profile.especialidad);
+    formData.append('biografia', profile.biografia || '');
+    formData.append('ubicacion', profile.ubicacion || '');
     formData.append('linkedin', profile.linkedin || '');
-    formData.append('github', profile.github || '');
-    formData.append('website', profile.website || '');
-    formData.append('university', profile.university || '');
-    formData.append('career', profile.career || '');
-    formData.append('education', profile.education || '');
+    formData.append('github_perfil', profile.github_perfil || '');
+    formData.append('sitio_web', profile.sitio_web || '');
 
     if (imageFile) {
       formData.append('image', imageFile);
@@ -285,9 +278,14 @@ const Profile: React.FC = () => {
 
     setLoading(true);
 
+    const token = localStorage.getItem('token');
+
     try {
-      const response = await axios.post<ProfileData>(`${API_URL}/api/profile`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      const response = await axios.post<ProfileData>(`${API_URL}/user/update`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       setProfile(response.data);
@@ -297,10 +295,23 @@ const Profile: React.FC = () => {
       setSuccessMessage('Perfil actualizado con éxito.');
       setImageFile(null);
     } catch (error: unknown) {
-      const message = axios.isAxiosError(error) && error.response?.data?.message
-        ? String(error.response.data.message)
-        : 'Error al guardar el perfil.';
-      setErrors({ submit: message });
+      if (axios.isAxiosError(error) && error.response?.status === 422) {
+        const validationErrors = error.response.data.errors;
+        if (validationErrors) {
+          const errorMessages: Record<string, string> = {};
+          Object.keys(validationErrors).forEach((key) => {
+            errorMessages[key] = validationErrors[key][0];
+          });
+          setErrors(errorMessages);
+        } else {
+          setErrors({ submit: 'Errores de validación en el servidor.' });
+        }
+      } else {
+        const message = axios.isAxiosError(error) && error.response?.data?.message
+          ? String(error.response.data.message)
+          : 'Error al guardar el perfil.';
+        setErrors({ submit: message });
+      }
       console.error(error);
     } finally {
       setLoading(false);
@@ -404,7 +415,7 @@ const Profile: React.FC = () => {
                     Subir foto
                     <input type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={handleFileChange} />
                   </label>
-                  <p className="helper-text">JPG, PNG o WEBP. Máximo 10 MB.</p>
+                  <p className="helper-text">JPG, PNG o WEBP. Máximo 2 MB.</p>
                   {errors.image && <div className="text-danger">{errors.image}</div>}
                 </div>
               </div>
@@ -422,12 +433,12 @@ const Profile: React.FC = () => {
                   <label className="form-label">Nombre completo</label>
                   <input
                     type="text"
-                    name="name"
-                    value={profile.name}
+                    name="nombre"
+                    value={profile.nombre}
                     onChange={handleChange}
-                    className={`form-control ${errors.name ? 'is-invalid' : ''}`}
+                    className={`form-control ${errors.nombre ? 'is-invalid' : ''}`}
                   />
-                  <div className="invalid-feedback">{errors.name}</div>
+                  <div className="invalid-feedback">{errors.nombre}</div>
                 </div>
                 <div className="col-md-6 mb-3">
                   <label className="form-label">Correo electrónico</label>
@@ -444,30 +455,30 @@ const Profile: React.FC = () => {
                   <label className="form-label">Profesión</label>
                   <input
                     type="text"
-                    name="profession"
-                    value={profile.profession}
+                    name="profesion"
+                    value={profile.profesion}
                     onChange={handleChange}
-                    className={`form-control ${errors.profession ? 'is-invalid' : ''}`}
+                    className={`form-control ${errors.profesion ? 'is-invalid' : ''}`}
                   />
-                  <div className="invalid-feedback">{errors.profession}</div>
+                  <div className="invalid-feedback">{errors.profesion}</div>
                 </div>
                 <div className="col-md-6 mb-3">
                   <label className="form-label">Especialidad</label>
                   <input
                     type="text"
-                    name="specialty"
-                    value={profile.specialty}
+                    name="especialidad"
+                    value={profile.especialidad}
                     onChange={handleChange}
-                    className={`form-control ${errors.specialty ? 'is-invalid' : ''}`}
+                    className={`form-control ${errors.especialidad ? 'is-invalid' : ''}`}
                   />
-                  <div className="invalid-feedback">{errors.specialty}</div>
+                  <div className="invalid-feedback">{errors.especialidad}</div>
                 </div>
                 <div className="col-md-6 mb-3">
                   <label className="form-label">Ubicación</label>
                   <input
                     type="text"
-                    name="location"
-                    value={profile.location || ''}
+                    name="ubicacion"
+                    value={profile.ubicacion || ''}
                     onChange={handleChange}
                     className="form-control"
                   />
@@ -496,8 +507,8 @@ const Profile: React.FC = () => {
                 <div className="col-12 mb-3">
                   <label className="form-label">Biografía</label>
                   <textarea
-                    name="biography"
-                    value={profile.biography || ''}
+                    name="biografia"
+                    value={profile.biografia || ''}
                     onChange={handleChange}
                     className="form-control"
                     rows={3}
@@ -591,23 +602,23 @@ const Profile: React.FC = () => {
                   <label className="form-label">GitHub</label>
                   <input
                     type="url"
-                    name="github"
-                    value={profile.github || ''}
+                    name="github_perfil"
+                    value={profile.github_perfil || ''}
                     onChange={handleChange}
-                    className={`form-control ${errors.github ? 'is-invalid' : ''}`}
+                    className={`form-control ${errors.github_perfil ? 'is-invalid' : ''}`}
                   />
-                  <div className="invalid-feedback">{errors.github}</div>
+                  <div className="invalid-feedback">{errors.github_perfil}</div>
                 </div>
                 <div className="col-12 mb-3">
                   <label className="form-label">Sitio web personal</label>
                   <input
                     type="url"
-                    name="website"
-                    value={profile.website || ''}
+                    name="sitio_web"
+                    value={profile.sitio_web || ''}
                     onChange={handleChange}
-                    className={`form-control ${errors.website ? 'is-invalid' : ''}`}
+                    className={`form-control ${errors.sitio_web ? 'is-invalid' : ''}`}
                   />
-                  <div className="invalid-feedback">{errors.website}</div>
+                  <div className="invalid-feedback">{errors.sitio_web}</div>
                 </div>
               </div>
             </section>
@@ -627,4 +638,4 @@ const Profile: React.FC = () => {
   );
 };
 
-export default Profile;
+export default UserProfile;

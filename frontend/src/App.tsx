@@ -1,8 +1,8 @@
 import React from 'react';
-import Profile from './components/Profile';
+import UserProfile from './components/UserProfile';
 
 const App: React.FC = () => {
-  return <Profile />;
+  return <UserProfile />;
 };
 
 export default App;

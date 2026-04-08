@@ -1,18 +1,12 @@
 export interface ProfileData {
-  name: string;
+  nombre: string;
   email: string;
-  profession: string;
-  specialty: string;
-  biography: string;
-  skills: string;
-  experience: string;
-  location: string;
-  phone: string;
+  profesion: string;
+  especialidad: string;
+  biografia: string;
+  ubicacion: string;
   linkedin: string;
-  github: string;
-  website: string;
-  university: string;
-  career: string;
-  education: string;
+  github_perfil: string;
+  sitio_web: string;
   image_url?: string | null;
 }
