@@ -165,7 +165,7 @@ const UserProfile: React.FC = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     axios
-      .get<ProfileData>(`${API_URL}/user`, {
+      .get<ProfileData>(`${API_URL}/user/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
