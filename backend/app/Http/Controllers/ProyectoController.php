@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 
 class ProyectoController extends Controller
 {
-    // Leer: Obtener todos los proyectos (con su categoría y creador)
+    // Leer: Obtener todos los proyectos
     public function index(): JsonResponse
     {
         $proyectos = Proyecto::with(['categoria', 'usuario:id,nombre,email,foto'])->get();
@@ -30,7 +30,7 @@ class ProyectoController extends Controller
             'descripcion'    => 'required|string',
             'tecnologias'    => 'required|string',
             'herramientas'   => 'nullable|string',
-            'imagen'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240', // Máx 10MB
+            'imagen'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
             'github'         => 'nullable|url|max:255',
             'demo'           => 'nullable|url|max:255',
             'cliente'        => 'nullable|string|max:255',
@@ -43,7 +43,7 @@ class ProyectoController extends Controller
 
         $data = $validator->validated();
         $data['usuario_id'] = $usuario_id;
-        $data['estado'] = 'pendiente'; // Regla de negocio: inician pendientes
+        $data['estado'] = 'pendiente'; 
 
         // Manejo de la subida de imagen
         if ($request->hasFile('imagen')) {

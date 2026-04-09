@@ -30,7 +30,7 @@ class AuthController extends Controller
             'email'    => $request->email,
             'password' => Hash::make($request->password),
             'rol'      => 'usuario',
-            'estado'   => 'pendiente', // Por regla de negocio
+            'estado'   => 'pendiente',
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -121,8 +121,6 @@ class AuthController extends Controller
         }
 
         // 2. Eliminar al usuario. 
-        // Nota: Gracias a tu migración, los proyectos y comentarios de este usuario 
-        // se eliminarán automáticamente por el "ON DELETE CASCADE" de la base de datos.
         $user->delete();
 
         return response()->json([
