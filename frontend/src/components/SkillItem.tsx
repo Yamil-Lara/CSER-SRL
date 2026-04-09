@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Badge, Button, ProgressBar } from "react-bootstrap";
+import { ProgressBar } from "react-bootstrap";
 
 type Skill = {
   id: number;
@@ -14,62 +14,28 @@ type Props = {
   onDelete: (id: number) => void;
 };
 
-const getProgressVariant = (level: number): string => {
-  if (level >= 80) return "success";
-  if (level >= 60) return "info";
-  if (level >= 40) return "warning";
-  return "danger";
-};
-
 const SkillItem: React.FC<Props> = ({ skill, onEdit, onDelete }) => {
+  const isTecnica = skill.type === "tecnica";
   return (
-    <Row className="align-items-center">
-      <Col md={8}>
-        <div className="mb-2">
-          <h6 className="mb-1 fw-bold">{skill.name}</h6>
-          <Badge
-            bg={skill.type === "tecnica" ? "primary" : "success"}
-            className="me-2"
-          >
-            {skill.type === "tecnica" ? "🔧 Técnica" : "🤝 Blanda"}
-          </Badge>
+    <div className="w-100 mb-2 mt-1">
+      <div className="d-flex justify-content-between align-items-center mb-2">
+        <span className="fw-bold text-dark" style={{ fontSize: "1rem" }}>{skill.name}</span>
+        <div className="d-flex align-items-center gap-3">
+          <span className="text-secondary" style={{ fontSize: "0.95rem" }}>{skill.level}%</span>
+          <button className="btn btn-link text-secondary p-0 border-0 text-decoration-none shadow-none" onClick={() => onEdit(skill)}>
+            <i className="bi bi-pencil-square fs-6"></i>
+          </button>
+          <button className="btn btn-link text-secondary p-0 border-0 text-decoration-none shadow-none" onClick={() => onDelete(skill.id)}>
+            <i className="bi bi-trash fs-6"></i>
+          </button>
         </div>
-        
-        <div className="mt-2">
-          <div className="d-flex justify-content-between align-items-center mb-1">
-            <small className="text-muted">Nivel de dominio</small>
-            <small className="fw-bold">{skill.level}%</small>
-          </div>
-          <ProgressBar
-            now={skill.level}
-            variant={getProgressVariant(skill.level)}
-            label={`${skill.level}%`}
-            striped
-            animated
-          />
-        </div>
-      </Col>
-
-      <Col md={4} className="text-end">
-        <Button
-          variant="outline-warning"
-          size="sm"
-          className="me-2"
-          onClick={() => onEdit(skill)}
-        >
-          <i className="bi bi-pencil me-1"></i>
-          Editar
-        </Button>
-        <Button
-          variant="outline-danger"
-          size="sm"
-          onClick={() => onDelete(skill.id)}
-        >
-          <i className="bi bi-trash me-1"></i>
-          Eliminar
-        </Button>
-      </Col>
-    </Row>
+      </div>
+      <ProgressBar
+        now={skill.level}
+        variant={isTecnica ? "primary" : "success"}
+        style={{ height: "10px", backgroundColor: "#f0f2f5" }}
+      />
+    </div>
   );
 };
 
