@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button, Alert, Row, Col } from "react-bootstrap";
+import { Form, Button, Alert, Modal } from "react-bootstrap";
 
 type Skill = {
   id?: number;
@@ -9,29 +9,33 @@ type Skill = {
 };
 
 type Props = {
+  show: boolean;
+  onClose: () => void;
   onSave: (skill: Skill) => void;
   editingSkill?: Skill | null;
   skills: Skill[];
 };
 
-const SkillForm: React.FC<Props> = ({ onSave, editingSkill, skills }) => {
+const SkillForm: React.FC<Props> = ({ show, onClose, onSave, editingSkill, skills }) => {
   const [name, setName] = useState("");
   const [type, setType] = useState<"tecnica" | "blanda">("tecnica");
-  const [level, setLevel] = useState(1);
+  const [level, setLevel] = useState(50);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (editingSkill) {
-      setName(editingSkill.name);
-      setType(editingSkill.type);
-      setLevel(editingSkill.level);
-    } else {
-      setName("");
-      setType("tecnica");
-      setLevel(1);
+    if (show) {
+      if (editingSkill) {
+        setName(editingSkill.name);
+        setType(editingSkill.type);
+        setLevel(editingSkill.level);
+      } else {
+        setName("");
+        setType("tecnica");
+        setLevel(50);
+      }
       setError("");
     }
-  }, [editingSkill]);
+  }, [show, editingSkill]);
 
   const validate = () => {
     if (!name.trim()) return "El nombre es obligatorio";
@@ -55,104 +59,80 @@ const SkillForm: React.FC<Props> = ({ onSave, editingSkill, skills }) => {
     }
 
     onSave({ id: editingSkill?.id, name: name.trim(), type, level });
-
-    if (!editingSkill) {
-      setName("");
-      setType("tecnica");
-      setLevel(1);
-    }
-    setError("");
-  };
-
-  const handleCancel = () => {
-    setName("");
-    setType("tecnica");
-    setLevel(1);
-    setError("");
+    onClose();
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <h5 className="mb-4">
-        {editingSkill ? (
-          <>
-            <i className="bi bi-pencil-square me-2"></i>
-            Editar habilidad
-          </>
-        ) : (
-          <>
-            <i className="bi bi-plus-circle me-2"></i>
-            Nueva habilidad
-          </>
-        )}
-      </h5>
+    <Modal show={show} onHide={onClose} centered backdrop="static">
+      <Form onSubmit={handleSubmit}>
+        <Modal.Header closeButton className="border-0 pb-0 mt-2 px-4">
+          <Modal.Title className="fw-bold fs-4">
+            {editingSkill ? "Editar Habilidad" : "Nueva Habilidad"}
+          </Modal.Title>
+        </Modal.Header>
+        
+        <Modal.Body className="px-4 pb-0 pt-3">
+          {error && (
+            <Alert variant="danger" dismissible onClose={() => setError("")}>
+              {error}
+            </Alert>
+          )}
 
-      {error && (
-        <Alert variant="danger" dismissible onClose={() => setError("")}>
-          {error}
-        </Alert>
-      )}
-
-      <Row className="mb-3">
-        <Col md={6}>
-          <Form.Group controlId="skillName">
-            <Form.Label>Nombre de la habilidad</Form.Label>
+          <Form.Group className="mb-4" controlId="skillName">
+            <Form.Label className="fw-semibold text-dark">
+              Nombre de la Habilidad <span className="text-danger">*</span>
+            </Form.Label>
             <Form.Control
               type="text"
-              placeholder="Ej: JavaScript, Liderazgo, etc."
+              className="py-2 text-secondary"
+              placeholder="Ej: React, Liderazgo, Comunicación"
               value={name}
               onChange={(e) => setName(e.target.value)}
               isInvalid={!!error && error.includes("nombre")}
             />
-            <Form.Control.Feedback type="invalid">
-              Por favor ingresa un nombre
-            </Form.Control.Feedback>
           </Form.Group>
-        </Col>
 
-        <Col md={3}>
-          <Form.Group controlId="skillType">
-            <Form.Label>Tipo</Form.Label>
+          <Form.Group className="mb-4" controlId="skillType">
+            <Form.Label className="fw-semibold text-dark">
+              Tipo <span className="text-danger">*</span>
+            </Form.Label>
             <Form.Select
+              className="py-2 text-dark"
               value={type}
               onChange={(e) => setType(e.target.value as "tecnica" | "blanda")}
             >
-              <option value="tecnica">🔧 Técnica</option>
-              <option value="blanda">🤝 Blanda</option>
+              <option value="tecnica">Técnica</option>
+              <option value="blanda">Blanda</option>
             </Form.Select>
           </Form.Group>
-        </Col>
 
-        <Col md={3}>
-          <Form.Group controlId="skillLevel">
-            <Form.Label>Nivel (1-100)</Form.Label>
-            <Form.Control
-              type="number"
-              min={1}
-              max={100}
+          <Form.Group className="mb-4" controlId="skillLevel">
+            <Form.Label className="fw-semibold text-dark mb-3">
+              Nivel de Dominio: {level}%
+            </Form.Label>
+            <Form.Range
               value={level}
               onChange={(e) => setLevel(Number(e.target.value))}
-              isInvalid={!!error && error.includes("nivel")}
             />
-            <Form.Control.Feedback type="invalid">
-              Nivel inválido
-            </Form.Control.Feedback>
+            <div className="d-flex justify-content-between text-muted mt-2" style={{ fontSize: "0.80rem", padding: "0 2px" }}>
+              <span>Principiante</span>
+              <span>Intermedio</span>
+              <span>Avanzado</span>
+              <span>Experto</span>
+            </div>
           </Form.Group>
-        </Col>
-      </Row>
-
-      <div className="d-flex gap-2">
-        <Button variant="primary" type="submit">
-          <i className="bi bi-save me-1"></i>
-          {editingSkill ? "Actualizar" : "Guardar"}
-        </Button>
-        {editingSkill && (
-          <Button variant="outline-secondary" onClick={handleCancel}>
+        </Modal.Body>
+        
+        <Modal.Footer className="border-0 pt-0 pb-4 px-4 d-flex justify-content-end gap-2">
+          <Button variant="link" className="text-dark text-decoration-none fw-semibold" onClick={onClose}>
             Cancelar
           </Button>
-        )}
-      </div>
-    </Form>
+          <Button variant="primary" type="submit" className="px-4 py-2 fw-semibold rounded-3 text-white">
+            {editingSkill ? "Actualizar" : "Crear"}
+          </Button>
+        </Modal.Footer>
+      </Form>
+    </Modal>
   );
 };
 
