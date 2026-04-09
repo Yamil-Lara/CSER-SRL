@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Nav, Row, Col } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Button, Nav } from "react-bootstrap";
 import SkillList from "../components/SkillList";
 import SkillForm from "../components/SkillForm";
 import ConfirmModal from "../components/ConfirmModal";
@@ -15,7 +15,22 @@ const Profile = () => {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
-  const [showForm, setShowForm] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    return localStorage.getItem("theme") === "dark";
+  });
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.setAttribute("data-theme", "dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDark]);
+
+  const toggleTheme = () => setIsDark(!isDark);
 
   const saveSkill = (skill: any) => {
     if (skill.id) {
@@ -23,18 +38,17 @@ const Profile = () => {
     } else {
       setSkills([...skills, { ...skill, id: Date.now() }]);
     }
-    setEditingSkill(null);
-    setShowForm(false);
+    setShowModal(false);
   };
 
   const handleEdit = (skill: Skill) => {
     setEditingSkill(skill);
-    setShowForm(true);
+    setShowModal(true);
   };
 
   const handleAddNew = () => {
     setEditingSkill(null);
-    setShowForm(true);
+    setShowModal(true);
   };
 
   const confirmDelete = () => {
@@ -46,12 +60,12 @@ const Profile = () => {
 
   return (
     <div className="d-flex">
-      {/* BARRA LATERAL (SIDEBAR) */}
-      <nav className="sidebar d-flex flex-column">
-        <div className="logo text-white mb-4">
-          <i className="bi bi-code-slash text-primary me-2"></i> DevFolio
+      {/* SIDEBAR */}
+      <nav className="sidebar d-flex flex-column shadow">
+        <div className="logo d-flex align-items-center">
+          <i className="bi bi-code-slash text-primary me-2 fs-4"></i> DevFolio
         </div>
-        
+
         <Nav className="flex-column flex-grow-1">
           <Nav.Link href="#"><i className="bi bi-grid"></i> Mi Resumen</Nav.Link>
           <Nav.Link href="#"><i className="bi bi-person"></i> Editar Perfil</Nav.Link>
@@ -62,44 +76,39 @@ const Profile = () => {
         </Nav>
 
         <Nav className="flex-column mt-auto border-top border-secondary pt-2 mb-3">
-          <Nav.Link href="#"><i className="bi bi-eye"></i> Ver mi Portafolio Público</Nav.Link>
+          <Nav.Link href="#"><i className="bi bi-eye"></i> Ver mi Portafolio</Nav.Link>
           <Nav.Link href="#"><i className="bi bi-chevron-left"></i> Colapsar</Nav.Link>
           <Nav.Link href="#" className="text-danger"><i className="bi bi-box-arrow-right"></i> Cerrar sesión</Nav.Link>
         </Nav>
       </nav>
 
-      {/* CONTENIDO PRINCIPAL */}
+      {/* MAIN CONTENT */}
       <main className="main-content p-5">
-        <div className="d-flex justify-content-between align-items-center mb-2">
-          <h2 className="fw-bold m-0">Mis Habilidades</h2>
-          <Button variant="primary" className="rounded-3 shadow-sm px-4" onClick={handleAddNew}>
-            <i className="bi bi-plus-lg me-2"></i> Nueva Habilidad
-          </Button>
+        <div className="d-flex justify-content-between align-items-start mb-4">
+          <div>
+            <h2 className="fw-bold m-0 text-dark">Mis Habilidades</h2>
+            <p className="text-muted">Gestiona tus competencias técnicas y blandas</p>
+          </div>
+          <div className="d-flex gap-3 align-items-center">
+            <Button 
+              variant="outline-secondary" 
+              className="rounded-circle border-0 d-flex align-items-center justify-content-center bg-transparent shadow-none" 
+              style={{ width: "40px", height: "40px" }}
+              onClick={toggleTheme}
+            >
+              {isDark ? (
+                <i className="bi bi-sun-fill text-warning fs-5"></i>
+              ) : (
+                <i className="bi bi-moon-stars-fill text-secondary fs-5"></i>
+              )}
+            </Button>
+            <Button variant="primary" className="px-4 py-2 rounded-3 shadow-sm fw-bold" onClick={handleAddNew}>
+              + Nueva Habilidad
+            </Button>
+          </div>
         </div>
-        <p className="text-muted mb-5">Gestiona tus competencias técnicas y blandas</p>
 
         <div className="mx-auto" style={{ maxWidth: "1000px" }}>
-          {showForm && (
-            <Row className="mb-4">
-              <Col lg={12}>
-                <div className="card shadow-sm border-0 p-4">
-                  <SkillForm
-                    onSave={saveSkill}
-                    editingSkill={editingSkill}
-                    skills={skills}
-                  />
-                  <Button
-                    variant="link"
-                    className="text-decoration-none text-muted mt-2"
-                    onClick={() => setShowForm(false)}
-                  >
-                    Cerrar formulario
-                  </Button>
-                </div>
-              </Col>
-            </Row>
-          )}
-
           <SkillList
             skills={skills}
             onEdit={handleEdit}
@@ -109,6 +118,16 @@ const Profile = () => {
         </div>
       </main>
 
+      {/* MODAL FORMULARIO */}
+      <SkillForm
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onSave={saveSkill}
+        editingSkill={editingSkill}
+        skills={skills}
+      />
+
+      {/* MODAL ELIMINAR */}
       <ConfirmModal
         show={deleteId !== null}
         onConfirm={confirmDelete}
