@@ -2,16 +2,9 @@ import React from "react";
 import { ListGroup, Button } from "react-bootstrap";
 import SkillItem from "./SkillItem";
 
-type Skill = {
-  id: number;
-  name: string;
-  type: "tecnica" | "blanda";
-  level: number;
-};
-
 type Props = {
-  skills: Skill[];
-  onEdit: (skill: Skill) => void;
+  skills: any[];
+  onEdit: (skill: any) => void;
   onDelete: (id: number) => void;
   onAddFirst: () => void;
 };
@@ -20,64 +13,42 @@ const SkillList: React.FC<Props> = ({ skills, onEdit, onDelete, onAddFirst }) =>
   const tecnicas = skills.filter((s) => s.type === "tecnica");
   const blandas = skills.filter((s) => s.type === "blanda");
 
-  const EmptyState = ({ title, icon }: { title: string; icon: string }) => (
-    <div className="text-center py-5">
-      <div className="mb-3 text-light">
-        <i className={`bi ${icon}`} style={{ fontSize: "4rem", opacity: 0.2 }}></i>
+  const Section = ({ title, icon, data, typeLabel, iconClass, bgClass }: any) => (
+    <div className="card border-0 shadow-sm rounded-4 p-4 mb-4">
+      <div className="d-flex align-items-center mb-4">
+        <div className={`${bgClass} rounded-3 me-3 d-flex align-items-center justify-content-center`} style={{ width: '45px', height: '45px' }}>
+          <i className={`bi ${icon} ${iconClass} fs-4`}></i>
+        </div>
+        <h4 className="fw-bold m-0 fs-5 text-dark">{title}</h4>
       </div>
-      <p className="text-muted mb-4">No tienes habilidades {title.toLowerCase()} registradas</p>
-      <Button variant="outline-primary" className="rounded-pill px-4" onClick={onAddFirst}>
-        + Agregar Primera Habilidad
-      </Button>
+
+      {data.length > 0 ? (
+        <ListGroup variant="flush">
+          {data.map((skill: any) => (
+            <ListGroup.Item key={skill.id} className="px-0 py-2 border-0 bg-transparent">
+              <SkillItem skill={skill} onEdit={onEdit} onDelete={onDelete} />
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
+      ) : (
+        <div className="text-center py-5">
+          <div className="mb-3 text-light">
+            <i className={`bi ${icon}`} style={{ fontSize: "4rem", opacity: 0.2 }}></i>
+          </div>
+          <p className="text-muted mb-4">No tienes habilidades {typeLabel} registradas</p>
+          <Button variant="outline-primary" className="rounded-pill px-4" onClick={onAddFirst}>
+            + Agregar Primera Habilidad
+          </Button>
+        </div>
+      )}
     </div>
   );
 
   return (
-    <div className="d-flex flex-column gap-4">
-      {/* Sección Habilidades Técnicas */}
-      <div className="card border-0 shadow-sm rounded-4 p-4 mb-4">
-        <div className="d-flex align-items-center mb-4">
-          <div className="bg-light p-2 rounded me-3">
-            <i className="bi bi-code-slash text-primary"></i>
-          </div>
-          <h4 className="fw-bold m-0">Habilidades Técnicas</h4>
-        </div>
-
-        {tecnicas.length > 0 ? (
-          <ListGroup variant="flush">
-            {tecnicas.map((skill) => (
-              <ListGroup.Item key={skill.id} className="px-0 py-3 border-light">
-                <SkillItem skill={skill} onEdit={onEdit} onDelete={onDelete} />
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
-        ) : (
-          <EmptyState title="técnicas" icon="bi-code-slash" />
-        )}
-      </div>
-
-      {/* Sección Habilidades Blandas */}
-      <div className="card border-0 shadow-sm rounded-4 p-4 mb-4">
-        <div className="d-flex align-items-center mb-4">
-          <div className="bg-light p-2 rounded me-3">
-            <i className="bi bi-people text-info"></i>
-          </div>
-          <h4 className="fw-bold m-0">Habilidades Blandas</h4>
-        </div>
-
-        {blandas.length > 0 ? (
-          <ListGroup variant="flush">
-            {blandas.map((skill) => (
-              <ListGroup.Item key={skill.id} className="px-0 py-3 border-light">
-                <SkillItem skill={skill} onEdit={onEdit} onDelete={onDelete} />
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
-        ) : (
-          <EmptyState title="blandas" icon="bi-people" />
-        )}
-      </div>
-    </div>
+    <>
+      <Section title="Habilidades Técnicas" icon="bi-code" iconClass="text-primary" bgClass="bg-primary bg-opacity-10" data={tecnicas} typeLabel="técnicas" />
+      <Section title="Habilidades Blandas" icon="bi-stars" iconClass="text-success" bgClass="bg-success bg-opacity-10" data={blandas} typeLabel="blandas" />
+    </>
   );
 };
 
