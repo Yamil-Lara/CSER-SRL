@@ -14,8 +14,8 @@ const App: React.FC = () => {
 
   useEffect(() => {
     axios.get<StatusResponse>('http://127.0.0.1:8000/api/status')
-      .then(response => setData(response.data))
-      .catch(error => console.error("Error de conexión:", error));
+      .then((response: { data: React.SetStateAction<StatusResponse | null>; }) => setData(response.data))
+      .catch((error: any) => console.error("Error de conexión:", error));
   }, []);
 
   return (
