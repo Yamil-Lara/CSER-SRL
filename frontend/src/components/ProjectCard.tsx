@@ -1,10 +1,11 @@
+// frontend/src/components/ProjectCard.tsx
 import { Calendar, Tag, GitBranch, ExternalLink, Edit, Trash2, FolderOpen } from 'lucide-react';
 import { Project } from '../pages/ProjectsPage';
 
 interface ProjectCardProps {
   project: Project;
   onDelete: (id: string) => void;
-  onEdit: (project: Project) => void; // Propiedad habilitada para editar
+  onEdit: (project: Project) => void;
 }
 
 export default function ProjectCard({ project, onDelete, onEdit }: ProjectCardProps) {
@@ -13,12 +14,26 @@ export default function ProjectCard({ project, onDelete, onEdit }: ProjectCardPr
     if (!dateStr) return 'Sin fecha';
     try {
       const d = new Date(dateStr);
-      // Validar que la fecha sea válida antes de retornarla
       if (isNaN(d.getTime())) return dateStr;
       return `${d.getDate() + 1}/${d.getMonth() + 1}/${d.getFullYear()}`;
     } catch {
       return dateStr;
     }
+  };
+
+  // Función para garantizar el color correcto según el estado
+  const getStatusColor = (status?: string) => {
+    // Convertimos a minúsculas y quitamos espacios invisibles por si acaso
+    const normalizedStatus = status?.trim().toLowerCase();
+
+    if (normalizedStatus === 'pendiente') {
+      return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
+    }
+    if (normalizedStatus === 'rechazado') {
+      return 'bg-red-100 text-red-800 border border-red-200';
+    }
+    // Por defecto (aprobado o cualquier otro)
+    return 'bg-green-100 text-green-800 border border-green-200';
   };
 
   return (
@@ -29,8 +44,9 @@ export default function ProjectCard({ project, onDelete, onEdit }: ProjectCardPr
       
       <div className="project-header">
         <h3 className="project-title">{project.title}</h3>
-        {/* Usamos el status directamente de la BD */}
-        <span className={`status-badge ${project.status === 'pendiente' ? 'bg-yellow-100 text-yellow-800' : ''}`}>
+        
+        {/* Utilizamos clases de Tailwind para darle forma de "píldora" y aplicamos el color dinámico */}
+        <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize shadow-sm ${getStatusColor(project.status)}`}>
           {project.status}
         </span>
       </div>
@@ -49,7 +65,6 @@ export default function ProjectCard({ project, onDelete, onEdit }: ProjectCardPr
       </div>
 
       <div className="tags-container">
-        {/* Validación segura por si technologies viene vacío */}
         {project.technologies && project.technologies.length > 0 ? (
            project.technologies.map((tech, index) => (
             <span key={index} className="tag">{tech}</span>
@@ -60,7 +75,6 @@ export default function ProjectCard({ project, onDelete, onEdit }: ProjectCardPr
       </div>
 
       <div className="project-links">
-        {/* Renderizado condicional seguro de URLs */}
         {project.githubUrl && (
           <a href={project.githubUrl} target="_blank" rel="noreferrer" title="Ver en GitHub">
             <GitBranch size={18} />
@@ -74,12 +88,10 @@ export default function ProjectCard({ project, onDelete, onEdit }: ProjectCardPr
       </div>
 
       <div className="project-actions">
-        {/* Botón Editar conectado a la función onEdit enviando todo el proyecto */}
         <button className="btn-icon-text" onClick={() => onEdit(project)}>
           <Edit size={16} />
           Editar
         </button>
-        {/* El botón de eliminar ya está conectado a la función principal */}
         <button className="btn-icon" onClick={() => onDelete(project.id)} title="Eliminar proyecto">
           <Trash2 size={16} />
         </button>

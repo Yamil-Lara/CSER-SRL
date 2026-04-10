@@ -3,6 +3,7 @@ import { X, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import { Project } from '../pages/ProjectsPage';
 
+// --- INTERFACES ---
 interface Category {
   id: number;
   nombre: string;
@@ -18,33 +19,31 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
   const [categories, setCategories] = useState<Category[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // 1. Inicializamos SIEMPRE con los valores por defecto (útil para "Nuevo Proyecto")
+  // 1. Inicializamos con valores VACÍOS
   const [formData, setFormData] = useState({
-    titulo: 'Nuevo Proyecto',
-    descripcion: 'Esta es una descripción de ejemplo que tiene más de cincuenta caracteres para cumplir la validación.',
+    titulo: '',
+    descripcion: '',
     categoria_id: '',
-    fecha_proyecto: new Date().toISOString().split('T')[0],
-    tecnologias: 'React, Node.js',
-    herramientas: 'VS Code, Git',
-    cliente: 'Yamil Angelo Lara B.',
-    github: 'https://github.com/yamil-lara',
+    fecha_proyecto: '',
+    tecnologias: '',
+    herramientas: '',
+    cliente: '',
+    github: '',
     demo: ''
   });
 
-  // 2. Cargamos las categorías del backend de forma segura
+  // 2. Cargar categorías
   useEffect(() => {
-    let isMounted = true; // <-- 1. Creamos una bandera para saber si el modal está abierto
+    let isMounted = true; 
 
     const fetchCategorias = async () => {
       try {
         const response = await axios.get('http://localhost:8000/api/categorias');
         const data = response.data.data || response.data;
         
-        // <-- 2. Solo actualizamos el estado si el modal SIGUE abierto
         if (isMounted) { 
           setCategories(data);
           
-          // Si estamos creando un proyecto nuevo, seleccionamos la primera categoría por defecto
           if (!projectToEdit && data.length > 0) {
             setFormData(prev => ({ ...prev, categoria_id: data[0].id.toString() }));
           }
@@ -56,20 +55,18 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
     
     fetchCategorias();
 
-    // <-- 3. Función de limpieza: React ejecuta esto justo cuando el modal se cierra
     return () => {
       isMounted = false; 
     };
   }, [projectToEdit]);
 
-  // 3. Efecto CRUCIAL: Si estamos editando, sobrescribimos los datos con los del proyecto seleccionado
+  // 3. Cargar datos si estamos en modo edición
   useEffect(() => {
     if (projectToEdit) {
       setFormData({
         titulo: projectToEdit.title || '',
         descripcion: projectToEdit.description || '',
         categoria_id: projectToEdit.categoryId || '',
-        // Formatear la fecha para que el input type="date" lo entienda (YYYY-MM-DD)
         fecha_proyecto: projectToEdit.date ? projectToEdit.date.split('T')[0] : '', 
         tecnologias: projectToEdit.technologies ? projectToEdit.technologies.join(', ') : '',
         herramientas: projectToEdit.tools || '',
@@ -78,8 +75,9 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
         demo: projectToEdit.demoUrl || ''
       });
     }
-  }, [projectToEdit]); // Este efecto se ejecuta cada vez que el proyecto a editar cambia
+  }, [projectToEdit]); 
 
+  // --- FUNCIONES QUE FALTABAN ---
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError(null);
@@ -123,6 +121,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
               <input 
                 type="text" name="titulo" className="form-input" 
                 value={formData.titulo} onChange={handleChange} required 
+                placeholder="Ej: Sistema de Gestión CSER-SRL"
               />
             </div>
 
@@ -131,6 +130,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
               <textarea 
                 name="descripcion" className="form-textarea" 
                 value={formData.descripcion} onChange={handleChange} required 
+                placeholder="Describe el propósito del proyecto, los problemas que resuelve y tus principales aportes. (Mínimo 50 caracteres)"
               />
               <span className="text-xs text-gray-500">
                 {formData.descripcion.length} / 5000 caracteres (mínimo 50)
@@ -165,6 +165,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
               <input 
                 type="text" name="tecnologias" className="form-input" 
                 value={formData.tecnologias} onChange={handleChange} required
+                placeholder="Ej: React, Laravel, Tailwind CSS"
               />
               <span className="form-hint">Separa las tecnologías con comas</span>
             </div>
@@ -174,6 +175,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
               <input 
                 type="text" name="herramientas" className="form-input" 
                 value={formData.herramientas} onChange={handleChange} 
+                placeholder="Ej: Figma, Docker, Postman"
               />
             </div>
 
@@ -182,6 +184,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
               <input 
                 type="text" name="cliente" className="form-input" 
                 value={formData.cliente} onChange={handleChange} 
+                placeholder="Ej: Universidad Mayor de San Simón"
               />
             </div>
 
@@ -191,6 +194,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
                 <input 
                   type="url" name="github" className="form-input" 
                   value={formData.github} onChange={handleChange} 
+                  placeholder="https://github.com/usuario/repo"
                 />
               </div>
               <div className="form-group">
@@ -198,6 +202,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
                 <input 
                   type="url" name="demo" className="form-input" 
                   value={formData.demo} onChange={handleChange} 
+                  placeholder="https://miproyecto.com"
                 />
               </div>
             </div>
