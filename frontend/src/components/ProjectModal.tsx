@@ -1,6 +1,7 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { X, AlertCircle } from 'lucide-react';
 import axios from 'axios';
+import { Project } from '../pages/ProjectsPage';
 
 interface Category {
   id: number;
@@ -9,14 +10,15 @@ interface Category {
 
 interface ProjectModalProps {
   onClose: () => void;
-  onSave: (projectData: any) => void; // Cambiado a 'any' para enviar el payload crudo a Laravel
+  onSave: (projectData: any) => void;
+  projectToEdit?: Project | null;
 }
 
-export default function ProjectModal({ onClose, onSave }: ProjectModalProps) {
+export default function ProjectModal({ onClose, onSave, projectToEdit }: ProjectModalProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // Estado inicial mapeado EXACTAMENTE a las columnas de tu base de datos y Request de Laravel
+  // 1. Inicializamos SIEMPRE con los valores por defecto (útil para "Nuevo Proyecto")
   const [formData, setFormData] = useState({
     titulo: 'Nuevo Proyecto',
     descripcion: 'Esta es una descripción de ejemplo que tiene más de cincuenta caracteres para cumplir la validación.',
@@ -29,62 +31,86 @@ export default function ProjectModal({ onClose, onSave }: ProjectModalProps) {
     demo: ''
   });
 
-  // Obtener categorías reales del backend al abrir el modal
+  // 2. Cargamos las categorías del backend de forma segura
   useEffect(() => {
+    let isMounted = true; // <-- 1. Creamos una bandera para saber si el modal está abierto
+
     const fetchCategorias = async () => {
       try {
-        // Ajusta el puerto según tu entorno
         const response = await axios.get('http://localhost:8000/api/categorias');
         const data = response.data.data || response.data;
-        setCategories(data);
         
-        // Seleccionar la primera categoría por defecto si existen
-        if (data.length > 0) {
-          setFormData(prev => ({ ...prev, categoria_id: data[0].id.toString() }));
+        // <-- 2. Solo actualizamos el estado si el modal SIGUE abierto
+        if (isMounted) { 
+          setCategories(data);
+          
+          // Si estamos creando un proyecto nuevo, seleccionamos la primera categoría por defecto
+          if (!projectToEdit && data.length > 0) {
+            setFormData(prev => ({ ...prev, categoria_id: data[0].id.toString() }));
+          }
         }
       } catch (err) {
         console.error("Error al cargar categorías", err);
       }
     };
+    
     fetchCategorias();
-  }, []);
+
+    // <-- 3. Función de limpieza: React ejecuta esto justo cuando el modal se cierra
+    return () => {
+      isMounted = false; 
+    };
+  }, [projectToEdit]);
+
+  // 3. Efecto CRUCIAL: Si estamos editando, sobrescribimos los datos con los del proyecto seleccionado
+  useEffect(() => {
+    if (projectToEdit) {
+      setFormData({
+        titulo: projectToEdit.title || '',
+        descripcion: projectToEdit.description || '',
+        categoria_id: projectToEdit.categoryId || '',
+        // Formatear la fecha para que el input type="date" lo entienda (YYYY-MM-DD)
+        fecha_proyecto: projectToEdit.date ? projectToEdit.date.split('T')[0] : '', 
+        tecnologias: projectToEdit.technologies ? projectToEdit.technologies.join(', ') : '',
+        herramientas: projectToEdit.tools || '',
+        cliente: projectToEdit.client || '',
+        github: projectToEdit.githubUrl || '',
+        demo: projectToEdit.demoUrl || ''
+      });
+    }
+  }, [projectToEdit]); // Este efecto se ejecuta cada vez que el proyecto a editar cambia
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError(null); // Limpiar errores al escribir
+    setError(null);
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     
-    // 1. Validación: Longitud de descripción (Regla de StoreProyectoRequest)
     if (formData.descripcion.length < 50) {
       setError('La descripción debe tener al menos 50 caracteres.');
       return;
     }
-
-    // 2. Validación: Al menos un enlace (Regla personalizada conValidator)
     if (!formData.github && !formData.demo) {
       setError('Debe proporcionar al menos un enlace (GitHub o Demo).');
       return;
     }
 
-    // Enviar los datos estructurados tal como los espera Laravel
     onSave(formData);
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Nuevo Proyecto</h2>
+          <h2>{projectToEdit ? 'Editar Proyecto' : 'Nuevo Proyecto'}</h2>
           <button className="close-btn" onClick={onClose}><X size={24} /></button>
         </div>
         
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="modal-body">
             
-            {/* Mensaje de error de validación */}
             {error && (
               <div className="bg-red-50 text-red-600 p-3 rounded-md flex items-center gap-2 mb-4 text-sm">
                 <AlertCircle size={16} />
@@ -94,7 +120,6 @@ export default function ProjectModal({ onClose, onSave }: ProjectModalProps) {
 
             <div className="form-group">
               <label className="form-label">Título del Proyecto <span>*</span></label>
-              {/* Cambiado name a 'titulo' */}
               <input 
                 type="text" name="titulo" className="form-input" 
                 value={formData.titulo} onChange={handleChange} required 
@@ -103,7 +128,6 @@ export default function ProjectModal({ onClose, onSave }: ProjectModalProps) {
 
             <div className="form-group">
               <label className="form-label">Descripción <span>*</span></label>
-              {/* Cambiado name a 'descripcion' */}
               <textarea 
                 name="descripcion" className="form-textarea" 
                 value={formData.descripcion} onChange={handleChange} required 
@@ -116,11 +140,11 @@ export default function ProjectModal({ onClose, onSave }: ProjectModalProps) {
             <div className="form-row">
               <div className="form-group">
                 <label className="form-label">Categoría <span>*</span></label>
-                {/* Cambiado name a 'categoria_id' y carga dinámica */}
                 <select 
                   name="categoria_id" className="form-select" 
                   value={formData.categoria_id} onChange={handleChange} required
                 >
+                  <option value="" disabled>Seleccione una categoría</option>
                   {categories.map(cat => (
                     <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                   ))}
@@ -128,18 +152,16 @@ export default function ProjectModal({ onClose, onSave }: ProjectModalProps) {
               </div>
               <div className="form-group">
                 <label className="form-label">Fecha de Realización</label>
-                {/* Cambiado name a 'fecha_proyecto' */}
                 <input 
                   type="date" name="fecha_proyecto" className="form-input" 
                   value={formData.fecha_proyecto} onChange={handleChange} 
-                  max={new Date().toISOString().split('T')[0]} // Regla: before_or_equal:today
+                  max={new Date().toISOString().split('T')[0]} 
                 />
               </div>
             </div>
 
             <div className="form-group">
               <label className="form-label">Tecnologías <span>*</span></label>
-              {/* Cambiado name a 'tecnologias' */}
               <input 
                 type="text" name="tecnologias" className="form-input" 
                 value={formData.tecnologias} onChange={handleChange} required
@@ -149,7 +171,6 @@ export default function ProjectModal({ onClose, onSave }: ProjectModalProps) {
 
             <div className="form-group">
               <label className="form-label">Herramientas</label>
-              {/* Cambiado name a 'herramientas' */}
               <input 
                 type="text" name="herramientas" className="form-input" 
                 value={formData.herramientas} onChange={handleChange} 
@@ -158,7 +179,6 @@ export default function ProjectModal({ onClose, onSave }: ProjectModalProps) {
 
             <div className="form-group">
               <label className="form-label">Cliente</label>
-              {/* Cambiado name a 'cliente' */}
               <input 
                 type="text" name="cliente" className="form-input" 
                 value={formData.cliente} onChange={handleChange} 
@@ -168,7 +188,6 @@ export default function ProjectModal({ onClose, onSave }: ProjectModalProps) {
             <div className="form-row">
               <div className="form-group">
                 <label className="form-label">URL de GitHub</label>
-                {/* Cambiado name a 'github' */}
                 <input 
                   type="url" name="github" className="form-input" 
                   value={formData.github} onChange={handleChange} 
@@ -176,7 +195,6 @@ export default function ProjectModal({ onClose, onSave }: ProjectModalProps) {
               </div>
               <div className="form-group">
                 <label className="form-label">URL de Demo</label>
-                {/* Cambiado name a 'demo' */}
                 <input 
                   type="url" name="demo" className="form-input" 
                   value={formData.demo} onChange={handleChange} 
@@ -187,7 +205,9 @@ export default function ProjectModal({ onClose, onSave }: ProjectModalProps) {
 
           <div className="modal-footer">
             <button type="button" className="btn-outline" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn-primary">Crear Proyecto</button>
+            <button type="submit" className="btn-primary">
+              {projectToEdit ? 'Guardar Cambios' : 'Crear Proyecto'}
+            </button>
           </div>
         </form>
       </div>

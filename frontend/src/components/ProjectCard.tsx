@@ -4,10 +4,10 @@ import { Project } from '../pages/ProjectsPage';
 interface ProjectCardProps {
   project: Project;
   onDelete: (id: string) => void;
-  // onEdit: (project: Project) => void; // Puedes agregarlo en el futuro
+  onEdit: (project: Project) => void; // Propiedad habilitada para editar
 }
 
-export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
+export default function ProjectCard({ project, onDelete, onEdit }: ProjectCardProps) {
   // Formateador de fecha seguro
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return 'Sin fecha';
@@ -74,7 +74,8 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
       </div>
 
       <div className="project-actions">
-        <button className="btn-icon-text">
+        {/* Botón Editar conectado a la función onEdit enviando todo el proyecto */}
+        <button className="btn-icon-text" onClick={() => onEdit(project)}>
           <Edit size={16} />
           Editar
         </button>

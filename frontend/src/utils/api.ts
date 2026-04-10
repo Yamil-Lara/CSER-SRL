@@ -10,12 +10,15 @@ const api = axios.create({
 
 // Interceptor para inyectar el token en cada petición automáticamente
 api.interceptors.request.use((config) => {
-  // Asumiendo que guardaste el token como 'auth_token' al hacer login
-  const token = localStorage.getItem('auth_token'); 
+  // Buscamos el token usando 'token' (como lo tenías originalmente) o 'auth_token'
+  const token = localStorage.getItem('token') || localStorage.getItem('auth_token'); 
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
+}, (error) => {
+  return Promise.reject(error);
 });
 
 export default api;
