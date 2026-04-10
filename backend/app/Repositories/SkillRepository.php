@@ -10,16 +10,16 @@ class SkillRepository
     {
         return Skill::byUsuario($usuarioId)
             ->with('usuario:id,nombre,email')
-            ->orderBy('tipo')
-            ->orderBy('nombre')
+            ->orderBy('type')
+            ->orderBy('name')
             ->get();
     }
 
-    public function getByUsuarioYTipo($usuarioId, $tipo)
+    public function getByUsuarioYTipo($usuarioId, $type)
     {
         return Skill::byUsuario($usuarioId)
-            ->byTipo($tipo)
-            ->orderBy('nivel', 'desc')
+            ->byType($type)
+            ->orderBy('level', 'desc')
             ->get();
     }
 
@@ -52,11 +52,11 @@ class SkillRepository
         return false;
     }
 
-    public function existsByNombre($usuarioId, $nombre, $tipo)
+    public function existsByName($usuarioId, $name, $type)
     {
         return Skill::where('usuario_id', $usuarioId)
-            ->where('nombre', $nombre)
-            ->where('tipo', $tipo)
+            ->where('name', $name)
+            ->where('type', $type)
             ->exists();
     }
 

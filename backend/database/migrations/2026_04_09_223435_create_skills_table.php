@@ -15,15 +15,14 @@ return new class extends Migration
         Schema::create('skills', function (Blueprint $table) {
             $table->id();
             $table->foreignId('usuario_id')->constrained('usuarios')->onDelete('cascade');
-            $table->string('nombre');
-            $table->enum('tipo', ['tecnica', 'blanda']);
-            $table->integer('nivel'); // 1-100 para barras de progreso
-            $table->text('descripcion')->nullable();
+            $table->string('name');
+            $table->enum('type', ['tecnica', 'blanda']);
+            $table->integer('level'); // 1-100 para barras de progreso
             $table->timestamps();
             
             // Índices para mejor rendimiento
-            $table->index(['usuario_id', 'tipo']);
-            $table->unique(['usuario_id', 'nombre', 'tipo']); // Evitar duplicados por usuario
+            $table->index(['usuario_id', 'type']);
+            $table->unique(['usuario_id', 'name', 'type']); // Evitar duplicados por usuario
         });
     }
 

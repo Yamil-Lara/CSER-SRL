@@ -12,14 +12,13 @@ class Skill extends Model
 
     protected $fillable = [
         'usuario_id',
-        'nombre',
-        'tipo',
-        'nivel',
-        'descripcion',
+        'name',
+        'type',
+        'level',
     ];
 
     protected $casts = [
-        'nivel' => 'integer',
+        'level' => 'integer',
     ];
 
     public function usuario(): BelongsTo
@@ -32,18 +31,18 @@ class Skill extends Model
         return $query->where('usuario_id', $usuarioId);
     }
 
-    public function scopeByTipo($query, $tipo)
+    public function scopeByType($query, $type)
     {
-        return $query->where('tipo', $tipo);
+        return $query->where('type', $type);
     }
 
     public function scopeTecnicas($query)
     {
-        return $query->where('tipo', 'tecnica');
+        return $query->where('type', 'tecnica');
     }
 
     public function scopeBlandas($query)
     {
-        return $query->where('tipo', 'blanda');
+        return $query->where('type', 'blanda');
     }
 }

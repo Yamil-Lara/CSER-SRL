@@ -19,9 +19,9 @@ class SkillService
         return $this->skillRepository->getByUsuario($usuarioId);
     }
 
-    public function getSkillsByUsuarioYTipo($usuarioId, $tipo)
+    public function getSkillsByUsuarioYTipo($usuarioId, $type)
     {
-        return $this->skillRepository->getByUsuarioYTipo($usuarioId, $tipo);
+        return $this->skillRepository->getByUsuarioYTipo($usuarioId, $type);
     }
 
     public function createSkill(array $data)
@@ -29,12 +29,12 @@ class SkillService
         $usuarioId = Auth::id();
         
         // Validar que no exista duplicado
-        if ($this->skillRepository->existsByNombre($usuarioId, $data['nombre'], $data['tipo'])) {
+        if ($this->skillRepository->existsByName($usuarioId, $data['name'], $data['type'])) {
             throw new \Exception('Ya existe una habilidad con ese nombre y tipo');
         }
 
         // Validar nivel
-        if ($data['nivel'] < 1 || $data['nivel'] > 100) {
+        if ($data['level'] < 1 || $data['level'] > 100) {
             throw new \Exception('El nivel debe estar entre 1 y 100');
         }
 
@@ -54,7 +54,7 @@ class SkillService
         }
 
         // Validar nivel si se proporciona
-        if (isset($data['nivel']) && ($data['nivel'] < 1 || $data['nivel'] > 100)) {
+        if (isset($data['level']) && ($data['level'] < 1 || $data['level'] > 100)) {
             throw new \Exception('El nivel debe estar entre 1 y 100');
         }
 

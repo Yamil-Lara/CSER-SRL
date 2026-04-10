@@ -22,25 +22,23 @@ class StoreSkillRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre' => 'required|string|max:255',
-            'tipo' => 'required|in:tecnica,blanda',
-            'nivel' => 'required|integer|min:1|max:100',
-            'descripcion' => 'nullable|string|max:500',
+            'name' => 'required|string|max:255',
+            'type' => 'required|in:tecnica,blanda',
+            'level' => 'required|integer|min:1|max:100',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'nombre.required' => 'El nombre de la habilidad es obligatorio',
-            'nombre.max' => 'El nombre no puede exceder 255 caracteres',
-            'tipo.required' => 'El tipo de habilidad es obligatorio',
-            'tipo.in' => 'El tipo debe ser: tecnica o blanda',
-            'nivel.required' => 'El nivel de habilidad es obligatorio',
-            'nivel.integer' => 'El nivel debe ser un número entero',
-            'nivel.min' => 'El nivel mínimo es 1',
-            'nivel.max' => 'El nivel máximo es 100',
-            'descripcion.max' => 'La descripción no puede exceder 500 caracteres',
+            'name.required' => 'El nombre de la habilidad es obligatorio',
+            'name.max' => 'El nombre no puede exceder 255 caracteres',
+            'type.required' => 'El tipo de habilidad es obligatorio',
+            'type.in' => 'El tipo debe ser: tecnica o blanda',
+            'level.required' => 'El nivel de habilidad es obligatorio',
+            'level.integer' => 'El nivel debe ser un número entero',
+            'level.min' => 'El nivel mínimo es 1',
+            'level.max' => 'El nivel máximo es 100',
         ];
     }
 }
