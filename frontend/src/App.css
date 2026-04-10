@@ -35,7 +35,12 @@ body {
   color: var(--text-primary) !important;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--text-primary) !important;
 }
 
@@ -80,7 +85,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .sidebar .nav-link:hover,
 .sidebar .nav-link.active {
-  background-color: #1e293b; /* Puede parametrizarse después si se desea */
+  background-color: #1e293b;
+  /* Puede parametrizarse después si se desea */
   color: var(--primary-color);
 }
 
@@ -105,17 +111,20 @@ h1, h2, h3, h4, h5, h6 {
   border-color: var(--border-color) !important;
 }
 
-.modal-header, .modal-footer {
+.modal-header,
+.modal-footer {
   border-color: var(--border-color) !important;
 }
 
-.form-control, .form-select {
+.form-control,
+.form-select {
   background-color: var(--bg-color) !important;
   color: var(--text-primary) !important;
   border-color: var(--border-color) !important;
 }
 
-.form-control:focus, .form-select:focus {
+.form-control:focus,
+.form-select:focus {
   background-color: var(--bg-color) !important;
   color: var(--text-primary) !important;
   border-color: var(--primary-color) !important;
