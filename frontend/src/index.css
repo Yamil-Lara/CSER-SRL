@@ -52,14 +52,15 @@ body {
 }
 
 .main-content {
+  margin-left: 250px;
+  padding: 20px;
   flex: 1;
-  padding: 2rem 3rem;
+  /*padding: 1rem 3rem;*/
   overflow-y: auto;
 }
 
 /* Sidebar */
 .sidebar-container {
-  width: 260px;
   background-color: var(--sidebar);
   color: #94A3B8;
   display: flex;
@@ -355,7 +356,7 @@ body {
 .project-card {
   background-color: var(--card);
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 1rem;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
@@ -483,4 +484,31 @@ body {
 
 .btn-icon:hover {
   color: var(--destructive);
+}
+
+/* Transiciones para el layout y Sidebar */
+.sidebar-container {
+  /* Mantén el resto de propiedades que ya tenías y añade: */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  z-index: 1000;
+  transition: width 0.3s ease;
+  overflow: hidden; /* Evita que el texto sobresalga al achicarse */
+}
+
+.sidebar-container.collapsed {
+  width: 80px; /* Ancho reducido solo para íconos */
+}
+
+/* Ocultar texto suavemente */
+.sidebar-container span {
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.sidebar-container.collapsed span {
+  display: none;
 }

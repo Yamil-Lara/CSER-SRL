@@ -4,14 +4,17 @@ import { Project } from '../pages/ProjectsPage';
 interface ProjectCardProps {
   project: Project;
   onDelete: (id: string) => void;
+  // onEdit: (project: Project) => void; // Puedes agregarlo en el futuro
 }
 
 export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
-  // Formatear fecha si es posible para mostrar "8/4/2026"
-  const formatDate = (dateStr: string) => {
+  // Formateador de fecha seguro
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return 'Sin fecha';
     try {
       const d = new Date(dateStr);
-      // Compensa zona horaria simplificada
+      // Validar que la fecha sea válida antes de retornarla
+      if (isNaN(d.getTime())) return dateStr;
       return `${d.getDate() + 1}/${d.getMonth() + 1}/${d.getFullYear()}`;
     } catch {
       return dateStr;
@@ -26,9 +29,10 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
       
       <div className="project-header">
         <h3 className="project-title">{project.title}</h3>
-        {project.status === 'aprobado' && (
-          <span className="status-badge">aprobado</span>
-        )}
+        {/* Usamos el status directamente de la BD */}
+        <span className={`status-badge ${project.status === 'pendiente' ? 'bg-yellow-100 text-yellow-800' : ''}`}>
+          {project.status}
+        </span>
       </div>
 
       <p className="project-desc">{project.description}</p>
@@ -45,19 +49,25 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
       </div>
 
       <div className="tags-container">
-        {project.technologies.map((tech, index) => (
-          <span key={index} className="tag">{tech}</span>
-        ))}
+        {/* Validación segura por si technologies viene vacío */}
+        {project.technologies && project.technologies.length > 0 ? (
+           project.technologies.map((tech, index) => (
+            <span key={index} className="tag">{tech}</span>
+          ))
+        ) : (
+          <span className="text-xs text-gray-400">Sin tecnologías</span>
+        )}
       </div>
 
       <div className="project-links">
+        {/* Renderizado condicional seguro de URLs */}
         {project.githubUrl && (
-          <a href={project.githubUrl} target="_blank" rel="noreferrer">
-            <GitBranch size={18} /> {/* Aquí usamos el nuevo ícono */}
+          <a href={project.githubUrl} target="_blank" rel="noreferrer" title="Ver en GitHub">
+            <GitBranch size={18} />
           </a>
         )}
         {project.demoUrl && (
-          <a href={project.demoUrl} target="_blank" rel="noreferrer">
+          <a href={project.demoUrl} target="_blank" rel="noreferrer" title="Ver Demo">
             <ExternalLink size={18} />
           </a>
         )}
@@ -68,7 +78,8 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
           <Edit size={16} />
           Editar
         </button>
-        <button className="btn-icon" onClick={() => onDelete(project.id)}>
+        {/* El botón de eliminar ya está conectado a la función principal */}
+        <button className="btn-icon" onClick={() => onDelete(project.id)} title="Eliminar proyecto">
           <Trash2 size={16} />
         </button>
       </div>
