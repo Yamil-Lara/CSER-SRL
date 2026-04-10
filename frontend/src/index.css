@@ -55,8 +55,12 @@ body {
   margin-left: 250px;
   padding: 20px;
   flex: 1;
-  /*padding: 1rem 3rem;*/
   overflow-y: auto;
+  transition: margin-left 0.3s ease; /* Agregamos la misma transición del sidebar */
+}
+
+.app-layout.sidebar-collapsed .main-content {
+  margin-left: 80px; /* Coincide con el ancho del .sidebar-container.collapsed */
 }
 
 /* Sidebar */
