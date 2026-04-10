@@ -220,7 +220,7 @@ const UserProfile: React.FC = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     axios
-      .get(`${API_URL}/user`, {
+      .get(`${API_URL}/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -364,15 +364,15 @@ const UserProfile: React.FC = () => {
     if (fotoFile) {
       formData.append('foto', fotoFile);
     }
+    formData.append('_method', 'PUT');
 
     setLoading(true);
 
     const token = localStorage.getItem('token');
 
     try {
-      const response = await axios.post(`${API_URL}/user/update`, formData, {
+      const response = await axios.post(`${API_URL}/profile`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
         },
       });
