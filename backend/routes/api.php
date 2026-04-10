@@ -21,16 +21,16 @@ Route::get('/proyectos/{id}', [ProyectoController::class, 'show']);
 
 /* --- RUTAS PROTEGIDAS (Requieren Token) --- */
 Route::middleware('auth:sanctum')->group(function () {
-    
+
     // Auth & Perfil
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'profile']);
     Route::post('/user/update', [AuthController::class, 'updateProfile']); // Usamos POST por compatibilidad con archivos
     Route::delete('/user', [AuthController::class, 'destroy']);
-    
+
     // Proyectos (Crear, Editar, Borrar)
     Route::post('/proyectos', [ProyectoController::class, 'store']);
     Route::put('/proyectos/{id}', [ProyectoController::class, 'update']);
     Route::delete('/proyectos/{id}', [ProyectoController::class, 'destroy']);
-    
+
 });

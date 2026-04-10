@@ -4,17 +4,23 @@ import { ProfileData } from '../types';
 
 // 1. Obtenemos la URL del backend y evitamos el error de TypeScript con (import.meta as any)
 const API_URL = 'http://127.0.0.1:8000/api';
+const STORAGE_URL = 'http://127.0.0.1:8000/storage';
 
 const defaultProfile: ProfileData = {
   nombre: '',
+  username: '',
   email: '',
   profesion: '',
   especialidad: '',
   biografia: '',
   ubicacion: '',
+  telefono: '',
+  universidad: '',
+  carrera: '',
   linkedin: '',
   github_perfil: '',
   sitio_web: '',
+  password: '',
   image_url: null,
 };
 
@@ -129,6 +135,40 @@ const iconSet = {
       <path d="M3 18H21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   ),
+  save: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 4C3.44772 4 3 4.44772 3 5V19C3 19.5523 3.44772 20 4 20H20C20.5523 20 21 19.5523 21 19V7.5C21 7.5 21 7.5 20.5 7L17 3.5C16.5 3 16 3 16 3H4Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M7 3V8H17V3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M8 13H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  eye: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" strokeWidth="1.5"/>
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5"/>
+    </svg>
+  ),
+  eyeOff: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 3L21 21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M10.584 10.587C10.2087 11.0227 10 11.5797 10 12.1662C10 13.5054 11.0294 14.5662 12.3437 14.5662C12.9282 14.5662 13.4862 14.358 13.9218 13.9826" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M9.513 5.73467C10.591 5.26005 11.7897 5 12.9995 5C19.9374 5 23.3657 10.7039 23.4358 10.8216C23.4779 10.8897 23.5 10.9915 23.5 11.1c0 0.1085-.0221.2103-.0642.2784 C23.1244 11.8952 22.0868 13.8848 20.5619 15.4095" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M6.61 6.61C5.29337 7.92661 4.19733 9.77974 3.5642 11.0784C3.0221 12.0895 2.75 12.5952 2.75 13C2.75 13.4048 3.0221 13.9105 3.5642 14.9216C5.3945 18.4671 8.95233 22 12 22C13.5181 22 15.017 21.5973 16.39 20.8368" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  graduation: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2L2 6V11.5C2 17.2 12 22 12 22S22 17.2 22 11.5V6L12 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M12 13C14.2091 13 16 11.2091 16 9C16 6.79086 14.2091 5 12 5C9.79086 5 8 6.79086 8 9C8 11.2091 9.79086 13 12 13Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+    </svg>
+  ),
+  link: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 13C10.4295 13.5741 11.0787 14.0605 11.8738 14.3993C12.6689 14.7381 13.5878 14.9077 14.5 14.9C15.4122 14.8923 16.3274 14.7071 17.1179 14.357C17.9084 14.0068 18.5501 13.5075 18.99 12.9M14 7C13.5705 6.42588 12.9213 5.93952 12.1262 5.60068C11.3311 5.26184 10.4122 5.09227 9.5 5.1C8.58784 5.10773 7.67257 5.29288 6.88214 5.64298C6.09171 5.99308 5.44992 6.49249 5.01 7.05" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M18.5 4.5H21.5V7.5M6.5 16.5H3.5V19.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M21.5 4.5L15 11M9 17L3.5 19.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
 };
 
 const sidebarItems = [
@@ -145,8 +185,10 @@ const UserProfile: React.FC = () => {
   const [profile, setProfile] = useState<ProfileData>(defaultProfile);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [fotoFile, setFotoFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
@@ -154,26 +196,60 @@ const UserProfile: React.FC = () => {
   });
   const [activeItem, setActiveItem] = useState('perfil');
 
-  // Función auxiliar robusta para construir la URL
+  // Función auxiliar robusta para construir la URL de la imagen de perfil
   const buildUrl = (path: string | null | undefined): string | null => {
     if (!path) return null;
+    if (path.startsWith('http')) return path;
+    if (path.startsWith('/storage')) {
+      return `http://127.0.0.1:8000${path}`;
+    }
+    if (path.startsWith('storage')) {
+      return `http://127.0.0.1:8000/${path}`;
+    }
     const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-    const cleanBase = API_URL.endsWith('/') ? API_URL.slice(0, -1) : API_URL;
-    return `${cleanBase}/${cleanPath}`;
+    return `${STORAGE_URL}/${cleanPath}`;
+  };
+
+  const normalizeUserData = (payload: any) => {
+    if (!payload) return null;
+    if (payload.user) return payload.user;
+    if (payload.data) return payload.data;
+    return payload;
   };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     axios
-      .get<ProfileData>(`${API_URL}/user/profile`, {
+      .get(`${API_URL}/user`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        setProfile(response.data);
-        if (response.data.image_url) {
-            setPreviewUrl(buildUrl(response.data.image_url));
+        const userData = normalizeUserData(response.data);
+        if (!userData) return;
+
+        setProfile({
+          nombre: userData.nombre || '',
+          email: userData.email || '',
+          username: userData.username || '',
+          profesion: userData.profesion || '',
+          especialidad: userData.especialidad || '',
+          biografia: userData.biografia || '',
+          ubicacion: userData.ubicacion || '',
+          telefono: userData.telefono || '',
+          universidad: userData.universidad || '',
+          carrera: userData.carrera || '',
+          linkedin: userData.linkedin || '',
+          github_perfil: userData.github_perfil || '',
+          sitio_web: userData.sitio_web || '',
+          password: '',
+          image_url: userData.foto || userData.image_url || null,
+        });
+
+        const imagePath = userData.foto || userData.image_url;
+        if (imagePath) {
+          setPreviewUrl(buildUrl(imagePath));
         }
       })
       .catch((error) => {
@@ -205,13 +281,13 @@ const UserProfile: React.FC = () => {
     if (profile.github_perfil && !isValidUrl(profile.github_perfil)) nextErrors.github_perfil = 'GitHub no es una URL válida.';
     if (profile.sitio_web && !isValidUrl(profile.sitio_web)) nextErrors.sitio_web = 'El sitio web no es una URL válida.';
 
-    if (imageFile) {
+    if (fotoFile) {
       const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-      if (!allowedTypes.includes(imageFile.type)) {
-        nextErrors.image = 'Solo se permiten JPG, PNG o WEBP.';
+      if (!allowedTypes.includes(fotoFile.type)) {
+        nextErrors.foto = 'Solo se permiten JPG, PNG o WEBP.';
       }
-      if (imageFile.size > 2 * 1024 * 1024) {
-        nextErrors.image = 'El archivo no puede superar los 2MB.';
+      if (fotoFile.size > 2 * 1024 * 1024) {
+        nextErrors.foto = 'El archivo no puede superar los 2MB.';
       }
     }
 
@@ -228,28 +304,28 @@ const UserProfile: React.FC = () => {
     const file = event.target.files?.[0] ?? null;
 
     if (!file) {
-      setImageFile(null);
+      setFotoFile(null);
       setPreviewUrl(buildUrl(profile.image_url));
       return;
     }
 
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-      setErrors({ ...errors, image: 'Solo se permiten JPG, PNG o WEBP.' });
+      setErrors({ ...errors, foto: 'Solo se permiten JPG, PNG o WEBP.' });
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      setErrors({ ...errors, image: 'El archivo no puede superar los 10MB.' });
+    if (file.size > 2 * 1024 * 1024) {
+      setErrors({ ...errors, foto: 'El archivo no puede superar los 2MB.' });
       return;
     }
 
     setErrors((prev) => {
       const next = { ...prev };
-      delete next.image;
+      delete next.foto;
       return next;
     });
 
-    setImageFile(file);
+    setFotoFile(file);
     setPreviewUrl(URL.createObjectURL(file));
   };
 
@@ -262,18 +338,31 @@ const UserProfile: React.FC = () => {
     }
 
     const formData = new FormData();
+    // Identidad del usuario
     formData.append('nombre', profile.nombre);
+    formData.append('username', profile.username);
     formData.append('email', profile.email);
+    // Información profesional
     formData.append('profesion', profile.profesion);
-    formData.append('especialidad', profile.especialidad);
+    formData.append('especialidad', profile.especialidad); // Exacto: 'especialidad'
     formData.append('biografia', profile.biografia || '');
     formData.append('ubicacion', profile.ubicacion || '');
+    formData.append('telefono', profile.telefono || '');
+    // Formación académica
+    formData.append('universidad', profile.universidad || '');
+    formData.append('carrera', profile.carrera || '');
+    // Redes sociales - Nombres exactos de columnas en BD
     formData.append('linkedin', profile.linkedin || '');
-    formData.append('github_perfil', profile.github_perfil || '');
+    formData.append('github_perfil', profile.github_perfil || ''); // Exacto: 'github_perfil'
     formData.append('sitio_web', profile.sitio_web || '');
+    
+    // Solo envía contraseña si no está vacía (política de seguridad)
+    if (profile.password && profile.password.trim()) {
+      formData.append('password', profile.password);
+    }
 
-    if (imageFile) {
-      formData.append('image', imageFile);
+    if (fotoFile) {
+      formData.append('foto', fotoFile);
     }
 
     setLoading(true);
@@ -281,19 +370,31 @@ const UserProfile: React.FC = () => {
     const token = localStorage.getItem('token');
 
     try {
-      const response = await axios.post<ProfileData>(`${API_URL}/user/update`, formData, {
+      const response = await axios.post(`${API_URL}/user/update`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
         },
       });
 
-      setProfile(response.data);
-      if (response.data.image_url) {
-          setPreviewUrl(buildUrl(response.data.image_url));
+      const updatedProfile = normalizeUserData(response.data);
+      setProfile((current) => ({
+        ...current,
+        password: '', // Limpiar contraseña tras guardado exitoso
+        image_url: updatedProfile?.foto ?? updatedProfile?.image_url ?? current.image_url,
+      }));
+
+      const imagePath = updatedProfile?.foto ?? updatedProfile?.image_url;
+      if (imagePath) {
+        setPreviewUrl(buildUrl(imagePath));
       }
-      setSuccessMessage('Perfil actualizado con éxito.');
-      setImageFile(null);
+      setSuccessMessage('¡Datos guardados correctamente!');
+      setShowSuccessMessage(true);
+      setFotoFile(null);
+      
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+      }, 3500);
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response?.status === 422) {
         const validationErrors = error.response.data.errors;
@@ -379,7 +480,7 @@ const UserProfile: React.FC = () => {
         <div className="page-heading">
           <div>
             <h1>Editar Perfil</h1>
-            <p className="page-subtitle">Actualiza tu información profesional y optimiza tu portafolio.</p>
+            <p className="page-subtitle">Actualiza tu información profesional y mantén tu portafolio al día.</p>
           </div>
           <button type="button" className="hamburger-menu" onClick={toggleSidebar} aria-label="Menú">
             {iconSet.hamburger}
@@ -411,12 +512,12 @@ const UserProfile: React.FC = () => {
                   </div>
                 </div>
                 <div className="col-md-9">
-                  <label className="btn btn-outline-primary upload-button">
+                  <label className="upload-button">
                     Subir foto
                     <input type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={handleFileChange} />
                   </label>
                   <p className="helper-text">JPG, PNG o WEBP. Máximo 2 MB.</p>
-                  {errors.image && <div className="text-danger">{errors.image}</div>}
+                  {errors.foto && <div className="text-danger">{errors.foto}</div>}
                 </div>
               </div>
             </section>
@@ -428,112 +529,149 @@ const UserProfile: React.FC = () => {
                   <h2>Información básica</h2>
                 </div>
               </div>
-              <div className="card-section-body row gx-3">
-                <div className="col-md-6 mb-3">
-                  <label className="form-label">Nombre completo</label>
-                  <input
-                    type="text"
-                    name="nombre"
-                    value={profile.nombre}
-                    onChange={handleChange}
-                    className={`form-control ${errors.nombre ? 'is-invalid' : ''}`}
-                  />
-                  <div className="invalid-feedback">{errors.nombre}</div>
+              <div className="card-section-body">
+                {/* Fila 1: Nombre Completo | Correo Electrónico */}
+                <div className="row gx-3 mb-3">
+                  <div className="col-md-6">
+                    <label className="form-label">Nombre completo</label>
+                    <input
+                      type="text"
+                      name="nombre"
+                      placeholder="Ej. Elena Montes de Oca"
+                      value={profile.nombre}
+                      onChange={handleChange}
+                      className={`form-control ${errors.nombre ? 'is-invalid' : ''}`}
+                    />
+                    <div className="invalid-feedback">{errors.nombre}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Correo electrónico</label>
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Ej. elena@example.com"
+                      value={profile.email}
+                      onChange={handleChange}
+                      className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                    />
+                    <div className="invalid-feedback">{errors.email}</div>
+                  </div>
                 </div>
-                <div className="col-md-6 mb-3">
-                  <label className="form-label">Correo electrónico</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={profile.email}
-                    onChange={handleChange}
-                    className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-                  />
-                  <div className="invalid-feedback">{errors.email}</div>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label className="form-label">Profesión</label>
-                  <input
-                    type="text"
-                    name="profesion"
-                    value={profile.profesion}
-                    onChange={handleChange}
-                    className={`form-control ${errors.profesion ? 'is-invalid' : ''}`}
-                  />
-                  <div className="invalid-feedback">{errors.profesion}</div>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label className="form-label">Especialidad</label>
-                  <input
-                    type="text"
-                    name="especialidad"
-                    value={profile.especialidad}
-                    onChange={handleChange}
-                    className={`form-control ${errors.especialidad ? 'is-invalid' : ''}`}
-                  />
-                  <div className="invalid-feedback">{errors.especialidad}</div>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label className="form-label">Ubicación</label>
-                  <input
-                    type="text"
-                    name="ubicacion"
-                    value={profile.ubicacion || ''}
-                    onChange={handleChange}
-                    className="form-control"
-                  />
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label className="form-label">Teléfono</label>
-                  <input
-                    type="text"
-                    name="phone"
-                    value={profile.phone || ''}
-                    onChange={handleChange}
-                    className="form-control"
-                  />
-                </div>
-              </div>
-            </section>
 
-            <section className="card-section profile-card mb-4">
-              <div className="card-section-header">
-                <div>
-                  <span className="section-icon">{iconSet.skills}</span>
-                  <h2>Perfil profesional</h2>
+                {/* Fila 2: Usuario | Nueva Contraseña */}
+                <div className="row gx-3 mb-3">
+                  <div className="col-md-6">
+                    <label className="form-label">Nombre de usuario</label>
+                    <input
+                      type="text"
+                      name="username"
+                      placeholder="Ej. elena.montes"
+                      value={profile.username}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Nueva contraseña</label>
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        name="password"
+                        placeholder="Mínimo 8 caracteres"
+                        value={profile.password || ''}
+                        onChange={handleChange}
+                        className="form-control"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        style={{
+                          position: 'absolute',
+                          right: '12px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: '4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'var(--text-muted)',
+                        }}
+                        aria-label="Alternar visibilidad de contraseña"
+                      >
+                        {showPassword ? iconSet.eyeOff : iconSet.eye}
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="card-section-body row gx-3">
-                <div className="col-12 mb-3">
+
+                {/* Fila 3: Especialidad | Profesión */}
+                <div className="row gx-3 mb-3">
+                  <div className="col-md-6">
+                    <label className="form-label">Especialidad</label>
+                    <input
+                      type="text"
+                      name="especialidad"
+                      placeholder="Ej. React & Node.js"
+                      value={profile.especialidad}
+                      onChange={handleChange}
+                      className={`form-control ${errors.especialidad ? 'is-invalid' : ''}`}
+                    />
+                    <div className="invalid-feedback">{errors.especialidad}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Profesión</label>
+                    <input
+                      type="text"
+                      name="profesion"
+                      placeholder="Ej. Ingeniera de Sistemas"
+                      value={profile.profesion}
+                      onChange={handleChange}
+                      className={`form-control ${errors.profesion ? 'is-invalid' : ''}`}
+                    />
+                    <div className="invalid-feedback">{errors.profesion}</div>
+                  </div>
+                </div>
+
+                {/* Fila 4: Biografía (Ancho completo) */}
+                <div className="mb-3">
                   <label className="form-label">Biografía</label>
                   <textarea
                     name="biografia"
+                    placeholder="Cuéntanos sobre ti, tu experiencia y tus intereses..."
                     value={profile.biografia || ''}
                     onChange={handleChange}
                     className="form-control"
                     rows={3}
                   />
                 </div>
-                <div className="col-12 mb-3">
-                  <label className="form-label">Habilidades</label>
-                  <input
-                    type="text"
-                    name="skills"
-                    value={profile.skills || ''}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder="Ej. React, Node.js, UI/UX"
-                  />
-                </div>
-                <div className="col-12 mb-3">
-                  <label className="form-label">Experiencia</label>
-                  <textarea
-                    name="experience"
-                    value={profile.experience || ''}
-                    onChange={handleChange}
-                    className="form-control"
-                    rows={3}
-                  />
+
+                {/* Fila 5: Ubicación | Teléfono */}
+                <div className="row gx-3 mb-3">
+                  <div className="col-md-6">
+                    <label className="form-label">Ubicación</label>
+                    <input
+                      type="text"
+                      name="ubicacion"
+                      placeholder="Ej. La Paz, Bolivia"
+                      value={profile.ubicacion || ''}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Teléfono</label>
+                    <input
+                      type="tel"
+                      name="telefono"
+                      placeholder="Ej. +591 12345678"
+                      value={profile.telefono || ''}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
                 </div>
               </div>
             </section>
@@ -541,8 +679,8 @@ const UserProfile: React.FC = () => {
             <section className="card-section profile-card mb-4">
               <div className="card-section-header">
                 <div>
-                  <span className="section-icon">{iconSet.education}</span>
-                  <h2>Formación académica</h2>
+                  <span className="section-icon">{iconSet.graduation}</span>
+                  <h2>Formación Académica</h2>
                 </div>
               </div>
               <div className="card-section-body row gx-3">
@@ -550,8 +688,9 @@ const UserProfile: React.FC = () => {
                   <label className="form-label">Universidad</label>
                   <input
                     type="text"
-                    name="university"
-                    value={profile.university || ''}
+                    name="universidad"
+                    placeholder="Ej. Universidad Mayor de San Simón"
+                    value={profile.universidad || ''}
                     onChange={handleChange}
                     className="form-control"
                   />
@@ -560,20 +699,11 @@ const UserProfile: React.FC = () => {
                   <label className="form-label">Carrera</label>
                   <input
                     type="text"
-                    name="career"
-                    value={profile.career || ''}
+                    name="carrera"
+                    placeholder="Ej. Ingeniería de Sistemas"
+                    value={profile.carrera || ''}
                     onChange={handleChange}
                     className="form-control"
-                  />
-                </div>
-                <div className="col-12 mb-3">
-                  <label className="form-label">Datos académicos</label>
-                  <textarea
-                    name="education"
-                    value={profile.education || ''}
-                    onChange={handleChange}
-                    className="form-control"
-                    rows={3}
                   />
                 </div>
               </div>
@@ -582,38 +712,41 @@ const UserProfile: React.FC = () => {
             <section className="card-section profile-card mb-4">
               <div className="card-section-header">
                 <div>
-                  <span className="section-icon">{iconSet.links}</span>
-                  <h2>Enlaces</h2>
+                  <span className="section-icon">{iconSet.link}</span>
+                  <h2>Redes Sociales</h2>
                 </div>
               </div>
-              <div className="card-section-body row gx-3">
-                <div className="col-md-6 mb-3">
+              <div className="card-section-body">
+                <div className="mb-3">
                   <label className="form-label">LinkedIn</label>
                   <input
                     type="url"
                     name="linkedin"
+                    placeholder="https://linkedin.com/in/tu-perfil"
                     value={profile.linkedin || ''}
                     onChange={handleChange}
                     className={`form-control ${errors.linkedin ? 'is-invalid' : ''}`}
                   />
                   <div className="invalid-feedback">{errors.linkedin}</div>
                 </div>
-                <div className="col-md-6 mb-3">
+                <div className="mb-3">
                   <label className="form-label">GitHub</label>
                   <input
                     type="url"
                     name="github_perfil"
+                    placeholder="https://github.com/tu-usuario"
                     value={profile.github_perfil || ''}
                     onChange={handleChange}
                     className={`form-control ${errors.github_perfil ? 'is-invalid' : ''}`}
                   />
                   <div className="invalid-feedback">{errors.github_perfil}</div>
                 </div>
-                <div className="col-12 mb-3">
+                <div className="mb-3">
                   <label className="form-label">Sitio web personal</label>
                   <input
                     type="url"
                     name="sitio_web"
+                    placeholder="https://tu-sitio.com"
                     value={profile.sitio_web || ''}
                     onChange={handleChange}
                     className={`form-control ${errors.sitio_web ? 'is-invalid' : ''}`}
@@ -623,12 +756,20 @@ const UserProfile: React.FC = () => {
               </div>
             </section>
 
-            <div className="page-actions d-flex justify-content-end gap-3 mt-4">
+            <div className="page-actions d-flex justify-content-end gap-3 mt-4 align-items-center">
+              {showSuccessMessage && (
+                <div style={{ color: '#28a745', fontWeight: 500, fontSize: '0.95rem', animation: 'fadeIn 0.3s ease-in' }}>
+                  ✓ {successMessage}
+                </div>
+              )}
               <button type="button" className="btn btn-outline-secondary" onClick={() => window.location.reload()}>
                 Cancelar
               </button>
-              <button type="submit" className="btn btn-primary" disabled={loading}>
-                {loading ? 'Guardando...' : 'Guardar Cambios'}
+              <button type="submit" className="btn btn-primary" disabled={loading} title="Guarda los cambios realizados">
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem' }}>
+                  {iconSet.save}
+                  {loading ? 'Guardando...' : 'Guardar Cambios'}
+                </span>
               </button>
             </div>
           </form>
