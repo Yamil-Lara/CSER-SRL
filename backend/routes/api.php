@@ -1,36 +1,43 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\User\AdminUserController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\CategoriaController;
+use Illuminate\Support\Facades\Route;
 
-/* --- RUTAS PÚBLICAS --- */
+// RUTAS PÚBLICAS
 Route::get('/status', function () {
-    return response()->json(['status' => 'OK', 'mensaje' => 'CSER API Conectada']);
+    return response()->json(['status' => 'OK', 'message' => 'CSER API Conectada']);
 });
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', RegisterController::class);
+Route::post('/login', LoginController::class);
 
-// Ver proyectos y categorías es público
 Route::get('/proyectos', [ProyectoController::class, 'index']);
-Route::get('/categorias', [CategoriaController::class, 'index']);
 Route::get('/proyectos/{id}', [ProyectoController::class, 'show']);
+Route::get('/categorias', [CategoriaController::class, 'index']);
+Route::get('/usuarios/{id}', [AdminUserController::class, 'show']);
 
+// RUTAS PROTEGIDAS
+Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
+    Route::post('/logout', LogoutController::class);
 
-/* --- RUTAS PROTEGIDAS (Requieren Token) --- */
-Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'show']);
+        Route::put('/', [ProfileController::class, 'update']);
+        Route::delete('/', [ProfileController::class, 'destroy']);
+    });
 
-    // Auth & Perfil
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', [AuthController::class, 'profile']);
-    Route::post('/user/update', [AuthController::class, 'updateProfile']); // Usamos POST por compatibilidad con archivos
-    Route::delete('/user', [AuthController::class, 'destroy']);
-
-    // Proyectos (Crear, Editar, Borrar)
     Route::post('/proyectos', [ProyectoController::class, 'store']);
     Route::put('/proyectos/{id}', [ProyectoController::class, 'update']);
     Route::delete('/proyectos/{id}', [ProyectoController::class, 'destroy']);
 
+    // RUTAS DE ADMINISTRADOR
+    Route::middleware(['admin'])->prefix('admin')->group(function () {
+        Route::apiResource('usuarios', AdminUserController::class);
+    });
 });

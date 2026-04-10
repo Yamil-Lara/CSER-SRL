@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 
 class CategoriaController extends Controller
 {
+    use ApiResponseTrait;  // <-- AGREGAR ESTO
+
     public function index(): JsonResponse
     {
-        return response()->json(Categoria::all(), 200);
+        return $this->successResponse(Categoria::all());  // <-- CAMBIAR ESTO
     }
 }

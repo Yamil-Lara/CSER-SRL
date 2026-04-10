@@ -5,142 +5,104 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Proyecto\StoreProyectoRequest;
 use App\Http\Requests\Proyecto\UpdateProyectoRequest;
 use App\Models\Proyecto;
+use App\Traits\ApiResponseTrait;  // <-- AGREGAR
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 
 class ProyectoController extends Controller
 {
-    // Obtener todos los proyectos
+    use ApiResponseTrait;  // <-- AGREGAR
+
     public function index(): JsonResponse
     {
         $proyectos = Proyecto::with(['categoria', 'usuario:id,nombre,email,foto'])
+            ->where('estado', 'aprobado')  // <-- AGREGAR filtro
             ->latest()
             ->get();
         
-        return response()->json([
-            'success' => true,
-            'message' => 'Proyectos obtenidos exitosamente',
-            'data' => $proyectos
-        ]);
+        return $this->successResponse($proyectos, 'Proyectos obtenidos exitosamente');  // <-- CAMBIAR
     }
 
-    // Crear un nuevo proyecto (usando Form Request)
     public function store(StoreProyectoRequest $request): JsonResponse
     {
         $data = $request->validated();
         $data['usuario_id'] = auth()->id();
         $data['estado'] = 'pendiente';
 
-        // Manejo de la subida de imagen
         if ($request->hasFile('imagen')) {
-            $path = $request->file('imagen')->store('proyectos', 'public');
-            $data['imagen'] = $path;
+            $data['imagen'] = $request->file('imagen')->store('proyectos', 'public');
         }
 
         $proyecto = Proyecto::create($data);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Proyecto creado exitosamente',
-            'data' => $proyecto->load(['categoria', 'usuario'])
-        ], 201);
+        return $this->successResponse(  // <-- CAMBIAR
+            $proyecto->load(['categoria', 'usuario']),
+            'Proyecto creado exitosamente',
+            201
+        );
     }
 
-    // Obtener un proyecto por ID
     public function show($id): JsonResponse
     {
         $proyecto = Proyecto::with(['categoria', 'usuario:id,nombre,email,foto'])
             ->find($id);
 
         if (!$proyecto) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Proyecto no encontrado'
-            ], 404);
+            return $this->errorResponse('Proyecto no encontrado', 404);  // <-- CAMBIAR
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => $proyecto
-        ]);
+        return $this->successResponse($proyecto);  // <-- CAMBIAR
     }
 
-    // Actualizar un proyecto (usando Form Request)
     public function update(UpdateProyectoRequest $request, $id): JsonResponse
     {
         $proyecto = Proyecto::find($id);
 
         if (!$proyecto) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Proyecto no encontrado'
-            ], 404);
+            return $this->errorResponse('Proyecto no encontrado', 404);  // <-- CAMBIAR
         }
 
-        // Verificar permisos (solo dueño o admin)
         $user = auth()->user();
         if ($user->id !== $proyecto->usuario_id && $user->rol !== 'admin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'No tienes permiso para editar este proyecto'
-            ], 403);
+            return $this->errorResponse('No tienes permiso para editar este proyecto', 403);  // <-- CAMBIAR
         }
 
         $data = $request->validated();
 
-        // Manejar nueva imagen
         if ($request->hasFile('imagen')) {
-            // Eliminar imagen anterior
             if ($proyecto->imagen && Storage::disk('public')->exists($proyecto->imagen)) {
                 Storage::disk('public')->delete($proyecto->imagen);
             }
-            
-            $path = $request->file('imagen')->store('proyectos', 'public');
-            $data['imagen'] = $path;
+            $data['imagen'] = $request->file('imagen')->store('proyectos', 'public');
         }
 
         $proyecto->update($data);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Proyecto actualizado exitosamente',
-            'data' => $proyecto->fresh(['categoria', 'usuario'])
-        ]);
+        return $this->successResponse(  // <-- CAMBIAR
+            $proyecto->fresh(['categoria', 'usuario']),
+            'Proyecto actualizado exitosamente'
+        );
     }
 
-    // Eliminar un proyecto
     public function destroy($id): JsonResponse
     {
         $proyecto = Proyecto::find($id);
 
         if (!$proyecto) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Proyecto no encontrado'
-            ], 404);
+            return $this->errorResponse('Proyecto no encontrado', 404);  // <-- CAMBIAR
         }
 
-        // Verificar permisos (solo dueño o admin)
         $user = auth()->user();
         if ($user->id !== $proyecto->usuario_id && $user->rol !== 'admin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'No tienes permiso para eliminar este proyecto'
-            ], 403);
+            return $this->errorResponse('No tienes permiso para eliminar este proyecto', 403);  // <-- CAMBIAR
         }
 
-        // Eliminar imagen asociada
         if ($proyecto->imagen && Storage::disk('public')->exists($proyecto->imagen)) {
             Storage::disk('public')->delete($proyecto->imagen);
         }
 
         $proyecto->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Proyecto eliminado exitosamente'
-        ]);
+        return $this->successResponse(null, 'Proyecto eliminado exitosamente');  // <-- CAMBIAR
     }
 }
-
-
