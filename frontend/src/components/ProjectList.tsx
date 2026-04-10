@@ -22,7 +22,7 @@ const ProjectList: React.FC = () => {
     useEffect(() => {
         api.get('/proyectos')
             .then(res => {
-                setProyectos(res.data);
+                setProyectos(res.data.data);
                 setLoading(false);
             })
             .catch(err => {
