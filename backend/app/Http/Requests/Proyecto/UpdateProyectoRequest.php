@@ -1,36 +1,24 @@
 <?php
+// app/Http/Requests/Proyecto/UpdateProyectoRequest.php
 
 namespace App\Http\Requests\Proyecto;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Models\Proyecto; // <-- Importamos el modelo
 
 class UpdateProyectoRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // Obtenemos el ID de la URL (puede llamarse 'id' o 'proyecto' según tus rutas)
-        $proyectoId = $this->route('proyecto') ?? $this->route('id');
-        
-        // Buscamos el proyecto real en la base de datos
-        $proyecto = Proyecto::find($proyectoId);
-        
+        $proyecto = $this->route('id');
         $user = auth()->user();
         
-        // Si no existe el proyecto o no hay usuario, bloqueamos la petición
-        if (!$proyecto || !$user) {
-            return false;
-        }
-        
         // Solo el dueño o admin pueden actualizar
-        return $user->id === $proyecto->usuario_id || $user->rol === 'admin';
+        return $user && ($user->id === $proyecto->usuario_id || $user->rol === 'admin');
     }
 
     public function rules(): array
     {
-        $proyectoId = $this->route('proyecto') ?? $this->route('id');
-
         return [
             'categoria_id' => 'sometimes|required|exists:categorias,id',
             'titulo' => [
@@ -38,7 +26,7 @@ class UpdateProyectoRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('proyectos', 'titulo')->ignore($proyectoId) // Usamos el ID rescatado
+                Rule::unique('proyectos', 'titulo')->ignore($this->route('id'))
             ],
             'descripcion' => 'sometimes|required|string|min:50|max:5000',
             'tecnologias' => 'sometimes|required|string|min:3|max:1000',
