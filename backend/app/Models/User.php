@@ -2,43 +2,83 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $table = 'usuarios';
+
+    public const ROLES_PERMITIDOS = ['usuario', 'admin', 'moderador'];
+    public const ESTADOS_PERMITIDOS = ['pendiente', 'aprobado', 'rechazado'];
+
     protected $fillable = [
-        'name',
+        'nombre',
+        'username',
         'email',
         'password',
+        'foto',
+        'rol',
+        'activo',
+        'estado',
+        'profesion',
+        'especialidad',
+        'biografia',
+        'ubicacion',
+        'linkedin',
+        'github_perfil',
+        'sitio_web',
+        'universidad',
+        'carrera',
+        'nivel_estudios',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'activo' => 'boolean',
     ];
+
+    public function isAdmin(): bool
+    {
+        return $this->rol === 'admin';
+    }
+
+    public function isModerador(): bool
+    {
+        return $this->rol === 'moderador';
+    }
+
+    public function estaAprobado(): bool
+    {
+        return $this->estado === 'aprobado';
+    }
+
+    public function proyectos(): HasMany
+    {
+        return $this->hasMany(Proyecto::class, 'usuario_id');
+    }
+
+    public function comentarios(): HasMany
+    {
+        return $this->hasMany(Comentario::class, 'usuario_id');
+    }
+
+    public function scopeActivos(Builder $query): Builder
+    {
+        return $query->where('activo', true);
+    }
+
+    public function scopeAprobados(Builder $query): Builder
+    {
+        return $query->where('estado', 'aprobado');
+    }
 }
