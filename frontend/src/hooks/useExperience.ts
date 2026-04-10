@@ -1,84 +1,90 @@
-import { useState, useEffect } from 'react';
-import {
-  Experiencia,
-  STORAGE_KEYS,
-  getStorageData,
-  setStorageData } from
-'../utils/mockData';
+import { useState, useEffect, useCallback } from 'react';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
+
+export interface Experiencia {
+  id: number;
+  usuario_id: number;
+  tipo: 'laboral' | 'academica';
+  cargo_titulo: string;
+  institucion_empresa: string;
+  descripcion?: string;
+  fecha_inicio: string;
+  fecha_fin?: string;
+  actual: number;
+}
 
 export function useExperience() {
   const { user } = useAuth();
   const [experiences, setExperiences] = useState<Experiencia[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadExperiences = useCallback(async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const response = await api.get('/experiences');
+      // Aseguramos obtener el array correcto dependiento de si Laravel devuelve { data: [...] }
+      const data = response.data.data || response.data;
+      
+      // Ordenamos desde la más reciente a la más antigua
+      const sortedData = data.sort((a: Experiencia, b: Experiencia) => {
+        const dateA = a.actual ? new Date() : new Date(a.fecha_fin || a.fecha_inicio);
+        const dateB = b.actual ? new Date() : new Date(b.fecha_fin || b.fecha_inicio);
+        return dateB.getTime() - dateA.getTime();
+      });
+      
+      setExperiences(sortedData);
+      setError(null);
+    } catch (err: any) {
+      console.error('Error al cargar experiencias:', err);
+      setError(err.response?.data?.message || 'Error al cargar experiencias');
+    } finally {
+      setLoading(false);
+    }
+  }, [user]);
 
   useEffect(() => {
     loadExperiences();
-  }, [user]);
+  }, [loadExperiences]);
 
-  const loadExperiences = () => {
-    const allExperiences = getStorageData<Experiencia>(
-      STORAGE_KEYS.EXPERIENCIAS
-    );
-    const userExperiences = user ?
-    allExperiences.filter((e) => e.usuario_id === user.id) :
-    [];
-    // Sort by date descending
-    userExperiences.sort((a, b) => {
-      const dateA = a.actual ?
-      new Date() :
-      new Date(a.fecha_fin || a.fecha_inicio);
-      const dateB = b.actual ?
-      new Date() :
-      new Date(b.fecha_fin || b.fecha_inicio);
-      return dateB.getTime() - dateA.getTime();
-    });
-    setExperiences(userExperiences);
-  };
-
-  const createExperience = (
-  expData: Omit<Experiencia, 'id' | 'usuario_id'>) =>
-  {
-    if (!user) return;
-
-    const allExperiences = getStorageData<Experiencia>(
-      STORAGE_KEYS.EXPERIENCIAS
-    );
-    const newExperience: Experiencia = {
-      ...expData,
-      id: allExperiences.length + 1,
-      usuario_id: user.id
-    };
-
-    allExperiences.push(newExperience);
-    setStorageData(STORAGE_KEYS.EXPERIENCIAS, allExperiences);
-    loadExperiences();
-    return newExperience;
-  };
-
-  const updateExperience = (id: number, expData: Partial<Experiencia>) => {
-    const allExperiences = getStorageData<Experiencia>(
-      STORAGE_KEYS.EXPERIENCIAS
-    );
-    const index = allExperiences.findIndex((e) => e.id === id);
-
-    if (index !== -1) {
-      allExperiences[index] = { ...allExperiences[index], ...expData };
-      setStorageData(STORAGE_KEYS.EXPERIENCIAS, allExperiences);
-      loadExperiences();
+  const createExperience = async (expData: Omit<Experiencia, 'id' | 'usuario_id'>) => {
+    try {
+      const response = await api.post('/experiences', expData);
+      await loadExperiences(); // Recargamos la lista actualizada
+      return response.data;
+    } catch (err: any) {
+      console.error('Error al crear experiencia:', err);
+      throw err;
     }
   };
 
-  const deleteExperience = (id: number) => {
-    const allExperiences = getStorageData<Experiencia>(
-      STORAGE_KEYS.EXPERIENCIAS
-    );
-    const filtered = allExperiences.filter((e) => e.id !== id);
-    setStorageData(STORAGE_KEYS.EXPERIENCIAS, filtered);
-    loadExperiences();
+  const updateExperience = async (id: number, expData: Partial<Experiencia>) => {
+    try {
+      const response = await api.put(`/experiences/${id}`, expData);
+      await loadExperiences(); // Recargamos la lista actualizada
+      return response.data;
+    } catch (err: any) {
+      console.error('Error al actualizar experiencia:', err);
+      throw err;
+    }
+  };
+
+  const deleteExperience = async (id: number) => {
+    try {
+      await api.delete(`/experiences/${id}`);
+      await loadExperiences(); // Recargamos la lista actualizada
+    } catch (err: any) {
+      console.error('Error al eliminar experiencia:', err);
+      throw err;
+    }
   };
 
   return {
     experiences,
+    loading,
+    error,
     createExperience,
     updateExperience,
     deleteExperience,

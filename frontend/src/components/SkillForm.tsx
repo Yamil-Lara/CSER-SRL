@@ -4,18 +4,12 @@ import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 import { Select } from "./ui/Select";
 import { Alert } from "./ui/Alert";
-
-type Skill = {
-  id?: number;
-  name: string;
-  type: "tecnica" | "blanda";
-  level: number;
-};
+import { Skill } from "../hooks/useSkill"; // Importamos la interfaz unificada
 
 type Props = {
   show: boolean;
   onClose: () => void;
-  onSave: (skill: Skill) => void;
+  onSave: (skill: Partial<Skill>) => void;
   editingSkill?: Skill | null;
   skills: Skill[];
 };
