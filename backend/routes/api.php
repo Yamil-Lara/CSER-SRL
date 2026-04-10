@@ -7,6 +7,8 @@ use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\AdminUserController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\SkillController;
+use App\Http\Controllers\ExperienceController;
 use Illuminate\Support\Facades\Route;
 
 // RUTAS PÚBLICAS
@@ -35,6 +37,12 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
     Route::post('/proyectos', [ProyectoController::class, 'store']);
     Route::put('/proyectos/{id}', [ProyectoController::class, 'update']);
     Route::delete('/proyectos/{id}', [ProyectoController::class, 'destroy']);
+
+    // RUTAS DE HABILIDADES (HU-04)
+    Route::apiResource('skills', SkillController::class);
+
+    // RUTAS DE EXPERIENCIAS (HU-05)
+    Route::apiResource('experiences', ExperienceController::class);
 
     // RUTAS DE ADMINISTRADOR
     Route::middleware(['admin'])->prefix('admin')->group(function () {
