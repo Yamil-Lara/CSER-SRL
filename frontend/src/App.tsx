@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ExperiencePage } from "./pages/ExperiencePage";
-import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export function App() {
   return (
@@ -10,16 +9,18 @@ export function App() {
       <AuthProvider>
         <Routes>
 
-          {/* 🔥 REDIRECCIÓN */}
+          {/* Redirección */}
           <Route path="/" element={<Navigate to="/dashboard/experiencia" />} />
 
-          {/* TU RUTA */}
+          {/* Seguridad por si algo manda a login */}
+          <Route path="/login" element={<Navigate to="/dashboard/experiencia" />} />
+
+          {/* Ruta principal */}
           <Route
             path="/dashboard/experiencia"
-            element={
-                <ExperiencePage />
-            }
+            element={<ExperiencePage />}
           />
+          
 
         </Routes>
       </AuthProvider>
