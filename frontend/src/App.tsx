@@ -1,28 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Profile from './pages/Profile';
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import { ExperiencePage } from "./pages/ExperiencePage";
 
-// Definimos la "Interface" para que TS sepa qué trae el JSON de Laravel
-interface StatusResponse {
-  status: string;
-  database: string;
-  mensaje: string;
-}
-
-const App: React.FC = () => {
-  const [data, setData] = useState<StatusResponse | null>(null);
-
-  useEffect(() => {
-    axios.get<StatusResponse>('http://127.0.0.1:8000/api/status')
-      .then(response => setData(response.data))
-      .catch(error => console.error("Error de conexión:", error));
-  }, []);
-
+export const App = (): JSX.Element => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Profile />
-    </div>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+
+          {/* Redirección */}
+          <Route path="/" element={<Navigate to="/dashboard/experiencia" />} />
+
+          {/* Seguridad por si algo manda a login */}
+          <Route path="/login" element={<Navigate to="/dashboard/experiencia" />} />
+
+          {/* Ruta principal */}
+          <Route
+            path="/dashboard/experiencia"
+            element={<ExperiencePage />}
+          />
+
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   );
 };
-
-export default App;
