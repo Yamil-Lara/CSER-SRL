@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+/* Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   /* Tema Claro */
   --bg-color: #F2F6F9;
@@ -9,7 +14,7 @@
   --card: #FFFFFF;
   --destructive: #F63B3B;
   --sidebar: #0F172A;
-  
+
   /* Colores de texto adaptativos */
   --text-main: #0F172A;
   --text-muted: #64748B;
@@ -56,11 +61,13 @@ body {
   padding: 20px;
   flex: 1;
   overflow-y: auto;
-  transition: margin-left 0.3s ease; /* Agregamos la misma transición del sidebar */
+  transition: margin-left 0.3s ease;
+  /* Agregamos la misma transición del sidebar */
 }
 
 .app-layout.sidebar-collapsed .main-content {
-  margin-left: 80px; /* Coincide con el ancho del .sidebar-container.collapsed */
+  margin-left: 80px;
+  /* Coincide con el ancho del .sidebar-container.collapsed */
 }
 
 /* Sidebar */
@@ -190,7 +197,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .empty-icon {
@@ -237,29 +244,34 @@ body {
   border-radius: 12px;
   width: 100%;
   max-width: 600px;
-  max-height: 90vh; /* Limita el alto máximo a la pantalla */
+  max-height: 90vh;
+  /* Limita el alto máximo a la pantalla */
   display: flex;
   flex-direction: column;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  overflow: hidden; /* Obliga a respetar los bordes redondeados */
-  margin: 1rem; /* Margen de seguridad en pantallas muy pequeñas */
+  overflow: hidden;
+  /* Obliga a respetar los bordes redondeados */
+  margin: 1rem;
+  /* Margen de seguridad en pantallas muy pequeñas */
 }
 
 .modal-form {
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-height: 0; /* Crucial: permite que el scroll interior se active */
+  min-height: 0;
+  /* Crucial: permite que el scroll interior se active */
 }
 
 /* ACTUALIZAR: Habilitar correctamente el scroll vertical */
 .modal-body {
   padding: 1.5rem;
-  overflow-y: auto; /* Activa la barra de scroll (paginación) */
+  overflow-y: auto;
+  /* Activa la barra de scroll (paginación) */
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  flex: 1; 
+  flex: 1;
 }
 
 .modal-header {
@@ -322,7 +334,9 @@ body {
   color: var(--destructive);
 }
 
-.form-input, .form-select, .form-textarea {
+.form-input,
+.form-select,
+.form-textarea {
   width: 100%;
   padding: 0.625rem;
   border: 1px solid var(--border-color);
@@ -335,7 +349,9 @@ body {
   transition: border-color 0.2s;
 }
 
-.form-input:focus, .form-select:focus, .form-textarea:focus {
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 1px var(--primary);
 }
@@ -361,7 +377,7 @@ body {
   background-color: var(--card);
   border-radius: 12px;
   padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
 }
@@ -500,11 +516,13 @@ body {
   height: 100vh;
   z-index: 50;
   transition: width 0.3s ease;
-  overflow: hidden; /* Evita que el texto sobresalga al achicarse */
+  overflow: hidden;
+  /* Evita que el texto sobresalga al achicarse */
 }
 
 .sidebar-container.collapsed {
-  width: 80px; /* Ancho reducido solo para íconos */
+  width: 80px;
+  /* Ancho reducido solo para íconos */
 }
 
 /* Ocultar texto suavemente */
@@ -522,14 +540,16 @@ body {
    ========================================================================== */
 
 @media (max-width: 768px) {
+
   /* 1. El menú lateral pasa a estar siempre colapsado para ahorrar espacio */
   .sidebar-container {
     width: 80px;
     padding: 1rem 0.5rem;
   }
-  
+
   .sidebar-container span {
-    display: none; /* Oculta los textos del menú */
+    display: none;
+    /* Oculta los textos del menú */
   }
 
   .sidebar-logo {
@@ -543,7 +563,8 @@ body {
   }
 
   /* 2. El contenido principal se ajusta al nuevo ancho del menú */
-  .main-content, .app-layout.sidebar-collapsed .main-content {
+  .main-content,
+  .app-layout.sidebar-collapsed .main-content {
     margin-left: 80px;
     padding: 15px;
   }
@@ -556,7 +577,8 @@ body {
   }
 
   .page-title {
-    font-size: 1.5rem; /* Letra un poco más pequeña en móviles */
+    font-size: 1.5rem;
+    /* Letra un poco más pequeña en móviles */
   }
 
   /* 4. Tarjetas de proyectos a 1 sola columna en pantallas muy pequeñas */
@@ -567,7 +589,8 @@ body {
 
   /* 5. Ajustes vitales para el Modal en teléfonos */
   .modal-content {
-    margin: 0.5rem; /* Menos margen exterior para aprovechar la pantalla */
+    margin: 0.5rem;
+    /* Menos margen exterior para aprovechar la pantalla */
     max-height: 95vh;
   }
 

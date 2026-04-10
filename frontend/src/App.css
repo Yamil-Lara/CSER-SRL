@@ -1,0 +1,150 @@
+:root {
+  --bg-color: #F2F6F9;
+  --primary-color: #3B82F6;
+  --accent-color: #10BD83;
+  --muted-color: #F0F4F8;
+  --card-bg: #FFFFFF;
+  --destructive-color: #F63B3B;
+  --sidebar-bg: #0F172A;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+}
+
+[data-theme='dark'] {
+  --bg-color: #080C17;
+  --primary-color: #3B82F6;
+  --accent-color: #10BD83;
+  --muted-color: #1B212F;
+  --card-bg: #0C1222;
+  --destructive-color: #7C1D1D;
+  --sidebar-bg: #080C17;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border-color: #1e293b;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Modificadores de texto global y Bootstrap overrides */
+.text-dark {
+  color: var(--text-primary) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-primary) !important;
+}
+
+/* Contenedores y Cards */
+.card {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.text-muted {
+  color: var(--text-secondary) !important;
+}
+
+/* Sidebar */
+.sidebar {
+  min-width: 260px;
+  max-width: 260px;
+  background-color: var(--sidebar-bg);
+  color: #ffffff;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar .logo {
+  padding: 30px 24px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.sidebar .nav-link {
+  color: #94a3b8;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+  background-color: #1e293b;
+  /* Puede parametrizarse después si se desea */
+  color: var(--primary-color);
+}
+
+.sidebar .nav-link i {
+  margin-right: 12px;
+  font-size: 1.2rem;
+}
+
+/* Contenido Principal */
+.main-content {
+  background-color: var(--bg-color);
+  width: 100%;
+  padding: 40px;
+  min-height: 100vh;
+  transition: background-color 0.3s ease;
+}
+
+/* Modals y Formularios */
+.modal-content {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.modal-header,
+.modal-footer {
+  border-color: var(--border-color) !important;
+}
+
+.form-control,
+.form-select {
+  background-color: var(--bg-color) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--bg-color) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
+}
+
+/* Ajustes para el Modal y Cards (Mockup 2) */
+.rounded-4 {
+  border-radius: 1rem !important;
+}
+
+/* Estilo del Slider de Nivel */
+input[type="range"] {
+  height: 6px;
+  background: var(--muted-color);
+  border-radius: 5px;
+  accent-color: var(--primary-color);
+}
+
+/* Fix para botón de cerrar en modales oscuros */
+[data-theme='dark'] .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}

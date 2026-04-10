@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api from '../utils/api'; // Usamos tu instancia configurada de axios
+import api from '../api/axios';
 
 interface Proyecto {
     id: number;
