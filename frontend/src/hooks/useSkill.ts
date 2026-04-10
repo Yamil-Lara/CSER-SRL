@@ -19,7 +19,7 @@ export function useSkill() {
   const [error, setError] = useState<string | null>(null);
 
   const loadSkills = useCallback(async () => {
-    if (!user) return;
+    // if (!user) return;
     setLoading(true);
     try {
       const response = await api.get('/skills'); // Ruta confirmada

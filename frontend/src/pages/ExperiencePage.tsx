@@ -183,7 +183,7 @@ export function ExperiencePage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      {exp.actual === 1 && <Badge variant="success" size="sm">Actual</Badge>}
+                      {exp.actual && <Badge variant="success" size="sm">Actual</Badge>}
                       <Button variant="ghost" size="sm" onClick={() => handleOpenModal(exp.id)}>
                         <Edit className="w-4 h-4" />
                       </Button>

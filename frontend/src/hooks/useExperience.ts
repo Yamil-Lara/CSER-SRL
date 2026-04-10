@@ -21,7 +21,7 @@ export function useExperience() {
   const [error, setError] = useState<string | null>(null);
 
   const loadExperiences = useCallback(async () => {
-    if (!user) return;
+    //if (!user) return;
     setLoading(true);
     try {
       const response = await api.get('/experiences');
