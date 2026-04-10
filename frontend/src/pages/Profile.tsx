@@ -90,9 +90,9 @@ const Profile = () => {
             <p className="text-muted">Gestiona tus competencias técnicas y blandas</p>
           </div>
           <div className="d-flex gap-3 align-items-center">
-            <Button 
-              variant="outline-secondary" 
-              className="rounded-circle border-0 d-flex align-items-center justify-content-center bg-transparent shadow-none" 
+            <Button
+              variant="outline-secondary"
+              className="rounded-circle border-0 d-flex align-items-center justify-content-center bg-transparent shadow-none"
               style={{ width: "40px", height: "40px" }}
               onClick={toggleTheme}
             >
