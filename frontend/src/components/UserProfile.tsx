@@ -364,6 +364,7 @@ const UserProfile: React.FC = () => {
     if (fotoFile) {
       formData.append('foto', fotoFile);
     }
+    formData.append('_method', 'PUT');
 
     setLoading(true);
 
@@ -372,7 +373,6 @@ const UserProfile: React.FC = () => {
     try {
       const response = await axios.post(`${API_URL}/profile`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
         },
       });
