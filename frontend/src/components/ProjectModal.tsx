@@ -1,9 +1,8 @@
 import { useState, useEffect, FormEvent } from 'react';
-import { X, AlertCircle } from 'lucide-react';
+import { X, AlertCircle, ChevronRight, ChevronLeft } from 'lucide-react';
 import axios from 'axios';
 import { Project } from '../pages/ProjectsPage';
 
-// --- INTERFACES ---
 interface Category {
   id: number;
   nombre: string;
@@ -18,6 +17,7 @@ interface ProjectModalProps {
 export default function ProjectModal({ onClose, onSave, projectToEdit }: ProjectModalProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [step, setStep] = useState(1);
 
   // 1. Inicializamos con valores VACÍOS
   const [formData, setFormData] = useState({
@@ -77,19 +77,37 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
     }
   }, [projectToEdit]); 
 
-  // --- FUNCIONES QUE FALTABAN ---
+  // --- FUNCIONES ---
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError(null);
   };
 
+  // Funciones de navegación para la paginación
+  const handleNext = () => {
+    // Validaciones por paso
+    if (step === 1) {
+      if (!formData.titulo.trim()) return setError('El título es obligatorio.');
+      if (formData.descripcion.length < 50) return setError('La descripción debe tener al menos 50 caracteres.');
+      if (!formData.categoria_id) return setError('Debe seleccionar una categoría.');
+    }
+    if (step === 2) {
+      if (!formData.tecnologias.trim()) return setError('Debe agregar al menos una tecnología.');
+    }
+
+    setError(null);
+    setStep(prev => prev + 1);
+  };
+
+  const handlePrev = () => {
+    setError(null);
+    setStep(prev => prev - 1);
+  };
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     
-    if (formData.descripcion.length < 50) {
-      setError('La descripción debe tener al menos 50 caracteres.');
-      return;
-    }
+    // Validaciones del paso final
     if (!formData.github && !formData.demo) {
       setError('Debe proporcionar al menos un enlace (GitHub o Demo).');
       return;
@@ -100,14 +118,22 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
+      {/* 1. Limitamos la altura máxima del modal y lo hacemos flex-col */}
+      <div 
+        className="modal-content max-h-[90vh] flex flex-col w-full max-w-2xl" 
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* 2. El header se mantiene fijo (shrink-0) */}
+        <div className="modal-header shrink-0 border-b pb-4 mb-0">
           <h2>{projectToEdit ? 'Editar Proyecto' : 'Nuevo Proyecto'}</h2>
           <button className="close-btn" onClick={onClose}><X size={24} /></button>
         </div>
         
-        <form onSubmit={handleSubmit} className="modal-form">
-          <div className="modal-body">
+        {/* 3. El formulario toma el espacio restante y oculta el desbordamiento general */}
+        <form onSubmit={handleSubmit} className="modal-form flex flex-col overflow-hidden flex-1">
+          
+          {/* 4. El cuerpo del modal ahora tiene overflow-y-auto para hacer scroll interno */}
+          <div className="modal-body flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
             
             {error && (
               <div className="bg-red-50 text-red-600 p-3 rounded-md flex items-center gap-2 mb-4 text-sm">
@@ -128,17 +154,17 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
             <div className="form-group">
               <label className="form-label">Descripción <span>*</span></label>
               <textarea 
-                name="descripcion" className="form-textarea" 
+                name="descripcion" className="form-textarea min-h-[100px]" 
                 value={formData.descripcion} onChange={handleChange} required 
                 placeholder="Describe el propósito del proyecto, los problemas que resuelve y tus principales aportes. (Mínimo 50 caracteres)"
               />
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500 block mt-1">
                 {formData.descripcion.length} / 5000 caracteres (mínimo 50)
               </span>
             </div>
 
-            <div className="form-row">
-              <div className="form-group">
+            <div className="form-row flex gap-4">
+              <div className="form-group flex-1">
                 <label className="form-label">Categoría <span>*</span></label>
                 <select 
                   name="categoria_id" className="form-select" 
@@ -150,7 +176,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
                   ))}
                 </select>
               </div>
-              <div className="form-group">
+              <div className="form-group flex-1">
                 <label className="form-label">Fecha de Realización</label>
                 <input 
                   type="date" name="fecha_proyecto" className="form-input" 
@@ -167,7 +193,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
                 value={formData.tecnologias} onChange={handleChange} required
                 placeholder="Ej: React, Laravel, Tailwind CSS"
               />
-              <span className="form-hint">Separa las tecnologías con comas</span>
+              <span className="form-hint text-xs text-gray-500">Separa las tecnologías con comas</span>
             </div>
 
             <div className="form-group">
@@ -188,8 +214,8 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
               />
             </div>
 
-            <div className="form-row">
-              <div className="form-group">
+            <div className="form-row flex gap-4">
+              <div className="form-group flex-1">
                 <label className="form-label">URL de GitHub</label>
                 <input 
                   type="url" name="github" className="form-input" 
@@ -197,7 +223,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
                   placeholder="https://github.com/usuario/repo"
                 />
               </div>
-              <div className="form-group">
+              <div className="form-group flex-1">
                 <label className="form-label">URL de Demo</label>
                 <input 
                   type="url" name="demo" className="form-input" 
@@ -208,7 +234,8 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
             </div>
           </div>
 
-          <div className="modal-footer">
+          {/* 5. El footer se mantiene fijo en la parte inferior */}
+          <div className="modal-footer shrink-0 border-t pt-4 mt-0 bg-white">
             <button type="button" className="btn-outline" onClick={onClose}>Cancelar</button>
             <button type="submit" className="btn-primary">
               {projectToEdit ? 'Guardar Cambios' : 'Crear Proyecto'}

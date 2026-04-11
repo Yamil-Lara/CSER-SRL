@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useSkill } from '../hooks/useSkill';
 import SkillList from '../components/SkillList';
-
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
@@ -17,8 +16,6 @@ export function SkillsPage() {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // CORRECCIÓN: Cambiamos 'nombre' por 'name' y 'nivel' por 'level'
   const [formData, setFormData] = useState({
     name: '',
     type: 'tecnica' as 'tecnica' | 'blanda',

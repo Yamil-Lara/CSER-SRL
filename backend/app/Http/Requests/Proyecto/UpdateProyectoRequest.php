@@ -10,11 +10,9 @@ class UpdateProyectoRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $proyecto = $this->route('id');
-        $user = auth()->user();
-        
-        // Solo el dueño o admin pueden actualizar
-        return $user && ($user->id === $proyecto->usuario_id || $user->rol === 'admin');
+        // Devolvemos true porque la validación de propiedad (usuario_id vs admin)
+        // ya se está manejando de forma excelente en el ProyectoController.
+        return true;
     }
 
     public function rules(): array

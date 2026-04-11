@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Briefcase, Edit, Trash2, Calendar, Building } from 'lucide-react';
 import { useExperience } from '../hooks/useExperience';
-
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Modal } from '../components/ui/Modal';
