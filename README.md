@@ -14,7 +14,7 @@ Estructura oficial con **Laravel 10** y **React 17**.
 4. Generar la clave de la app: `php artisan key:generate`
 5. Configurar la DB en el `.env` y correr: `php artisan migrate`
 6. Iniciar servidor: `php artisan serve`
-
+php artisan migrate:fresh --seed
 ## Configuración del Frontend
 1. Entrar a la carpeta: `cd frontend`
 2. Instalar dependencias: `npm install --legacy-peer-deps`
