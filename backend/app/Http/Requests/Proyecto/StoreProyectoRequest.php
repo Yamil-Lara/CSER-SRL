@@ -75,7 +75,7 @@ class StoreProyectoRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-    
+        // Sanitizar URLs
         if ($this->github) {
             $this->merge([
                 'github' => rtrim($this->github, '/'),

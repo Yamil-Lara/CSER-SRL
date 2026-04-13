@@ -1,0 +1,6 @@
+# Build output
+dist/
+
+# Dependencies (managed at root level)
+node_modules/
+.vite/

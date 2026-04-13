@@ -17,19 +17,12 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             'nombre' => 'sometimes|string|max:255',
-            'username' => ['sometimes', 'string', 'max:255', Rule::unique('usuarios', 'username')->ignore($this->user()->id)],
-            'email' => ['sometimes', 'email', 'max:255', Rule::unique('usuarios', 'email')->ignore($this->user()->id)],
             'profesion' => 'nullable|string|max:255',
-            'especialidad' => 'nullable|string|max:255',
             'biografia' => 'nullable|string|max:1000',
             'ubicacion' => 'nullable|string|max:255',
-            'telefono' => 'nullable|string|max:50',
-            'universidad' => 'nullable|string|max:255',
-            'carrera' => 'nullable|string|max:255',
             'linkedin' => 'nullable|url|max:255',
             'github_perfil' => 'nullable|url|max:255',
             'sitio_web' => 'nullable|url|max:255',
-            'password' => 'nullable|string|min:8',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // 2MB max
         ];
     }
