@@ -13,7 +13,6 @@ import LinksPage from "./pages/LinksPage";
 const App = (): JSX.Element => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // LÓGICA GLOBAL: Sincronizar con localStorage y el sistema
   useEffect(() => {
     const applyTheme = (isDark: boolean) => {
       const htmlElement = document.documentElement;
