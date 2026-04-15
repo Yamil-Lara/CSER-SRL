@@ -5,11 +5,9 @@ import { AuthProvider } from "./context/AuthContext";
 import { ExperiencePage } from "./pages/ExperiencePage";
 import Sidebar from "./components/Sidebar";
 import ProjectsPage from "./pages/ProjectsPage";
-import Profile from "./pages/Profile";
+import SkillsPage from "./pages/SkillsPage";
 import UserProfile from "./components/UserProfile";
-// Importamos la nueva Landing Page
 import { LandingPage } from "./pages/LandingPage"; 
-// 1. IMPORTAMOS LA NUEVA PÁGINA DE ENLACES
 import LinksPage from "./pages/LinksPage"; 
 
 const App = (): JSX.Element => {
@@ -70,10 +68,10 @@ const App = (): JSX.Element => {
                 <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
                 <main className="main-content">
                   <Routes>
-                    <Route path="experiencia" element={<ExperiencePage />} />
-                    <Route path="proyectos" element={<ProjectsPage />} />
-                    <Route path="habilidades" element={<Profile />} />
                     <Route path="perfil" element={<UserProfile />} />
+                    <Route path="proyectos" element={<ProjectsPage />} />
+                    <Route path="habilidades" element={<SkillsPage />} />                  
+                    <Route path="experiencia" element={<ExperiencePage />} />
                     <Route path="enlaces" element={<LinksPage />} />
                   </Routes>
                 </main>

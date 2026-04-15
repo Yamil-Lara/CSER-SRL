@@ -5,7 +5,7 @@ import { Card } from './ui/Card';
 import { Input } from './ui/Input';
 import { Button } from './ui/Button';
 import { Textarea } from './ui/Textarea';
-import { User, FileText, GraduationCap, Eye, EyeOff, Save } from 'lucide-react'; // Quitamos LinkIcon
+import { User, FileText, GraduationCap, Eye, EyeOff, Save } from 'lucide-react';
 
 const API_URL = 'http://127.0.0.1:8000/api';
 const STORAGE_URL = 'http://127.0.0.1:8000/storage';
@@ -216,13 +216,13 @@ const UserProfile: React.FC = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto w-full">
-      <div className="flex items-center justify-between mb-8">
+    <div>
+      <header className="page-header">
         <div>
-          <h1 className="text-3xl font-bold text-sidebar mb-2">Editar Perfil</h1>
-          <p className="text-sidebar/60">Actualiza tu información profesional y mantén tu portafolio al día</p>
+          <h1 className="page-title">Editar Perfil</h1>
+          <p className="page-subtitle">Actualiza tu información profesional y mantén tu portafolio al día</p>
         </div>
-      </div>
+      </header>
 
       {showSuccessMessage && (
         <div className="mb-6 p-4 rounded-lg bg-green-50 border border-green-200 text-green-700 font-medium">

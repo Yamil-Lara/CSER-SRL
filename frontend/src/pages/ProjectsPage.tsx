@@ -133,7 +133,7 @@ export default function ProjectsPage() {
 
       {isLoading ? (
         <div className="flex justify-center items-center h-64 text-gray-500">
-          Cargando tus proyectos...
+          Cargando Proyectos...
         </div>
       ) : projects.length === 0 ? (
         <EmptyState onOpenModal={() => { setEditingProject(null); setIsModalOpen(true); }} />

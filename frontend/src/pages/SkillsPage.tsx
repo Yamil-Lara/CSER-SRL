@@ -55,7 +55,6 @@ export function SkillsPage() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    // CORRECCIÓN: Validamos formData.name en lugar de formData.nombre
     if (!formData.name.trim()) newErrors.name = 'El nombre de la habilidad es obligatorio';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -99,36 +98,33 @@ export function SkillsPage() {
   };
 
   return (
-    <div className="page-body">
-      <div className="max-w-5xl mx-auto">
-        {/* Encabezado */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-sidebar mb-2">Mis Habilidades</h1>
-            <p className="text-sidebar/60">Gestiona tus habilidades técnicas y blandas</p>
-          </div>
-          <Button variant="primary" onClick={() => handleOpenModal()} className="gap-2">
-            <Plus className="w-5 h-5" />
-            Nueva Habilidad
-          </Button>
+    <div>
+      <header className="page-header">
+        <div>
+          <h1 className="page-title">Mis Habilidades</h1>
+          <p className="page-subtitle">Gestiona tus habilidades técnicas y blandas</p>
         </div>
+        <button className="btn-primary" onClick={() => handleOpenModal()}>
+          <Plus size={18} />
+          Nueva Habilidad
+        </button>
+      </header>
 
-        {/* Alertas */}
-        {successMessage && <Alert type="success" message={successMessage} className="mb-6" />}
-        {errorMessage && <Alert type="error" message={errorMessage} className="mb-6" />}
+      {/* Alertas */}
+      {successMessage && <Alert type="success" message={successMessage} className="mb-6" />}
+      {errorMessage && <Alert type="error" message={errorMessage} className="mb-6" />}
 
-        {/* Lista de Habilidades */}
-        {loading ? (
-           <p className="text-center py-10 text-sidebar/60">Cargando habilidades...</p>
-        ) : (
-          <SkillList 
-            skills={skills} 
-            onEdit={handleOpenModal} 
-            onDelete={handleDelete} 
-            onAddFirst={() => handleOpenModal()} 
-          />
-        )}
-      </div>
+      {/* Lista de Habilidades */}
+      {loading ? (
+         <p className="text-center py-10 text-sidebar/60">Cargando Habilidades...</p>
+      ) : (
+        <SkillList 
+          skills={skills} 
+          onEdit={handleOpenModal} 
+          onDelete={handleDelete} 
+          onAddFirst={() => handleOpenModal()} 
+        />
+      )}
 
       {/* Modal para Crear/Editar */}
       <Modal
@@ -187,3 +183,5 @@ export function SkillsPage() {
     </div>
   );
 }
+
+export default SkillsPage;
