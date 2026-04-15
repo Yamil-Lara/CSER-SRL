@@ -9,6 +9,7 @@ use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\ExperienceController;
+use App\Http\Controllers\ExploreController;
 use Illuminate\Support\Facades\Route;
 
 // RUTAS PÚBLICAS
@@ -23,6 +24,10 @@ Route::get('/proyectos', [ProyectoController::class, 'index']);
 Route::get('/proyectos/{id}', [ProyectoController::class, 'show']);
 Route::get('/categorias', [CategoriaController::class, 'index']);
 Route::get('/usuarios/{id}', [AdminUserController::class, 'show']);
+
+Route::prefix('explore')->group(function () {
+    Route::get('/users', [ExploreController::class, 'users']);
+});
 
 // RUTAS PROTEGIDAS
 Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
