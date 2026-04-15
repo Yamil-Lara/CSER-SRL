@@ -13,7 +13,9 @@ export interface ProfileData {
   github?: string | null;
   website?: string | null;
   facebook?: string | null;
-  instagram?: string | null;
+  instagram?: string | null
+  threads?: string | null;
+  tiktok?: string | null;
   twitter?: string | null;
   password?: string;
   image_url?: string | null;
