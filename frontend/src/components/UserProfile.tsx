@@ -5,7 +5,7 @@ import { Card } from './ui/Card';
 import { Input } from './ui/Input';
 import { Button } from './ui/Button';
 import { Textarea } from './ui/Textarea';
-import { User, FileText, GraduationCap, Link as LinkIcon, Eye, EyeOff, Save } from 'lucide-react';
+import { User, FileText, GraduationCap, Eye, EyeOff, Save } from 'lucide-react'; // Quitamos LinkIcon
 
 const API_URL = 'http://127.0.0.1:8000/api';
 const STORAGE_URL = 'http://127.0.0.1:8000/storage';
@@ -21,21 +21,8 @@ const defaultProfile: ProfileData = {
   telefono: '',
   universidad: '',
   carrera: '',
-  linkedin: '',
-  github_perfil: '',
-  sitio_web: '',
   password: '',
   image_url: null,
-};
-
-const isValidUrl = (value: string): boolean => {
-  if (!value) return true;
-  try {
-    new URL(value);
-    return true;
-  } catch {
-    return false;
-  }
 };
 
 const UserProfile: React.FC = () => {
@@ -89,9 +76,6 @@ const UserProfile: React.FC = () => {
           telefono: userData.telefono || '',
           universidad: userData.universidad || '',
           carrera: userData.carrera || '',
-          linkedin: userData.linkedin || '',
-          github_perfil: userData.github_perfil || '',
-          sitio_web: userData.sitio_web || '',
           password: '',
           image_url: userData.foto || userData.image_url || null,
         });
@@ -111,9 +95,6 @@ const UserProfile: React.FC = () => {
     if (!profile.email.trim()) nextErrors.email = 'El correo es requerido.';
     if (!profile.profesion.trim()) nextErrors.profesion = 'La profesión es requerida.';
     if (!profile.especialidad.trim()) nextErrors.especialidad = 'La especialidad es requerida.';
-    if (profile.linkedin && !isValidUrl(profile.linkedin)) nextErrors.linkedin = 'LinkedIn no es una URL válida.';
-    if (profile.github_perfil && !isValidUrl(profile.github_perfil)) nextErrors.github_perfil = 'GitHub no es una URL válida.';
-    if (profile.sitio_web && !isValidUrl(profile.sitio_web)) nextErrors.sitio_web = 'El sitio web no es una URL válida.';
 
     if (fotoFile) {
       const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
@@ -180,9 +161,6 @@ const UserProfile: React.FC = () => {
     formData.append('telefono', profile.telefono || '');
     formData.append('universidad', profile.universidad || '');
     formData.append('carrera', profile.carrera || '');
-    formData.append('linkedin', profile.linkedin || '');
-    formData.append('github_perfil', profile.github_perfil || '');
-    formData.append('sitio_web', profile.sitio_web || '');
     
     if (profile.password && profile.password.trim()) {
       formData.append('password', profile.password);
@@ -415,45 +393,6 @@ const UserProfile: React.FC = () => {
               placeholder="Ej. Ingeniería de Sistemas" 
               value={profile.carrera || ''} 
               onChange={handleChange} 
-            />
-          </div>
-        </Card>
-
-        {/* === SECCIÓN REDES SOCIALES === */}
-        <Card>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-lg bg-blue-100">
-              <LinkIcon className="w-5 h-5 text-blue-600" />
-            </div>
-            <h2 className="text-xl font-bold text-sidebar m-0">Redes Sociales</h2>
-          </div>
-          <div className="space-y-4">
-            <Input 
-              label="LinkedIn" 
-              name="linkedin" 
-              type="url"
-              placeholder="https://linkedin.com/in/tu-perfil" 
-              value={profile.linkedin || ''} 
-              onChange={handleChange} 
-              error={errors.linkedin}
-            />
-            <Input 
-              label="GitHub" 
-              name="github_perfil" 
-              type="url"
-              placeholder="https://github.com/tu-usuario" 
-              value={profile.github_perfil || ''} 
-              onChange={handleChange} 
-              error={errors.github_perfil}
-            />
-            <Input 
-              label="Sitio web personal" 
-              name="sitio_web" 
-              type="url"
-              placeholder="https://tu-sitio.com" 
-              value={profile.sitio_web || ''} 
-              onChange={handleChange} 
-              error={errors.sitio_web}
             />
           </div>
         </Card>

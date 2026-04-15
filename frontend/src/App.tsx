@@ -9,6 +9,8 @@ import Profile from "./pages/Profile";
 import UserProfile from "./components/UserProfile";
 // Importamos la nueva Landing Page
 import { LandingPage } from "./pages/LandingPage"; 
+// 1. IMPORTAMOS LA NUEVA PÁGINA DE ENLACES
+import LinksPage from "./pages/LinksPage"; 
 
 const App = (): JSX.Element => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -58,7 +60,7 @@ const App = (): JSX.Element => {
           <Route path="/" element={<LandingPage />} />
 
           {/* Redirección del login temporalmente al dashboard */}
-          <Route path="/login" element={<Navigate to="/dashboard/experiencia" />} />
+          <Route path="/login" element={<Navigate to="/dashboard/perfil" />} />
 
           {/* Rutas Privadas / Dashboard */}
           <Route
@@ -72,6 +74,7 @@ const App = (): JSX.Element => {
                     <Route path="proyectos" element={<ProjectsPage />} />
                     <Route path="habilidades" element={<Profile />} />
                     <Route path="perfil" element={<UserProfile />} />
+                    <Route path="enlaces" element={<LinksPage />} />
                   </Routes>
                 </main>
               </div>
