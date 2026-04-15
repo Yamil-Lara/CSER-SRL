@@ -107,7 +107,6 @@ export default function ProjectsPage() {
     }
   };
 
-  // Helpers para manejar el modal
   const openEditModal = (project: Project) => {
     setEditingProject(project);
     setIsModalOpen(true);

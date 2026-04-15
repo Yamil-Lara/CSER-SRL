@@ -33,12 +33,15 @@ const LinksPage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('/user/profile');
+        const token = localStorage.getItem('token');
+        const response = await axios.get('/profile', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         const data = response.data.data;
         setFormData({
           linkedin: data.linkedin || '',
-          github: data.github || '',
-          website: data.website || '',
+          github: data.github_perfil || '',
+          website: data.sitio_web || '',
           facebook: data.facebook || '',
           instagram: data.instagram || '',
           twitter: data.twitter || '',
@@ -64,7 +67,19 @@ const LinksPage = () => {
     setMessage(null);
 
     try {
-      await axios.put('/user/links', formData);
+      const dataToSend = {
+          ...formData,
+          github_perfil: formData.github,
+          sitio_web: formData.website
+      };
+
+      const token = localStorage.getItem('token');
+      
+      // CORRECCIÓN: Cambiado de '/user/links' a '/profile' para usar el método de actualización existente
+      await axios.put('/profile', dataToSend, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
       setMessage({ type: 'success', text: 'Redes sociales guardadas correctamente.' });
       setTimeout(() => setMessage(null), 4000);
     } catch (error: any) {

@@ -13,12 +13,25 @@ class ProyectoController extends Controller
 {
     use ApiResponseTrait;  // <-- AGREGAR
 
-    public function index(): JsonResponse
+    public function index(\Illuminate\Http\Request $request): JsonResponse
     {
-        $proyectos = Proyecto::with(['categoria', 'usuario:id,nombre,email,foto'])
-            // ->where('estado', 'aprobado')  <-- ELIMINA O COMENTA ESTA LÍNEA
-            ->latest()
-            ->get();
+        // Iniciamos la consulta con las relaciones
+        $query = Proyecto::with(['categoria', 'usuario:id,nombre,email,foto']);
+
+        // Obtenemos el usuario autenticado (usando el guard de sanctum por si la ruta es pública)
+        $user = auth('sanctum')->user();
+
+        if ($user) {
+            // Si hay un usuario autenticado y NO es admin, filtramos por su ID
+            if ($user->rol !== 'admin') {
+                $query->where('usuario_id', $user->id);
+            }
+        } else {
+            // Opcional: Si no hay token (usuario anónimo), tal vez solo mostrar los aprobados
+            $query->where('estado', 'aprobado');
+        }
+
+        $proyectos = $query->latest()->get();
         
         return $this->successResponse($proyectos, 'Proyectos obtenidos exitosamente');
     }
