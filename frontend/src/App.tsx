@@ -8,9 +8,10 @@ import ProjectsPage from "./pages/ProjectsPage";
 import Profile from "./pages/Profile";
 import UserProfile from "./components/UserProfile";
 // Importamos la nueva Landing Page
-import { LandingPage } from "./pages/LandingPage"; 
+import { LandingPage } from "./pages/LandingPage";
+import ExplorePage from "./pages/ExplorePage";
 
-const App = (): JSX.Element => {
+function App(): JSX.Element {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   // LÓGICA GLOBAL: Sincronizar con localStorage y el sistema
@@ -57,26 +58,26 @@ const App = (): JSX.Element => {
           {/* Ruta principal: ahora carga la Landing Page */}
           <Route path="/" element={<LandingPage />} />
 
+          {/* Ruta pública: Explorar portafolios y proyectos */}
+          <Route path="/explorar" element={<ExplorePage />} />
+
           {/* Redirección del login temporalmente al dashboard */}
           <Route path="/login" element={<Navigate to="/dashboard/experiencia" />} />
 
           {/* Rutas Privadas / Dashboard */}
           <Route
             path="/dashboard/*"
-            element={
-              <div className={`app-layout ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
-                <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
-                <main className="main-content">
-                  <Routes>
-                    <Route path="experiencia" element={<ExperiencePage />} />
-                    <Route path="proyectos" element={<ProjectsPage />} />
-                    <Route path="habilidades" element={<Profile />} />
-                    <Route path="perfil" element={<UserProfile />} />
-                  </Routes>
-                </main>
-              </div>
-            }
-          />
+            element={<div className={`app-layout ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
+              <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
+              <main className="main-content">
+                <Routes>
+                  <Route path="experiencia" element={<ExperiencePage />} />
+                  <Route path="proyectos" element={<ProjectsPage />} />
+                  <Route path="habilidades" element={<Profile />} />
+                  <Route path="perfil" element={<UserProfile />} />
+                </Routes>
+              </main>
+            </div>} />
 
           {/* Ruta para manejar 404 - Página no encontrada */}
           <Route path="*" element={<div>Página no encontrada</div>} />
@@ -84,6 +85,6 @@ const App = (): JSX.Element => {
       </AuthProvider>
     </BrowserRouter>
   );
-};
+}
 
 export default App;
