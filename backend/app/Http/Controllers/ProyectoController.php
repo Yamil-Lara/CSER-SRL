@@ -16,11 +16,11 @@ class ProyectoController extends Controller
     public function index(): JsonResponse
     {
         $proyectos = Proyecto::with(['categoria', 'usuario:id,nombre,email,foto'])
-            ->where('estado', 'aprobado')  // <-- AGREGAR filtro
+            // ->where('estado', 'aprobado')  <-- ELIMINA O COMENTA ESTA LÍNEA
             ->latest()
             ->get();
         
-        return $this->successResponse($proyectos, 'Proyectos obtenidos exitosamente');  // <-- CAMBIAR
+        return $this->successResponse($proyectos, 'Proyectos obtenidos exitosamente');
     }
 
     public function store(StoreProyectoRequest $request): JsonResponse
