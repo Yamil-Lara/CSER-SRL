@@ -15,8 +15,8 @@ export const LandingPage = () => {
       return savedTheme === 'dark';
     }
     // 2. Prioridad 2: Leer el sistema
-    return document.documentElement.classList.contains('dark') || 
-           window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return document.documentElement.classList.contains('dark') ||
+      window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 
   useEffect(() => {
@@ -25,12 +25,12 @@ export const LandingPage = () => {
       htmlElement.classList.add('dark');
       htmlElement.setAttribute('data-theme', 'dark');
       // Guardar elección en la memoria del navegador
-      localStorage.setItem('devfolio-theme', 'dark'); 
+      localStorage.setItem('devfolio-theme', 'dark');
     } else {
       htmlElement.classList.remove('dark');
       htmlElement.removeAttribute('data-theme');
       // Guardar elección en la memoria del navegador
-      localStorage.setItem('devfolio-theme', 'light'); 
+      localStorage.setItem('devfolio-theme', 'light');
     }
   }, [isDarkMode]);
 
@@ -43,21 +43,24 @@ export const LandingPage = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      
+
       {/* HEADER / NAVEGACIÓN */}
       <nav className="navbar">
         <div className="logo">DevFolio</div>
 
         <div className="nav-links">
           <a href="#features">Características</a>
+          <a onClick={() => navigate('/explorar')} style={{ cursor: 'pointer' }}>
+            Explorar
+          </a>
           <a href="#how-it-works">Cómo Funciona</a>
           <a href="#nosotros">Nosotros</a>
         </div>
-        
+
         <div className="nav-actions">
           {/* BOTÓN CON REDIRECCIÓN AL DASHBOARD */}
           <button className="btn-ghost" onClick={handleLoginClick}>Iniciar Sesión</button>
-          
+
           <button className="btn-primary-small">Regístrate Gratis</button>
 
           {/* BOTÓN DE CAMBIO DE TEMA */}
@@ -80,7 +83,7 @@ export const LandingPage = () => {
           </div>
 
           <h1 className="hero-title">
-            Construye tu marca personal como <br/>
+            Construye tu marca personal como <br />
             <span className="text-gradient">desarrollador</span>
           </h1>
 
