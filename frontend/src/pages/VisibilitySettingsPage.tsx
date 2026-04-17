@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Eye, EyeOff, Save, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Card } from '../components/ui/Card';
@@ -21,8 +21,11 @@ export function VisibilitySettingsPage() {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Cargar desde el backend al montar la página
   useEffect(() => {
+    
     const loadSettings = async () => {
       setIsLoading(true);
       try {
@@ -53,6 +56,11 @@ export function VisibilitySettingsPage() {
     };
     
     loadSettings();
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, []);
 
   const handleToggle = (key: keyof VisibilitySettings) => {
@@ -73,6 +81,9 @@ export function VisibilitySettingsPage() {
     setSuccessMessage('');
     setErrorMessage('');
     
+    // Limpiar cualquier temporizador previo antes de guardar
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    
     try {
       const payload = {
         mostrar_proyectos: settings.proyectos_visible,
@@ -83,11 +94,17 @@ export function VisibilitySettingsPage() {
       
       await api.put('/visibilidad', payload);
       setSuccessMessage('Configuración guardada correctamente');
-      setTimeout(() => setSuccessMessage(''), 3000);
+      
+      // CAMBIADO: Asignar el timeout a la referencia
+      timeoutRef.current = setTimeout(() => setSuccessMessage(''), 3000);
+      
     } catch (error) {
       console.error('Error saving settings:', error);
       setErrorMessage('Error al guardar la configuración');
-      setTimeout(() => setErrorMessage(''), 3000);
+      
+      // CAMBIADO: Asignar el timeout a la referencia
+      timeoutRef.current = setTimeout(() => setErrorMessage(''), 3000);
+      
     } finally {
       setIsSaving(false);
     }

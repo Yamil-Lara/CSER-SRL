@@ -29,7 +29,7 @@ Route::get('/usuarios/{id}', [AdminUserController::class, 'show']);
 Route::get('/portafolio/{username}', [PublicPortafolioController::class, 'show']);
 
 // ===== HU-06: Portafolio público (VERSIÓN TUYA) =====
-Route::get('/portafolio/{username}', [PortafolioController::class, 'show']);
+//Route::get('/portafolio/{username}', [PortafolioController::class, 'show']);
 Route::post('/portafolio/{username}/visita', [PortafolioController::class, 'registrarVisita']);
 Route::get('/portafolio/{username}/proyectos', [PortafolioController::class, 'proyectos']);
 Route::get('/portafolio/{username}/experiencias', [PortafolioController::class, 'experiencias']);
