@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use App\Models\Proyecto;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ExploreRepository
@@ -53,6 +54,28 @@ class ExploreRepository
                                          ->where('universidad', '!=', ''),
                 default         => null,
             };
+        }
+
+        return $query->latest('id')->paginate($perPage);
+    }
+
+    public function searchProjects(array $filters, int $perPage = 12): LengthAwarePaginator
+    {
+        $query = Proyecto::select([
+                'id',
+                'titulo',
+                'descripcion',
+                'tecnologias',
+                'imagen',
+                'categoria_id',
+                'usuario_id',
+                'estado',
+            ])
+            ->where('estado', 'aprobado')
+            ->with(['categoria:id,nombre,icono,color', 'usuario:id,nombre,username,foto']);
+
+        if (!empty($filters['categoria_id'])) {
+            $query->where('categoria_id', $filters['categoria_id']);
         }
 
         return $query->latest('id')->paginate($perPage);
