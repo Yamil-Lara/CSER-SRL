@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Alert } from '../components/ui/Alert';
-import api from '../utils/api';  // ← AGREGADO: Para llamar al backend
+import api from '../utils/api';
 
 interface VisibilitySettings {
   proyectos_visible: boolean;
@@ -15,21 +15,16 @@ interface VisibilitySettings {
 
 export function VisibilitySettingsPage() {
   const { user } = useAuth();
-  const [settings, setSettings] = useState<VisibilitySettings>({
-    proyectos_visible: true,
-    habilidades_visible: true,
-    experiencia_visible: true,
-    redes_visible: true
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  const [settings, setSettings] = useState<VisibilitySettings | null>(null); // ← CAMBIADO: empieza en null
+  const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // ← NUEVO: para saber si está cargando
   const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); // ← AGREGADO: Para errores
+  const [errorMessage, setErrorMessage] = useState('');
 
-  // ✅ MODIFICADO: Cargar desde el backend en lugar de localStorage
+  // Cargar desde el backend al montar la página
   useEffect(() => {
     const loadSettings = async () => {
-      if (!user) return;
-      
+      setIsLoading(true);
       try {
         const response = await api.get('/visibilidad');
         const data = response.data.data;
@@ -40,30 +35,45 @@ export function VisibilitySettingsPage() {
           experiencia_visible: data.mostrar_experiencia ?? true,
           redes_visible: data.mostrar_redes ?? true,
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error cargando configuración:', error);
-        setErrorMessage('Error al cargar la configuración');
+        if (error.response?.status !== 401) {
+          setErrorMessage('Error al cargar la configuración');
+        }
+        // Si hay error, mostrar valores por defecto
+        setSettings({
+          proyectos_visible: true,
+          habilidades_visible: true,
+          experiencia_visible: true,
+          redes_visible: true,
+        });
+      } finally {
+        setIsLoading(false);
       }
     };
     
     loadSettings();
-  }, [user]);
+  }, []);
 
   const handleToggle = (key: keyof VisibilitySettings) => {
-    setSettings((prev) => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
+    if (!settings) return;
+    setSettings((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        [key]: !prev[key]
+      };
+    });
   };
 
-  // ✅ MODIFICADO: Guardar en el backend en lugar de localStorage
   const handleSave = async () => {
-    setIsLoading(true);
+    if (!settings) return;
+    
+    setIsSaving(true);
     setSuccessMessage('');
     setErrorMessage('');
     
     try {
-      // Mapear los nombres: frontend usa 'proyectos_visible', backend espera 'mostrar_proyectos'
       const payload = {
         mostrar_proyectos: settings.proyectos_visible,
         mostrar_habilidades: settings.habilidades_visible,
@@ -79,7 +89,7 @@ export function VisibilitySettingsPage() {
       setErrorMessage('Error al guardar la configuración');
       setTimeout(() => setErrorMessage(''), 3000);
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
@@ -110,6 +120,31 @@ export function VisibilitySettingsPage() {
     }
   ];
 
+  // Mostrar pantalla de carga mientras se obtienen los datos
+  if (isLoading) {
+    return (
+      <div>
+        <header className="page-header">
+          <div>
+            <h1 className="page-title">Control de Visibilidad</h1>
+            <p className="page-subtitle">
+              Controla qué secciones de tu portafolio son visibles para el público
+            </p>
+          </div>
+        </header>
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <span className="ml-2 text-sidebar/70">Cargando configuración...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Si no hay settings (error), no renderizar
+  if (!settings) {
+    return null;
+  }
+
   return (
     <div>
       <header className="page-header">
@@ -124,10 +159,10 @@ export function VisibilitySettingsPage() {
         <Button
           variant="primary"
           onClick={handleSave}
-          disabled={isLoading}
+          disabled={isSaving}
           className="gap-2"
         >
-          {isLoading ? (
+          {isSaving ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
               Guardando...
@@ -173,7 +208,6 @@ export function VisibilitySettingsPage() {
                     </div>
                   </div>
 
-                  {/* Toggle Switch */}
                   <button
                     onClick={() => handleToggle(section.key)}
                     className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${isVisible ? 'bg-primary' : 'bg-muted'}`}
