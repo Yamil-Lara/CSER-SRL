@@ -67,6 +67,16 @@ class User extends Authenticatable
         return $this->hasMany(Proyecto::class, 'usuario_id');
     }
 
+    public function skills(): HasMany
+    {
+        return $this->hasMany(Skill::class, 'usuario_id');
+    }
+ 
+    public function experiencias(): HasMany
+    {
+        return $this->hasMany(Experience::class, 'usuario_id');
+    }
+
     public function comentarios(): HasMany
     {
         return $this->hasMany(Comentario::class, 'usuario_id');

@@ -8,10 +8,9 @@ use App\Http\Controllers\User\AdminUserController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\SkillController;
-
 use App\Http\Controllers\VisibilidadController; 
-
 use App\Http\Controllers\ExperienceController;
+use App\Http\Controllers\ExploreController;
 use Illuminate\Support\Facades\Route;
 
 // RUTAS PÚBLICAS
@@ -27,34 +26,16 @@ Route::get('/proyectos/{id}', [ProyectoController::class, 'show']);
 Route::get('/categorias', [CategoriaController::class, 'index']);
 Route::get('/usuarios/{id}', [AdminUserController::class, 'show']);
 
-
-
-
-
-// ===== HU-06: Portafolio público =====
+// ===== HU-06: Portafolio público (VERSIÓN TUYA) =====
 Route::get('/portafolio/{username}', [PortafolioController::class, 'show']);
 Route::post('/portafolio/{username}/visita', [PortafolioController::class, 'registrarVisita']);
 Route::get('/portafolio/{username}/proyectos', [PortafolioController::class, 'proyectos']);
 Route::get('/portafolio/{username}/experiencias', [PortafolioController::class, 'experiencias']);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// ===== Explore users (VERSIÓN DE ÉL) =====
+Route::prefix('explore')->group(function () {
+    Route::get('/users', [ExploreController::class, 'users']);
+});
 
 // RUTAS PROTEGIDAS
 Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
@@ -67,12 +48,9 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
         Route::delete('/', [ProfileController::class, 'destroy']);
     });
 
-
-      // ===== HU-08: Control de visibilidad =====
-        Route::get('/visibilidad', [VisibilidadController::class, 'show']);
-        Route::put('/visibilidad', [VisibilidadController::class, 'update']);
-
-
+    // ===== HU-08: Control de visibilidad (VERSIÓN TUYA) =====
+    Route::get('/visibilidad', [VisibilidadController::class, 'show']);
+    Route::put('/visibilidad', [VisibilidadController::class, 'update']);
     
     Route::post('/proyectos', [ProyectoController::class, 'store']);
     Route::put('/proyectos/{id}', [ProyectoController::class, 'update']);
