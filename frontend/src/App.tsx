@@ -11,6 +11,7 @@ import { LandingPage } from "./pages/LandingPage";
 import PortfolioPublico from "./pages/PortfolioPublico";
 import LinksPage from "./pages/LinksPage"; 
 import { VisibilitySettingsPage } from "./pages/VisibilitySettingsPage";
+import ExplorePage from "./pages/ExplorePage";
 
 const App = (): JSX.Element => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -57,6 +58,7 @@ const App = (): JSX.Element => {
         <Routes>
           {/* Ruta principal: ahora carga la Landing Page */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/explore" element={<ExplorePage />} />
 
           {/* Redirección del login temporalmente al dashboard */}
           <Route path="/login" element={<Navigate to="/dashboard/perfil" />} />

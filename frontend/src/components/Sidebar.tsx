@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Code2, LayoutDashboard, User, FolderGit2, Wrench, 
   Briefcase, Link as LinkIcon, EyeOff, ChevronLeft, ChevronRight, LogOut 
 } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -12,6 +14,25 @@ interface SidebarProps {
 
 export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [dbUsername, setDbUsername] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      axios.get('http://127.0.0.1:8000/api/profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => {
+         const payload = res.data.user || res.data.data || res.data;
+         if (payload && payload.username) {
+            setDbUsername(payload.username);
+         }
+      })
+      .catch(err => console.error('Error fetching real DB username in sidebar:', err));
+    }
+  }, []);
+
   return (
     <aside className={`sidebar-container ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-logo" style={{ justifyContent: isCollapsed ? 'center' : 'flex-start', padding: isCollapsed ? '0' : '0 0.5rem' }}>
@@ -36,7 +57,10 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
           icon={<EyeOff size={18} />} 
           text="Ver Portafolio" 
           isCollapsed={isCollapsed} 
-          onClick={() => navigate('/portfolio/ana-garcia')} 
+          onClick={() => {
+            const finalUsername = dbUsername || user?.username || '';
+            navigate(`/portfolio/${finalUsername}`);
+          }} 
         />
         
         {/* El botón de colapsar cambia el ícono dependiendo del estado */}

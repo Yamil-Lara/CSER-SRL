@@ -10,6 +10,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\ExploreController;
+use App\Http\Controllers\PublicPortafolioController;
 use Illuminate\Support\Facades\Route;
 
 // RUTAS PÚBLICAS
@@ -24,6 +25,7 @@ Route::get('/proyectos', [ProyectoController::class, 'index']);
 Route::get('/proyectos/{id}', [ProyectoController::class, 'show']);
 Route::get('/categorias', [CategoriaController::class, 'index']);
 Route::get('/usuarios/{id}', [AdminUserController::class, 'show']);
+Route::get('/portafolio/{username}', [PublicPortafolioController::class, 'show']);
 
 Route::prefix('explore')->group(function () {
     Route::get('/users', [ExploreController::class, 'users']);
@@ -39,6 +41,10 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
         Route::put('/', [ProfileController::class, 'update']);
         Route::delete('/', [ProfileController::class, 'destroy']);
     });
+    
+    // VISIBILIDAD (HU-08)
+    Route::get('/visibilidad', [\App\Http\Controllers\VisibilidadController::class, 'show']);
+    Route::put('/visibilidad', [\App\Http\Controllers\VisibilidadController::class, 'update']);
     
     Route::post('/proyectos', [ProyectoController::class, 'store']);
     Route::put('/proyectos/{id}', [ProyectoController::class, 'update']);

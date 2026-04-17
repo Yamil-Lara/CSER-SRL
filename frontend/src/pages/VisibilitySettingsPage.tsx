@@ -4,12 +4,15 @@ import { useAuth } from '../context/AuthContext';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Alert } from '../components/ui/Alert';
+import axios from 'axios';
+
 interface VisibilitySettings {
   proyectos_visible: boolean;
   habilidades_visible: boolean;
   experiencia_visible: boolean;
   redes_visible: boolean;
 }
+
 export function VisibilitySettingsPage() {
   const { user } = useAuth();
   const [settings, setSettings] = useState<VisibilitySettings>({
@@ -20,31 +23,49 @@ export function VisibilitySettingsPage() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+
   useEffect(() => {
-    // Load saved settings from localStorage
-    const saved = localStorage.getItem(`visibility_${user?.id}`);
-    if (saved) {
-      setSettings(JSON.parse(saved));
-    }
-  }, [user]);
+    const fetchSettings = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      try {
+        const res = await axios.get('http://127.0.0.1:8000/api/visibilidad', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setSettings({
+          proyectos_visible: Boolean(res.data.proyectos_visible),
+          habilidades_visible: Boolean(res.data.habilidades_visible),
+          experiencia_visible: Boolean(res.data.experiencia_visible),
+          redes_visible: Boolean(res.data.redes_visible),
+        });
+      } catch (error) {
+        console.error('Error cargando la visibilidad:', error);
+      }
+    };
+    fetchSettings();
+  }, []);
+
   const handleToggle = (key: keyof VisibilitySettings) => {
     setSettings((prev) => ({
       ...prev,
       [key]: !prev[key]
     }));
   };
+
   const handleSave = async () => {
     setIsLoading(true);
     setSuccessMessage('');
+    const token = localStorage.getItem('token');
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      // Save to localStorage (in real app, would be API call)
-      localStorage.setItem(`visibility_${user?.id}`, JSON.stringify(settings));
+      if (token) {
+        await axios.put('http://127.0.0.1:8000/api/visibilidad', settings, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
       setSuccessMessage('Configuración guardada correctamente');
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
-      console.error('Error saving settings:', error);
+      console.error('Error guardando la visibilidad:', error);
     } finally {
       setIsLoading(false);
     }

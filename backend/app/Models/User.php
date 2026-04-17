@@ -82,6 +82,11 @@ class User extends Authenticatable
         return $this->hasMany(Comentario::class, 'usuario_id');
     }
 
+    public function visibilidad()
+    {
+        return $this->hasOne(Visibilidad::class, 'user_id');
+    }
+
     public function scopeActivos(Builder $query): Builder
     {
         return $query->where('activo', true);
