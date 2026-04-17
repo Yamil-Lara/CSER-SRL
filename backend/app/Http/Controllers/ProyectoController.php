@@ -42,17 +42,22 @@ class ProyectoController extends Controller
         );
     }
 
-    public function show($id): JsonResponse
-    {
-        $proyecto = Proyecto::with(['categoria', 'usuario:id,nombre,email,foto'])
-            ->find($id);
+  public function show($id): JsonResponse
+{
+    // Solo mostrar proyectos APROBADOS
+    $proyecto = Proyecto::with(['categoria', 'usuario:id,nombre,email,foto'])
+        ->where('estado', 'aprobado')
+        ->find($id);
 
-        if (!$proyecto) {
-            return $this->errorResponse('Proyecto no encontrado', 404);  // <-- CAMBIAR
-        }
-
-        return $this->successResponse($proyecto);  // <-- CAMBIAR
+    if (!$proyecto) {
+        return $this->errorResponse('Proyecto no disponible', 404);
     }
+
+    // Incrementar contador de vistas
+    $proyecto->increment('vistas');
+
+    return $this->successResponse($proyecto);
+}
 
     public function update(UpdateProyectoRequest $request, $id): JsonResponse
     {
