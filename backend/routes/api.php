@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\PortafolioController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
@@ -8,6 +8,7 @@ use App\Http\Controllers\User\AdminUserController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\SkillController;
+use App\Http\Controllers\VisibilidadController; 
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\ExploreController;
 use App\Http\Controllers\PublicPortafolioController;
@@ -27,6 +28,13 @@ Route::get('/categorias', [CategoriaController::class, 'index']);
 Route::get('/usuarios/{id}', [AdminUserController::class, 'show']);
 Route::get('/portafolio/{username}', [PublicPortafolioController::class, 'show']);
 
+// ===== HU-06: Portafolio público (VERSIÓN TUYA) =====
+Route::get('/portafolio/{username}', [PortafolioController::class, 'show']);
+Route::post('/portafolio/{username}/visita', [PortafolioController::class, 'registrarVisita']);
+Route::get('/portafolio/{username}/proyectos', [PortafolioController::class, 'proyectos']);
+Route::get('/portafolio/{username}/experiencias', [PortafolioController::class, 'experiencias']);
+
+// ===== Explore users (VERSIÓN DE ÉL) =====
 Route::prefix('explore')->group(function () {
     Route::get('/users', [ExploreController::class, 'users']);
 });
@@ -41,6 +49,10 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
         Route::put('/', [ProfileController::class, 'update']);
         Route::delete('/', [ProfileController::class, 'destroy']);
     });
+
+    // ===== HU-08: Control de visibilidad (VERSIÓN TUYA) =====
+    Route::get('/visibilidad', [VisibilidadController::class, 'show']);
+    Route::put('/visibilidad', [VisibilidadController::class, 'update']);
     
     // VISIBILIDAD (HU-08)
     Route::get('/visibilidad', [\App\Http\Controllers\VisibilidadController::class, 'show']);
