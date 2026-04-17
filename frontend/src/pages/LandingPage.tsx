@@ -38,7 +38,7 @@ export const LandingPage = () => {
 
   // Función para redirigir al Dashboard
   const handleLoginClick = () => {
-    navigate('/dashboard/experiencia');
+    navigate('/dashboard/perfil');
   };
 
   return (

@@ -5,16 +5,16 @@ import { AuthProvider } from "./context/AuthContext";
 import { ExperiencePage } from "./pages/ExperiencePage";
 import Sidebar from "./components/Sidebar";
 import ProjectsPage from "./pages/ProjectsPage";
-import Profile from "./pages/Profile";
+import SkillsPage from "./pages/SkillsPage";
 import UserProfile from "./components/UserProfile";
-// Importamos la nueva Landing Page
 import { LandingPage } from "./pages/LandingPage"; 
 import PortfolioPublico from "./pages/PortfolioPublico";
+import LinksPage from "./pages/LinksPage"; 
+import { VisibilitySettingsPage } from "./pages/VisibilitySettingsPage";
 
 const App = (): JSX.Element => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // LÓGICA GLOBAL: Sincronizar con localStorage y el sistema
   useEffect(() => {
     const applyTheme = (isDark: boolean) => {
       const htmlElement = document.documentElement;
@@ -59,7 +59,7 @@ const App = (): JSX.Element => {
           <Route path="/" element={<LandingPage />} />
 
           {/* Redirección del login temporalmente al dashboard */}
-          <Route path="/login" element={<Navigate to="/dashboard/experiencia" />} />
+          <Route path="/login" element={<Navigate to="/dashboard/perfil" />} />
 
           {/* Rutas Privadas / Dashboard */}
           <Route
@@ -69,10 +69,12 @@ const App = (): JSX.Element => {
                 <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
                 <main className="main-content">
                   <Routes>
-                    <Route path="experiencia" element={<ExperiencePage />} />
-                    <Route path="proyectos" element={<ProjectsPage />} />
-                    <Route path="habilidades" element={<Profile />} />
                     <Route path="perfil" element={<UserProfile />} />
+                    <Route path="proyectos" element={<ProjectsPage />} />
+                    <Route path="habilidades" element={<SkillsPage />} />                  
+                    <Route path="experiencia" element={<ExperiencePage />} />
+                    <Route path="enlaces" element={<LinksPage />} />
+                    <Route path="visibilidad" element={<VisibilitySettingsPage />} />
                   </Routes>
                 </main>
               </div>
