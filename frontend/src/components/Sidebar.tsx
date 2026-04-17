@@ -3,7 +3,7 @@ import {
   Code2, LayoutDashboard, User, FolderGit2, Wrench, 
   Briefcase, Link as LinkIcon, EyeOff, ChevronLeft, ChevronRight, LogOut 
 } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -11,6 +11,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
+  const navigate = useNavigate();
   return (
     <aside className={`sidebar-container ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-logo" style={{ justifyContent: isCollapsed ? 'center' : 'flex-start', padding: isCollapsed ? '0' : '0 0.5rem' }}>
@@ -31,7 +32,12 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
       </nav>
 
       <div className="sidebar-footer">
-        <SidebarItem icon={<EyeOff size={18} />} text="Ver Portafolio" isCollapsed={isCollapsed} />
+        <SidebarItem 
+          icon={<EyeOff size={18} />} 
+          text="Ver Portafolio" 
+          isCollapsed={isCollapsed} 
+          onClick={() => navigate('/portfolio/ana-garcia')} 
+        />
         
         {/* El botón de colapsar cambia el ícono dependiendo del estado */}
         <div className="sidebar-item" onClick={toggleSidebar} style={{ justifyContent: isCollapsed ? 'center' : 'flex-start' }}>
@@ -46,7 +52,7 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
 }
 
 // Componente helper para mantener el código limpio
-function SidebarItem({ icon, text, isCollapsed, to, danger }: any) {
+function SidebarItem({ icon, text, isCollapsed, to, danger, onClick }: any) {
   const baseStyle = { 
     justifyContent: isCollapsed ? 'center' : 'flex-start', 
     padding: isCollapsed ? '0.75rem 0' : '0.75rem 1rem',
@@ -70,7 +76,8 @@ function SidebarItem({ icon, text, isCollapsed, to, danger }: any) {
   return (
     <div className={`sidebar-item ${danger ? 'danger' : ''}`} 
          style={baseStyle}
-         title={isCollapsed ? text : ''}>
+         title={isCollapsed ? text : ''}
+         onClick={onClick}>
       {icon}
       {!isCollapsed && <span>{text}</span>}
     </div>

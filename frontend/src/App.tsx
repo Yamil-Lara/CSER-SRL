@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import UserProfile from "./components/UserProfile";
 // Importamos la nueva Landing Page
 import { LandingPage } from "./pages/LandingPage"; 
+import PortfolioPublico from "./pages/PortfolioPublico";
 
 const App = (): JSX.Element => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -77,6 +78,9 @@ const App = (): JSX.Element => {
               </div>
             }
           />
+
+          {/* Ruta del Portafolio Público (HU-06) */}
+          <Route path="/portfolio/:username" element={<PortfolioPublico />} />
 
           {/* Ruta para manejar 404 - Página no encontrada */}
           <Route path="*" element={<div>Página no encontrada</div>} />
