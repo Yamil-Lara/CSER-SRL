@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Proyecto;
 use App\Models\Visibilidad;
 
 class PublicPortafolioController extends Controller
@@ -34,5 +35,17 @@ class PublicPortafolioController extends Controller
         return response()->json([
             'user' => $user
         ]);
+    }
+
+    public function showProject($username, $projectId)
+    {
+        $user = User::where('username', $username)->firstOrFail();
+
+        // CORRECCIÓN: Usar 'usuario_id' en lugar de 'user_id'
+        $proyecto = Proyecto::where('usuario_id', $user->id)
+                            ->where('id', $projectId)
+                            ->firstOrFail();
+        
+        return response()->json(['data' => $proyecto]);
     }
 }

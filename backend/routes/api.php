@@ -11,6 +11,7 @@ use App\Http\Controllers\SkillController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\ExploreController;
 use App\Http\Controllers\PublicPortafolioController;
+use App\Http\Controllers\ComentarioController;
 use Illuminate\Support\Facades\Route;
 
 // RUTAS PÚBLICAS
@@ -26,13 +27,25 @@ Route::get('/proyectos/{id}', [ProyectoController::class, 'show']);
 Route::get('/categorias', [CategoriaController::class, 'index']);
 Route::get('/usuarios/{id}', [AdminUserController::class, 'show']);
 Route::get('/portafolio/{username}', [PublicPortafolioController::class, 'show']);
+Route::get('/portfolio/{username}/proyectos/{projectId}', [PublicPortafolioController::class, 'showProject']);
+Route::get('/proyectos/{proyecto}/comentarios', [ComentarioController::class, 'indexByProyecto']);
+Route::get('/portafolio/{username}/proyectos/{projectId}', [PublicPortafolioController::class, 'showProject']);
 
 Route::prefix('explore')->group(function () {
     Route::get('/users', [ExploreController::class, 'users']);
+    Route::get('/projects', [ExploreController::class, 'projects']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/proyectos/{proyecto}/comentarios', [ComentarioController::class, 'store']);
+});
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::patch('/comentarios/{comentario}/approve', [ComentarioController::class, 'approve']);
 });
 
 // RUTAS PROTEGIDAS
 Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
+    Route::post('/proyectos/{proyecto}/comentarios', [ComentarioController::class, 'store']);
     
     Route::post('/logout', LogoutController::class);
     
