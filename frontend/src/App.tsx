@@ -12,6 +12,7 @@ import PortfolioPublico from "./pages/PortfolioPublico";
 import LinksPage from "./pages/LinksPage"; 
 import { VisibilitySettingsPage } from "./pages/VisibilitySettingsPage";
 import ExplorePage from "./pages/ExplorePage";
+import PublicProjectDetail from './pages/PublicProjectDetail';
 
 function App(): JSX.Element {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -88,6 +89,7 @@ function App(): JSX.Element {
 
           {/* Ruta del Portafolio Público (HU-06) */}
           <Route path="/portfolio/:username" element={<PortfolioPublico />} />
+          <Route path="/portfolio/:username/proyecto/:projectId" element={<PublicProjectDetail />} />
 
           {/* Ruta para manejar 404 - Página no encontrada */}
           <Route path="*" element={<div>Página no encontrada</div>} />
