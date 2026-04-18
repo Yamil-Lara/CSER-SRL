@@ -33,6 +33,11 @@ class User extends Authenticatable
         'linkedin',
         'github_perfil',
         'sitio_web',
+        'facebook',
+        'instagram',
+        'twitter',
+        'tiktok',
+        'threads',
         'universidad',
         'carrera',
         'nivel_estudios',
@@ -82,6 +87,11 @@ class User extends Authenticatable
         return $this->hasMany(Comentario::class, 'usuario_id');
     }
 
+    public function visibilidad()
+    {
+        return $this->hasOne(Visibilidad::class, 'user_id');
+    }
+
     public function scopeActivos(Builder $query): Builder
     {
         return $query->where('activo', true);
@@ -91,4 +101,12 @@ class User extends Authenticatable
     {
         return $query->where('estado', 'aprobado');
     }
+   
+
+    public function visibilidadConfig()
+   {
+    return $this->hasOne(ConfiguracionVisibilidad::class);
+    }
+
+
 }

@@ -4,3 +4,5 @@ dist/
 # Dependencies (managed at root level)
 node_modules/
 .vite/
+
+package-lock.json

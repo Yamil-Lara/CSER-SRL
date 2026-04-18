@@ -5,20 +5,30 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Proyecto\StoreProyectoRequest;
 use App\Http\Requests\Proyecto\UpdateProyectoRequest;
 use App\Models\Proyecto;
-use App\Traits\ApiResponseTrait;  // <-- AGREGAR
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 
 class ProyectoController extends Controller
 {
-    use ApiResponseTrait;  // <-- AGREGAR
+    use ApiResponseTrait;
 
-    public function index(): JsonResponse
+    // === TOMA LA VERSIÓN DE ÉL (Visibilidad) ===
+    public function index(\Illuminate\Http\Request $request): JsonResponse
     {
-        $proyectos = Proyecto::with(['categoria', 'usuario:id,nombre,email,foto'])
-            // ->where('estado', 'aprobado')  <-- ELIMINA O COMENTA ESTA LÍNEA
-            ->latest()
-            ->get();
+        $query = Proyecto::with(['categoria', 'usuario:id,nombre,email,foto']);
+
+        $user = auth('sanctum')->user();
+
+        if ($user) {
+            if ($user->rol !== 'admin') {
+                $query->where('usuario_id', $user->id);
+            }
+        } else {
+            $query->where('estado', 'aprobado');
+        }
+
+        $proyectos = $query->latest()->get();
         
         return $this->successResponse($proyectos, 'Proyectos obtenidos exitosamente');
     }
@@ -35,23 +45,44 @@ class ProyectoController extends Controller
 
         $proyecto = Proyecto::create($data);
 
-        return $this->successResponse(  // <-- CAMBIAR
+        return $this->successResponse(
             $proyecto->load(['categoria', 'usuario']),
             'Proyecto creado exitosamente',
             201
         );
     }
 
+    // === TOMA TU VERSIÓN (prueba_javi) pero MEJORADA ===
     public function show($id): JsonResponse
     {
-        $proyecto = Proyecto::with(['categoria', 'usuario:id,nombre,email,foto'])
-            ->find($id);
+        // PRIMERO: Verificar si el usuario está autenticado (de él)
+        $user = auth('sanctum')->user();
+        
+        // SEGUNDO: Construir consulta según el usuario (de él)
+        $query = Proyecto::with(['categoria', 'usuario:id,nombre,email,foto']);
+        
+        if (!$user) {
+            // Usuario anónimo: solo ve aprobados (de él)
+            $query->where('estado', 'aprobado');
+        } elseif ($user->rol !== 'admin') {
+            // Usuario normal: ve sus proyectos + los aprobados (MEZCLA)
+            $query->where(function($q) use ($user) {
+                $q->where('usuario_id', $user->id)
+                  ->orWhere('estado', 'aprobado');
+            });
+        }
+        // Admin: ve todo (sin filtro)
+        
+        $proyecto = $query->find($id);
 
         if (!$proyecto) {
-            return $this->errorResponse('Proyecto no encontrado', 404);  // <-- CAMBIAR
+            return $this->errorResponse('Proyecto no disponible', 404);
         }
 
-        return $this->successResponse($proyecto);  // <-- CAMBIAR
+        // TERCERO: Tu funcionalidad de vistas
+        $proyecto->increment('vistas');
+
+        return $this->successResponse($proyecto);
     }
 
     public function update(UpdateProyectoRequest $request, $id): JsonResponse
@@ -59,12 +90,12 @@ class ProyectoController extends Controller
         $proyecto = Proyecto::find($id);
 
         if (!$proyecto) {
-            return $this->errorResponse('Proyecto no encontrado', 404);  // <-- CAMBIAR
+            return $this->errorResponse('Proyecto no encontrado', 404);
         }
 
         $user = auth()->user();
         if ($user->id !== $proyecto->usuario_id && $user->rol !== 'admin') {
-            return $this->errorResponse('No tienes permiso para editar este proyecto', 403);  // <-- CAMBIAR
+            return $this->errorResponse('No tienes permiso para editar este proyecto', 403);
         }
 
         $data = $request->validated();
@@ -78,7 +109,7 @@ class ProyectoController extends Controller
 
         $proyecto->update($data);
 
-        return $this->successResponse(  // <-- CAMBIAR
+        return $this->successResponse(
             $proyecto->fresh(['categoria', 'usuario']),
             'Proyecto actualizado exitosamente'
         );
@@ -89,12 +120,12 @@ class ProyectoController extends Controller
         $proyecto = Proyecto::find($id);
 
         if (!$proyecto) {
-            return $this->errorResponse('Proyecto no encontrado', 404);  // <-- CAMBIAR
+            return $this->errorResponse('Proyecto no encontrado', 404);
         }
 
         $user = auth()->user();
         if ($user->id !== $proyecto->usuario_id && $user->rol !== 'admin') {
-            return $this->errorResponse('No tienes permiso para eliminar este proyecto', 403);  // <-- CAMBIAR
+            return $this->errorResponse('No tienes permiso para eliminar este proyecto', 403);
         }
 
         if ($proyecto->imagen && Storage::disk('public')->exists($proyecto->imagen)) {
@@ -103,6 +134,6 @@ class ProyectoController extends Controller
 
         $proyecto->delete();
 
-        return $this->successResponse(null, 'Proyecto eliminado exitosamente');  // <-- CAMBIAR
+        return $this->successResponse(null, 'Proyecto eliminado exitosamente');
     }
 }
