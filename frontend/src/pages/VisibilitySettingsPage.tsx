@@ -21,13 +21,17 @@ export function VisibilitySettingsPage() {
     experiencia_visible: true,
     redes_visible: true
   });
+  const [isFetchingData, setIsFetchingData] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     const fetchSettings = async () => {
       const token = localStorage.getItem('token');
-      if (!token) return;
+      if (!token) {
+        setIsFetchingData(false);
+        return;
+      }
       try {
         const res = await axios.get('http://127.0.0.1:8000/api/visibilidad', {
           headers: { Authorization: `Bearer ${token}` }
@@ -40,6 +44,8 @@ export function VisibilitySettingsPage() {
         });
       } catch (error) {
         console.error('Error cargando la visibilidad:', error);
+      } finally {
+        setIsFetchingData(false);
       }
     };
     fetchSettings();
@@ -134,6 +140,11 @@ export function VisibilitySettingsPage() {
         <Alert type="success" message={successMessage} className="mb-6" />
         }
 
+        {isFetchingData ? (
+          <div className="flex justify-center items-center h-64 text-sidebar/60">
+            Cargando clips de Visibilidad...
+          </div>
+        ) : (
         <Card className="shadow-sm mb-6">
           <div className="space-y-6">
             {sections.map((section) => {
@@ -176,6 +187,7 @@ export function VisibilitySettingsPage() {
             })}
           </div>
         </Card>
+        )}
 
       </div>
     </div>

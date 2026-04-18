@@ -23,23 +23,22 @@ export default function PortfolioPublico() {
           location: user.ubicacion || 'La Paz, Bolivia',
           email: user.email,
           socials: {
-            linkedin: user.linkedin || '#',
-            github: user.github_perfil || '#',
+            linkedin: user.linkedin || '',
+            github: user.github_perfil || '',
+            website: user.sitio_web || '',
+            facebook: user.facebook || '',
+            instagram: user.instagram || '',
+            twitter: user.twitter || '',
+            tiktok: user.tiktok || '',
+            threads: user.threads || '',
           },
           skills: {
-            // Ajustamos skills si vienen o usamos mock
             technical: user.skills && user.skills.length > 0
               ? user.skills.filter((s:any) => s.type === 'tecnica').map((s: any) => ({ name: s.name || s.nombre || 'Skill', percentage: s.level || s.porcentaje || s.nivel || 80 }))
-              : [
-                { name: 'Node.js', percentage: 100 },
-                { name: 'java', percentage: 39 }
-              ],
+              : [],
             soft: user.skills && user.skills.length > 0
               ? user.skills.filter((s:any) => s.type === 'blanda').map((s: any) => ({ name: s.name || s.nombre || 'Skill', percentage: s.level || s.porcentaje || s.nivel || 80 }))
-              : [
-                { name: 'Comunicacion', percentage: 70 },
-                { name: 'liderazgo', percentage: 57 }
-            ]
+              : []
           },
           experience: user.experiencias && user.experiencias.length > 0
             ? user.experiencias.map((e: any) => {
@@ -52,38 +51,16 @@ export default function PortfolioPublico() {
                   description: e.descripcion || e.description || '',
                 };
               })
-            : [
-                {
-                  title: 'Ingeniera de Sistemas',
-                  company: 'UMSS',
-                  date: 'jun 2010 - ago 2016',
-                  description: 'Desarrollador Full Stack crear aplicaciones web completas, trabajando tanto en el frontend (interfaz de usuario) como en el backend (lógica del servidor, API y bases de datos).'
-                },
-                {
-                  title: 'Analista de sistemas',
-                  company: 'Banco Mercantil Santa Cruz',
-                  date: 'sept 2017 - Presente',
-                  description: 'dando soporte de datos al sistema'
-                }
-            ],
+            : [],
           projects: user.proyectos && user.proyectos.length > 0
-            ? user.proyectos.map((p: any) => ({
+            ? user.proyectos
+                .filter((p: any) => p.estado === 'aprobado' || p.estado === 'Aprobado')
+                .map((p: any) => ({
                 title: p.titulo || p.nombre || 'Proyecto',
                 description: p.descripcion || p.description || '',
                 tags: p.tecnologias ? p.tecnologias.split(',') : ['react']
               }))
-            : [
-                {
-                  title: 'robot vionico',
-                  description: 'máquina avanzada que imita la estructura, movimiento y funciones de los seres vivos...',
-                  tags: ['react', 'node.js']
-                },
-                {
-                  title: 'aplicación de banca móvil',
-                  description: 'es una herramienta digital segura proporcionada por instituciones financiera...',
-                  tags: ['Swift (iOS)', 'Kotlin/Java (Android)', 'SQL']
-                }
-            ],
+            : [],
           visibilidad: user.visibilidad ? {
              proyectos_visible: Boolean(user.visibilidad.proyectos_visible),
              habilidades_visible: Boolean(user.visibilidad.habilidades_visible),
