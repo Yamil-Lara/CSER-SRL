@@ -29,6 +29,7 @@ Route::get('/portafolio/{username}', [PublicPortafolioController::class, 'show']
 
 Route::prefix('explore')->group(function () {
     Route::get('/users', [ExploreController::class, 'users']);
+    Route::get('/projects', [ExploreController::class, 'projects']);
 });
 
 // RUTAS PROTEGIDAS

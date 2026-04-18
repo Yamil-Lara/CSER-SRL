@@ -13,7 +13,7 @@ import LinksPage from "./pages/LinksPage";
 import { VisibilitySettingsPage } from "./pages/VisibilitySettingsPage";
 import ExplorePage from "./pages/ExplorePage";
 
-const App = (): JSX.Element => {
+function App(): JSX.Element {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
@@ -60,6 +60,9 @@ const App = (): JSX.Element => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/explore" element={<ExplorePage />} />
 
+          {/* Ruta pública: Explorar portafolios y proyectos */}
+          <Route path="/explorar" element={<ExplorePage />} />
+
           {/* Redirección del login temporalmente al dashboard */}
           <Route path="/login" element={<Navigate to="/dashboard/perfil" />} />
 
@@ -92,6 +95,6 @@ const App = (): JSX.Element => {
       </AuthProvider>
     </BrowserRouter>
   );
-};
+}
 
 export default App;
