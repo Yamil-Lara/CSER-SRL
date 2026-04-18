@@ -74,8 +74,19 @@ class ExploreRepository
             ->where('estado', 'aprobado')
             ->with(['categoria:id,nombre,icono,color', 'usuario:id,nombre,username,foto']);
 
+        // 1. Filtro de categoría (INDEPENDIENTE)
         if (!empty($filters['categoria_id'])) {
             $query->where('categoria_id', $filters['categoria_id']);
+        } // <-- Aquí se cierra correctamente
+
+        // 2. Filtro de búsqueda por texto (INDEPENDIENTE)
+        if (!empty($filters['search'])) {
+            $term = $filters['search'];
+            $query->where(function ($q) use ($term) {
+                $q->where('titulo', 'LIKE', "%{$term}%")
+                  ->orWhere('descripcion', 'LIKE', "%{$term}%")
+                  ->orWhere('tecnologias', 'LIKE', "%{$term}%");
+            });
         }
 
         return $query->latest('id')->paginate($perPage);

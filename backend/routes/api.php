@@ -61,4 +61,11 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
     Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::apiResource('usuarios', AdminUserController::class);
     });
+
+    // En la sección de RUTAS PÚBLICAS (fuera del middleware auth:sanctum)
+    Route::get('/proyectos/{proyectoId}/comentarios', [\App\Http\Controllers\ComentarioController::class, 'index']);
+
+    // En la sección de RUTAS PROTEGIDAS (dentro del middleware auth:sanctum)
+    Route::post('/proyectos/{proyectoId}/comentarios', [\App\Http\Controllers\ComentarioController::class, 'store']);
+
 });

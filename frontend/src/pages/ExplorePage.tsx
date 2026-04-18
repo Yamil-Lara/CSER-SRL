@@ -61,7 +61,7 @@ const ExplorePage: React.FC = () => {
       const filterValue = filter === "Todos" ? undefined : filter.toLowerCase();
       searchUsers({ search: searchTerm, filter: filterValue });
     } else {
-      searchProjects({ categoria_id: selectedCategory || undefined, page: 1, per_page: 12 });
+      searchProjects({ search: searchTerm, categoria_id: selectedCategory || undefined, page: 1, per_page: 12 });
     }
   };
 
