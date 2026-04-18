@@ -8,10 +8,12 @@ import ProjectsPage from "./pages/ProjectsPage";
 import SkillsPage from "./pages/SkillsPage";
 import UserProfile from "./components/UserProfile";
 import { LandingPage } from "./pages/LandingPage"; 
+import PortfolioPublico from "./pages/PortfolioPublico";
 import LinksPage from "./pages/LinksPage"; 
 import { VisibilitySettingsPage } from "./pages/VisibilitySettingsPage";
+import ExplorePage from "./pages/ExplorePage";
 
-const App = (): JSX.Element => {
+function App(): JSX.Element {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
@@ -56,6 +58,10 @@ const App = (): JSX.Element => {
         <Routes>
           {/* Ruta principal: ahora carga la Landing Page */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/explore" element={<ExplorePage />} />
+
+          {/* Ruta pública: Explorar portafolios y proyectos */}
+          <Route path="/explorar" element={<ExplorePage />} />
 
           {/* Redirección del login temporalmente al dashboard */}
           <Route path="/login" element={<Navigate to="/dashboard/perfil" />} />
@@ -80,12 +86,15 @@ const App = (): JSX.Element => {
             }
           />
 
+          {/* Ruta del Portafolio Público (HU-06) */}
+          <Route path="/portfolio/:username" element={<PortfolioPublico />} />
+
           {/* Ruta para manejar 404 - Página no encontrada */}
           <Route path="*" element={<div>Página no encontrada</div>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
   );
-};
+}
 
 export default App;

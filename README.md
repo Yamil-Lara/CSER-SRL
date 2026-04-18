@@ -15,7 +15,7 @@ Estructura oficial con **Laravel 10** y **React 17**.
 DB_DATABASE=cser_srl  <-- Asegurarse de que este nombre sea exacto
 5. Configurar la DB en el `.env` y correr: `php artisan migrate`
 6. Iniciar servidor: `php artisan serve`
-
+php artisan migrate:fresh --seed
 ## Configuración del Frontend
 1. Entrar a la carpeta: `cd frontend`
 2. Instalar dependencias: `npm install --legacy-peer-deps`

@@ -59,4 +59,40 @@ class ExploreService
 
         return 'general';
     }
+
+    public function searchProjects(array $filters): LengthAwarePaginator
+    {
+        $perPage = isset($filters['per_page']) ? (int) $filters['per_page'] : 12;
+
+        $paginator = $this->exploreRepository->searchProjects($filters, $perPage);
+
+        $paginator->getCollection()->transform(function ($proyecto) {
+            return $this->formatProjectCard($proyecto);
+        });
+
+        return $paginator;
+    }
+
+    private function formatProjectCard($proyecto): array
+    {
+        return [
+            'id' => $proyecto->id,
+            'titulo' => $proyecto->titulo,
+            'descripcion' => $proyecto->descripcion,
+            'tecnologias' => $proyecto->tecnologias,
+            'imagen' => $proyecto->imagen ? asset('storage/' . $proyecto->imagen) : null,
+            'categoria' => $proyecto->categoria ? [
+                'id' => $proyecto->categoria->id,
+                'nombre' => $proyecto->categoria->nombre,
+                'icono' => $proyecto->categoria->icono,
+                'color' => $proyecto->categoria->color,
+            ] : null,
+            'autor' => $proyecto->usuario ? [
+                'id' => $proyecto->usuario->id,
+                'nombre' => $proyecto->usuario->nombre,
+                'username' => $proyecto->usuario->username,
+                'foto' => $proyecto->usuario->foto ? asset('storage/' . $proyecto->usuario->foto) : null,
+            ] : null,
+        ];
+    }
 }

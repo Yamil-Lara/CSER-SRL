@@ -2,53 +2,47 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ConfiguracionVisibilidad;
-use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
+use App\Models\Visibilidad;
+use Illuminate\Support\Facades\Auth;
 
 class VisibilidadController extends Controller
 {
-    use ApiResponseTrait;
-
-    /**
-     * Obtener la configuración de visibilidad del usuario autenticado
-     */
-    public function show(Request $request)
+    public function show()
     {
-        $usuario = $request->user();
-        
-        $config = ConfiguracionVisibilidad::where('usuario_id', $usuario->id)->first();
-        
-        // Si no existe configuración, devolver valores por defecto
-        if (!$config) {
-            return $this->successResponse([
-                'mostrar_proyectos' => true,
-                'mostrar_habilidades' => true,
-                'mostrar_experiencia' => true,
-                'mostrar_redes' => true,
-            ]);
-        }
-        
-        return $this->successResponse($config);
+        $user = Auth::user();
+        $visibilidad = Visibilidad::firstOrCreate(
+            ['user_id' => $user->id],
+            [
+                'proyectos_visible' => true,
+                'habilidades_visible' => true,
+                'experiencia_visible' => true,
+                'redes_visible' => true,
+            ]
+        );
+
+        return response()->json($visibilidad);
     }
 
-    /**
-     * Guardar la configuración de visibilidad del usuario autenticado
-     */
     public function update(Request $request)
     {
+        $user = Auth::user();
+
         $validated = $request->validate([
-            'mostrar_proyectos' => 'sometimes|boolean',
-            'mostrar_habilidades' => 'sometimes|boolean',
-            'mostrar_experiencia' => 'sometimes|boolean',
-            'mostrar_redes' => 'sometimes|boolean',
+            'proyectos_visible' => 'boolean',
+            'habilidades_visible' => 'boolean',
+            'experiencia_visible' => 'boolean',
+            'redes_visible' => 'boolean',
         ]);
 
-        $config = ConfiguracionVisibilidad::updateOrCreate(
-            ['usuario_id' => $request->user()->id],
+        $visibilidad = Visibilidad::updateOrCreate(
+            ['user_id' => $user->id],
             $validated
         );
 
-        return $this->successResponse($config, 'Configuración guardada correctamente');
+        return response()->json([
+            'message' => 'Configuración guardada correctamente',
+            'visibilidad' => $visibilidad
+        ]);
     }
 }

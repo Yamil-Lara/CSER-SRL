@@ -22,6 +22,11 @@ class UpdateProfileRequest extends FormRequest
             'ubicacion' => 'nullable|string|max:255',
             'linkedin' => 'nullable|url|max:255',
             'github_perfil' => 'nullable|url|max:255',
+            'facebook' => 'nullable|url|max:255',
+            'instagram' => 'nullable|url|max:255',
+            'twitter' => 'nullable|url|max:255',
+            'tiktok' => 'nullable|url|max:255',
+            'threads' => 'nullable|url|max:255',
             'sitio_web' => 'nullable|url|max:255',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // 2MB max
         ];
@@ -35,6 +40,11 @@ class UpdateProfileRequest extends FormRequest
             'biografia.max' => 'La biografía no puede superar los 1000 caracteres',
             'linkedin.url' => 'El enlace de LinkedIn debe ser una URL válida',
             'github_perfil.url' => 'El enlace de GitHub debe ser una URL válida',
+            'facebook.url' => 'El enlace de Facebook debe ser una URL válida',
+            'instagram.url' => 'El enlace de Instagram debe ser una URL válida',
+            'twitter.url' => 'El enlace de X (Twitter) debe ser una URL válida',
+            'tiktok.url' => 'El enlace de TikTok debe ser una URL válida',
+            'threads.url' => 'El enlace de Threads debe ser una URL válida',
             'sitio_web.url' => 'El sitio web debe ser una URL válida',
             'foto.image' => 'El archivo debe ser una imagen',
             'foto.mimes' => 'La foto debe ser de tipo: jpeg, png, jpg',
@@ -45,7 +55,10 @@ class UpdateProfileRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         // Sanitizar URLs
-        $urlFields = ['linkedin', 'github_perfil', 'sitio_web'];
+        $urlFields = [
+            'linkedin', 'github_perfil', 'sitio_web', 
+            'facebook', 'instagram', 'twitter', 'tiktok', 'threads'
+        ];
         
         foreach ($urlFields as $field) {
             if ($this->$field) {
