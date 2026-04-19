@@ -13,10 +13,20 @@ export default function PortfolioPublico() {
     axios.get(`http://localhost:8000/api/portafolio/${username}`)
       .then(res => {
         const user = res.data.user;
+
+        const buildUrl = (path: string | null | undefined): string | undefined => {
+          if (!path) return undefined;
+          if (path.startsWith('http')) return path;
+          if (path.startsWith('/storage')) return `http://127.0.0.1:8000${path}`;
+          if (path.startsWith('storage')) return `http://127.0.0.1:8000/${path}`;
+          const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+          return `http://127.0.0.1:8000/storage/${cleanPath}`;
+        };
         
         // Mapeo seguro de backend a la interfaz
         const mappedData: PortfolioData = {
           name: user.nombre,
+          photo: buildUrl(user.foto),
           profession: user.profesion || 'Desarrollador Full Stack',
           technologies: user.especialidad || 'React & Node.js',
           bio: user.biografia || 'Apasionada por crear experiencias web increíbles',

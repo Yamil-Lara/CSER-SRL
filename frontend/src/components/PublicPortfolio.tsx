@@ -19,6 +19,7 @@ const ThreadsIcon = FaThreads as React.ElementType;
 
 export interface PortfolioData {
   name: string;
+  photo?: string;
   profession: string;
   technologies: string;
   bio: string;
@@ -138,9 +139,15 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
             
             {/* 1. Perfil Card */}
             <Card className="card flex flex-col sm:flex-row gap-6 items-start shadow-sm">
-              <div className="w-24 h-24 sm:w-32 sm:h-32 shrink-0 bg-primary/20 text-primary rounded-full flex items-center justify-center text-4xl sm:text-5xl font-bold">
-                {getInitial(data.name)}
-              </div>
+              {data.photo ? (
+                <div className="w-24 h-24 sm:w-32 sm:h-32 shrink-0 rounded-full overflow-hidden border-4 border-white shadow-sm">
+                  <img src={data.photo} alt={data.name} className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div className="w-24 h-24 sm:w-32 sm:h-32 shrink-0 bg-primary/20 text-primary rounded-full flex items-center justify-center text-4xl sm:text-5xl font-bold shadow-sm">
+                  {getInitial(data.name)}
+                </div>
+              )}
               
               <div className="flex flex-col w-full">
                 <h1 className="text-2xl sm:text-3xl font-bold mb-1">{data.name}</h1>
