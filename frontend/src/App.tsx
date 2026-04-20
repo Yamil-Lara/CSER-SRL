@@ -10,6 +10,7 @@ import UserProfile from "./components/UserProfile";
 // Importamos la nueva Landing Page
 import { LandingPage } from "./pages/LandingPage";
 import ExplorePage from "./pages/ExplorePage";
+import ProjectDetailPage from "./pages/ProjectDetailPage";
 
 function App(): JSX.Element {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -60,7 +61,7 @@ function App(): JSX.Element {
 
           {/* Ruta pública: Explorar portafolios y proyectos */}
           <Route path="/explorar" element={<ExplorePage />} />
-
+          <Route path="/proyecto/:id" element={<ProjectDetailPage />} />
           {/* Redirección del login temporalmente al dashboard */}
           <Route path="/login" element={<Navigate to="/dashboard/experiencia" />} />
 
