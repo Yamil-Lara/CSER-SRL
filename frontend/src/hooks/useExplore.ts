@@ -84,7 +84,7 @@ export const useExplore = () => {
     }
   };
 
-  const searchProjects = async (params: { categoria_id?: number; page?: number; per_page?: number }) => {
+  const searchProjects = async (params: { search?: string; categoria_id?: number; page?: number; per_page?: number }) => {
     setLoading(true);
     setError(null);
     try {

@@ -14,6 +14,7 @@ class ExploreProjectsRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'search' => 'nullable|string|max:255',
             'categoria_id' => 'nullable|integer|exists:categorias,id',
             'page' => 'nullable|integer|min:1',
             'per_page' => 'nullable|integer|min:1|max:12',
