@@ -9,12 +9,23 @@ export default function PortfolioPublico() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // LLamada Real de Axios (HU-06 x HU-08)
-    axios.get(`http://localhost:8000/api/portafolio/${username}`)
-      .then(res => {
-        const user = res.data.user;
+    // LLamar a las múltiples rutas que el nuevo backend definió
+    const fetchData = async () => {
+      try {
+        const [userRes, projectsRes, experienceRes, skillsRes] = await Promise.all([
+          axios.get(`http://localhost:8000/api/portafolio/${username}`),
+          axios.get(`http://localhost:8000/api/portafolio/${username}/proyectos`),
+          axios.get(`http://localhost:8000/api/portafolio/${username}/experiencias`),
+          axios.get(`http://localhost:8000/api/portafolio/${username}/habilidades`)
+        ]);
+
+        // Adaptado al ApiResponseTrait (res.data.data)
+        const user = userRes.data.data.usuario;
+        const redes = userRes.data.data.redes_sociales || {};
+        const proyectos = projectsRes.data.data || [];
+        const experiencias = experienceRes.data.data || [];
+        const habilidades = skillsRes.data.data || [];
         
-        // Mapeo seguro de backend a la interfaz
         const mappedData: PortfolioData = {
           name: user.nombre,
           profession: user.profesion || 'Desarrollador Full Stack',
@@ -23,93 +34,46 @@ export default function PortfolioPublico() {
           location: user.ubicacion || 'La Paz, Bolivia',
           email: user.email,
           socials: {
-            linkedin: user.linkedin,
-            github: user.github_perfil,
-            sitio_web: user.sitio_web,
-            twitter: user.twitter,
-            facebook: user.facebook,
-            instagram: user.instagram,
+            linkedin: redes.linkedin,
+            github: redes.github,
+            sitio_web: redes.sitio_web,
+            facebook: redes.facebook,
+            instagram: redes.instagram,
+            twitter: redes.twitter,
+            tiktok: redes.tiktok,
+            threads: redes.threads,
           },
           skills: {
-            // Ajustamos skills si vienen o usamos mock
-            technical: user.skills && user.skills.length > 0
-              ? user.skills.filter((s:any) => s.type === 'tecnica').map((s: any) => ({ name: s.name || s.nombre || 'Skill', percentage: s.level || s.porcentaje || s.nivel || 80 }))
-              : [
-                { name: 'Node.js', percentage: 100 },
-                { name: 'java', percentage: 39 }
-              ],
-            soft: user.skills && user.skills.length > 0
-              ? user.skills.filter((s:any) => s.type === 'blanda').map((s: any) => ({ name: s.name || s.nombre || 'Skill', percentage: s.level || s.porcentaje || s.nivel || 80 }))
-              : [
-                { name: 'Comunicacion', percentage: 70 },
-                { name: 'liderazgo', percentage: 57 }
-            ]
+            technical: habilidades.filter((s:any) => s.type === 'tecnica').map((s: any) => ({ name: s.name, percentage: s.level })),
+            soft: habilidades.filter((s:any) => s.type === 'blanda').map((s: any) => ({ name: s.name, percentage: s.level }))
           },
-          experience: user.experiencias && user.experiencias.length > 0
-            ? user.experiencias.map((e: any) => {
-                const fInicio = e.fecha_inicio ? e.fecha_inicio.split('T')[0] : '';
-                const fFin = e.fecha_fin ? e.fecha_fin.split('T')[0] : 'Presente';
-                return {
-                  title: e.cargo_titulo || e.cargo || e.title || 'Cargo',
-                  company: e.institucion_empresa || e.empresa || e.company || 'Empresa',
-                  date: `${fInicio} - ${fFin}`,
-                  description: e.descripcion || e.description || '',
-                };
-              })
-            : [
-                {
-                  title: 'Ingeniera de Sistemas',
-                  company: 'UMSS',
-                  date: 'jun 2010 - ago 2016',
-                  description: 'Desarrollador Full Stack crear aplicaciones web completas, trabajando tanto en el frontend (interfaz de usuario) como en el backend (lógica del servidor, API y bases de datos).'
-                },
-                {
-                  title: 'Analista de sistemas',
-                  company: 'Banco Mercantil Santa Cruz',
-                  date: 'sept 2017 - Presente',
-                  description: 'dando soporte de datos al sistema'
-                }
-            ],
-          projects: user.proyectos && user.proyectos.length > 0
-            ? user.proyectos.map((p: any) => ({
-                title: p.titulo || p.nombre || 'Proyecto',
-                description: p.descripcion || p.description || '',
-                tags: p.tecnologias ? p.tecnologias.split(',') : ['react']
-              }))
-            : [
-                {
-                  title: 'robot vionico',
-                  description: 'máquina avanzada que imita la estructura, movimiento y funciones de los seres vivos...',
-                  tags: ['react', 'node.js']
-                },
-                {
-                  title: 'aplicación de banca móvil',
-                  description: 'es una herramienta digital segura proporcionada por instituciones financiera...',
-                  tags: ['Swift (iOS)', 'Kotlin/Java (Android)', 'SQL']
-                }
-            ],
-          visibilidad: user.visibilidad ? {
-             proyectos_visible: Boolean(user.visibilidad.proyectos_visible),
-             habilidades_visible: Boolean(user.visibilidad.habilidades_visible),
-             experiencia_visible: Boolean(user.visibilidad.experiencia_visible),
-             redes_visible: Boolean(user.visibilidad.redes_visible)
-          } : {
-             proyectos_visible: true,
-             habilidades_visible: true,
-             experiencia_visible: true,
-             redes_visible: true
+          experience: experiencias.map((e: any) => ({
+                title: e.cargo_titulo || 'Cargo',
+                company: e.institucion_empresa || 'Empresa',
+                date: `${e.fecha_inicio?.split('T')[0]} - ${e.fecha_fin ? e.fecha_fin.split('T')[0] : 'Presente'}`,
+                description: e.descripcion || '',
+          })),
+          projects: proyectos.map((p: any) => ({
+                title: p.titulo,
+                description: p.descripcion,
+                tags: p.tecnologias ? p.tecnologias.split(',') : []
+          })),
+          // Por defecto todo visible ya que el backend no lo incluyó en la respuesta del nuevo endpoint
+          visibilidad: {
+             proyectos_visible: true, habilidades_visible: true,
+             experiencia_visible: true, redes_visible: true
           }
         };
 
         setData(mappedData);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error('Error fetching portfolio:', err);
-      })
-      .finally(() => {
+      } finally {
         setLoading(false);
-      });
+      }
+    };
 
+    fetchData();
   }, [username]);
 
   if (loading) {
