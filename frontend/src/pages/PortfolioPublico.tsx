@@ -23,8 +23,12 @@ export default function PortfolioPublico() {
           location: user.ubicacion || 'La Paz, Bolivia',
           email: user.email,
           socials: {
-            linkedin: user.linkedin || '#',
-            github: user.github_perfil || '#',
+            linkedin: user.linkedin,
+            github: user.github_perfil,
+            sitio_web: user.sitio_web,
+            twitter: user.twitter,
+            facebook: user.facebook,
+            instagram: user.instagram,
           },
           skills: {
             // Ajustamos skills si vienen o usamos mock

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 import ProjectModal from '../components/ProjectModal';
 import ProjectCard from '../components/ProjectCard';
-import api from '../utils/api'; // Usamos tu instancia configurada de axios
+import ProjectCommentsManager from '../components/ProjectCommentsManager'; // IMPORTACIÓN NUEVA
+import api from '../utils/api'; 
 
 export interface Project {
   id: string;
@@ -27,6 +28,9 @@ export default function ProjectsPage() {
   
   // Estado para saber qué proyecto estamos editando
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  
+  // NUEVO ESTADO: Saber de qué proyecto estamos viendo los comentarios
+  const [commentsProject, setCommentsProject] = useState<Project | null>(null);
 
   useEffect(() => {
     fetchProjects();
@@ -66,24 +70,16 @@ export default function ProjectsPage() {
   const handleSaveProject = async (projectData: any) => {
     try {
       if (editingProject) {
-        // ACTUALIZAR (PUT)
         await api.put(`/proyectos/${editingProject.id}`, projectData);
       } else {
-        // CREAR (POST)
         await api.post('/proyectos', projectData);
       }
-      
-      // Si todo sale bien, cerramos el modal y recargamos
       closeModal();
       fetchProjects();
-      
     } catch (error: any) {
       console.error('Error completo:', error);
-      
-      // Extraemos el error de Laravel para mostrarlo en pantalla
       let errorMsg = "Ocurrió un error desconocido.";
       if (error.response && error.response.data) {
-        // Si Laravel envía errores de validación (422)
         if (error.response.data.errors) {
           const firstError = Object.values(error.response.data.errors)[0];
           errorMsg = Array.isArray(firstError) ? firstError[0] : "Revisa los campos del formulario";
@@ -91,7 +87,6 @@ export default function ProjectsPage() {
           errorMsg = error.response.data.message;
         }
       }
-      // Mostramos una alerta en pantalla para saber qué falló
       alert("Error al guardar: " + errorMsg);
     }
   };
@@ -117,44 +112,80 @@ export default function ProjectsPage() {
     setIsModalOpen(false);
   };
 
+  // NUEVO: Función para abrir el modal de comentarios
+  const openCommentsManager = (project: Project) => {
+    setCommentsProject(project);
+  };
+
   return (
-    <div>
-      <header className="page-header">
+    <div className="relative">
+      <header className="page-header flex justify-between items-center mb-8">
         <div>
-          <h1 className="page-title">Mis Proyectos</h1>
-          <p className="page-subtitle">Gestiona tu portafolio de proyectos de software</p>
+          <h1 className="text-3xl font-bold text-slate-900">Mis Proyectos</h1>
+          <p className="text-slate-500 mt-1">Gestiona tu portafolio de proyectos de software</p>
         </div>
-        <button className="btn-primary" onClick={() => { setEditingProject(null); setIsModalOpen(true); }}>
+        <button 
+          className="flex items-center gap-2 bg-[#3B82F6] hover:bg-blue-600 text-white px-4 py-2 rounded-xl font-bold transition-colors shadow-sm" 
+          onClick={() => { setEditingProject(null); setIsModalOpen(true); }}
+        >
           <Plus size={18} />
           Nuevo Proyecto
         </button>
       </header>
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-64 text-gray-500">
+        <div className="flex justify-center items-center h-64 text-gray-500 font-medium">
           Cargando Proyectos...
         </div>
       ) : projects.length === 0 ? (
         <EmptyState onOpenModal={() => { setEditingProject(null); setIsModalOpen(true); }} />
       ) : (
-        <div className="projects-grid">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map(project => (
              <ProjectCard 
                key={project.id} 
                project={project} 
                onDelete={handleDeleteProject}
-               onEdit={openEditModal} // Conectamos el botón de editar
+               onEdit={openEditModal} 
+               onManageComments={openCommentsManager} // Le pasamos la función al card
              />
           ))}
         </div>
       )}
 
+      {/* Modal para Crear/Editar Proyecto original */}
       {isModalOpen && (
         <ProjectModal 
           onClose={closeModal} 
           onSave={handleSaveProject}
           projectToEdit={editingProject} 
         />
+      )}
+
+      {/* NUEVO: Modal Flotante para el Gestor de Comentarios */}
+      {commentsProject && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white rounded-[24px] w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            {/* Header del Modal */}
+            <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-white">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">Comentarios del Proyecto</h2>
+                <p className="text-sm text-slate-500 font-medium">{commentsProject.title}</p>
+              </div>
+              <button 
+                onClick={() => setCommentsProject(null)} 
+                className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-full transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            
+            {/* Cuerpo del Modal (Donde se inyecta el Gestor) */}
+            <div className="overflow-y-auto p-6 bg-slate-50 flex-1">
+              <ProjectCommentsManager proyectoId={commentsProject.id} />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -154,6 +154,24 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
                     <a href={data.socials.github} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
                       <FiGithub size={20} />
                     </a>
+                    <a href={data.socials.sitio_web} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
+                      <FiLinkedin size={20} />
+                    </a>
+                    <a href={data.socials.twitter} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
+                      <FiGithub size={20} />
+                    </a>
+                    <a href={data.socials.linkedin} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
+                      <FiLinkedin size={20} />
+                    </a>
+                    <a href={data.socials.github} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
+                      <FiGithub size={20} />
+                    </a>
+                    <a href={data.socials.sitio_web} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
+                      <FiLinkedin size={20} />
+                    </a>
+                    <a href={data.socials.twitter} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
+                      <FiGithub size={20} />
+                    </a>
                   </div>
                 )}
               </div>
