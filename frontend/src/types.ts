@@ -9,9 +9,14 @@ export interface ProfileData {
   telefono?: string;
   universidad?: string;
   carrera?: string;
-  linkedin: string;
-  github_perfil: string;
-  sitio_web: string;
+  linkedin?: string | null;
+  github?: string | null;
+  website?: string | null;
+  facebook?: string | null;
+  instagram?: string | null
+  threads?: string | null;
+  tiktok?: string | null;
+  twitter?: string | null;
   password?: string;
   image_url?: string | null;
 }

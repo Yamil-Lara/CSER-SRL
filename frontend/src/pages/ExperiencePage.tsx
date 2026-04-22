@@ -52,7 +52,7 @@ export function ExperiencePage() {
           cargo_titulo: exp.cargo_titulo,
           institucion_empresa: exp.institucion_empresa,
           descripcion: exp.descripcion || '',
-          fecha_inicio: exp.fecha_inicio.split('T')[0], // Limpia hora en caso de timestamp DB
+          fecha_inicio: exp.fecha_inicio.split('T')[0],
           fecha_fin: exp.fecha_fin ? exp.fecha_fin.split('T')[0] : '',
           actual: exp.actual
         });
@@ -130,134 +130,132 @@ export function ExperiencePage() {
   };
 
   return (
-    <div className="page-body">
-      <div className="max-w-5xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-sidebar mb-2">Mi Experiencia</h1>
-            <p className="text-sidebar/60">Gestiona tu trayectoria laboral y académica</p>
+    <div>
+      <header className="page-header">
+        <div>
+          <h1 className="page-title">Mi Experiencia</h1>
+          <p className="page-subtitle">Gestiona tu trayectoria laboral y académica</p>
+        </div>
+        <button className="btn-primary" onClick={() => handleOpenModal()}>
+          <Plus size={18} />
+          Nueva Experiencia
+        </button>
+      </header>
+
+      {successMessage && <Alert type="success" message={successMessage} className="mb-6" />}
+      {errorMessage && <Alert type="error" message={errorMessage} className="mb-6" />}
+
+      {/* Experiencia Laboral */}
+      <Card className="mb-8">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <Briefcase className="w-6 h-6 text-primary" />
           </div>
-          <Button variant="primary" onClick={() => handleOpenModal()} className="gap-2">
-            <Plus className="w-5 h-5" />
-            Nueva Experiencia
-          </Button>
+          <h2 className="text-xl font-bold text-sidebar">Experiencia Laboral</h2>
         </div>
 
-        {successMessage && <Alert type="success" message={successMessage} className="mb-6" />}
-        {errorMessage && <Alert type="error" message={errorMessage} className="mb-6" />}
-
-        {/* Experiencia Laboral */}
-        <Card className="mb-8">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Briefcase className="w-6 h-6 text-primary" />
+        {loading ? (
+           <p className="text-center py-6 text-sidebar/60">Cargando Experiencia Laboral...</p>
+        ) : laboralExperiences.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
+              <Briefcase className="w-8 h-8 text-sidebar/30" />
             </div>
-            <h2 className="text-xl font-bold text-sidebar">Experiencia Laboral</h2>
+            <p className="text-sidebar/60 mb-4">No tienes experiencia laboral registrada</p>
+            <Button variant="outline" size="sm" onClick={() => handleOpenModal()} className="gap-2">
+              <Plus className="w-4 h-4" />
+              Agregar Primera Experiencia
+            </Button>
           </div>
-
-          {loading ? (
-             <p className="text-center py-6 text-sidebar/60">Cargando datos...</p>
-          ) : laboralExperiences.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-                <Briefcase className="w-8 h-8 text-sidebar/30" />
-              </div>
-              <p className="text-sidebar/60 mb-4">No tienes experiencia laboral registrada</p>
-              <Button variant="outline" size="sm" onClick={() => handleOpenModal()} className="gap-2">
-                <Plus className="w-4 h-4" />
-                Agregar Primera Experiencia
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {laboralExperiences.map((exp) => (
-                <div key={exp.id} className="relative pl-8 pb-6 border-l-2 border-primary/20 last:border-l-0 last:pb-0">
-                  <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-primary border-4 border-background" />
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-sidebar">{exp.cargo_titulo}</h3>
-                      <div className="flex items-center gap-2 text-sidebar/70 mt-1">
-                        <Building className="w-4 h-4" />
-                        <span>{exp.institucion_empresa}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {exp.actual && <Badge variant="success" size="sm">Actual</Badge>}
-                      <Button variant="ghost" size="sm" onClick={() => handleOpenModal(exp.id)}>
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleDelete(exp.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+        ) : (
+          <div className="space-y-6">
+            {laboralExperiences.map((exp) => (
+              <div key={exp.id} className="relative pl-8 pb-6 border-l-2 border-primary/20 last:border-l-0 last:pb-0">
+                <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-primary border-4 border-background" />
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-sidebar">{exp.cargo_titulo}</h3>
+                    <div className="flex items-center gap-2 text-sidebar/70 mt-1">
+                      <Building className="w-4 h-4" />
+                      <span>{exp.institucion_empresa}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-sidebar/60 mb-3">
-                    <Calendar className="w-4 h-4" />
-                    <span>{formatDate(exp.fecha_inicio)} - {exp.actual ? 'Presente' : formatDate(exp.fecha_fin!)}</span>
+                  <div className="flex items-center gap-2">
+                    {exp.actual && <Badge variant="success" size="sm">Actual</Badge>}
+                    <Button variant="ghost" size="sm" onClick={() => handleOpenModal(exp.id)}>
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleDelete(exp.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
-                  {exp.descripcion && <p className="text-sm text-sidebar/70">{exp.descripcion}</p>}
                 </div>
-              ))}
-            </div>
-          )}
-        </Card>
-
-        {/* Formación Académica */}
-        <Card>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-lg bg-accent/10">
-              <Briefcase className="w-6 h-6 text-accent" />
-            </div>
-            <h2 className="text-xl font-bold text-sidebar">Formación Académica</h2>
+                <div className="flex items-center gap-2 text-sm text-sidebar/60 mb-3">
+                  <Calendar className="w-4 h-4" />
+                  <span>{formatDate(exp.fecha_inicio)} - {exp.actual ? 'Presente' : formatDate(exp.fecha_fin!)}</span>
+                </div>
+                {exp.descripcion && <p className="text-sm text-sidebar/70">{exp.descripcion}</p>}
+              </div>
+            ))}
           </div>
+        )}
+      </Card>
 
-          {loading ? (
-             <p className="text-center py-6 text-sidebar/60">Cargando datos...</p>
-          ) : academicExperiences.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-                <Briefcase className="w-8 h-8 text-sidebar/30" />
-              </div>
-              <p className="text-sidebar/60 mb-4">No tienes formación académica registrada</p>
-              <Button variant="outline" size="sm" onClick={() => handleOpenModal()} className="gap-2">
-                <Plus className="w-4 h-4" />
-                Agregar Primera Formación
-              </Button>
+      {/* Formación Académica */}
+      <Card>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 rounded-lg bg-accent/10">
+            <Briefcase className="w-6 h-6 text-accent" />
+          </div>
+          <h2 className="text-xl font-bold text-sidebar">Formación Académica</h2>
+        </div>
+
+        {loading ? (
+           <p className="text-center py-6 text-sidebar/60">Cargando Formación Académica...</p>
+        ) : academicExperiences.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
+              <Briefcase className="w-8 h-8 text-sidebar/30" />
             </div>
-          ) : (
-            <div className="space-y-6">
-              {academicExperiences.map((exp) => (
-                <div key={exp.id} className="relative pl-8 pb-6 border-l-2 border-accent/20 last:border-l-0 last:pb-0">
-                  <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-accent border-4 border-background" />
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-sidebar">{exp.cargo_titulo}</h3>
-                      <div className="flex items-center gap-2 text-sidebar/70 mt-1">
-                        <Building className="w-4 h-4" />
-                        <span>{exp.institucion_empresa}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {exp.actual === 1 && <Badge variant="success" size="sm">En curso</Badge>}
-                      <Button variant="ghost" size="sm" onClick={() => handleOpenModal(exp.id)}>
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleDelete(exp.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+            <p className="text-sidebar/60 mb-4">No tienes formación académica registrada</p>
+            <Button variant="outline" size="sm" onClick={() => handleOpenModal()} className="gap-2">
+              <Plus className="w-4 h-4" />
+              Agregar Primera Formación
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {academicExperiences.map((exp) => (
+              <div key={exp.id} className="relative pl-8 pb-6 border-l-2 border-accent/20 last:border-l-0 last:pb-0">
+                <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-accent border-4 border-background" />
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-sidebar">{exp.cargo_titulo}</h3>
+                    <div className="flex items-center gap-2 text-sidebar/70 mt-1">
+                      <Building className="w-4 h-4" />
+                      <span>{exp.institucion_empresa}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-sidebar/60 mb-3">
-                    <Calendar className="w-4 h-4" />
-                    <span>{formatDate(exp.fecha_inicio)} - {exp.actual ? 'Presente' : formatDate(exp.fecha_fin!)}</span>
+                  <div className="flex items-center gap-2">
+                    {exp.actual === 1 && <Badge variant="success" size="sm">En curso</Badge>}
+                    <Button variant="ghost" size="sm" onClick={() => handleOpenModal(exp.id)}>
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleDelete(exp.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
-                  {exp.descripcion && <p className="text-sm text-sidebar/70">{exp.descripcion}</p>}
                 </div>
-              ))}
-            </div>
-          )}
-        </Card>
-      </div>
+                <div className="flex items-center gap-2 text-sm text-sidebar/60 mb-3">
+                  <Calendar className="w-4 h-4" />
+                  <span>{formatDate(exp.fecha_inicio)} - {exp.actual ? 'Presente' : formatDate(exp.fecha_fin!)}</span>
+                </div>
+                {exp.descripcion && <p className="text-sm text-sidebar/70">{exp.descripcion}</p>}
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
 
       <Modal
         isOpen={isModalOpen}
