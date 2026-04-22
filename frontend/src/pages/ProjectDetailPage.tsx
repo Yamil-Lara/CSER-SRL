@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, ExternalLink, MessageSquare, Send } from "lucide-react";
 import { FiGithub as FiGithubIcon } from "react-icons/fi";
+import ProjectComments from "../components/ProjectComments";
+
 const FiGithub: any = FiGithubIcon;
 
 const ProjectDetailPage: React.FC = () => {
@@ -36,6 +38,7 @@ const ProjectDetailPage: React.FC = () => {
             </nav>
 
             <main className="max-w-5xl mx-auto py-12 px-6">
+                {/* --- SECCIÓN SUPERIOR: Info del proyecto --- */}
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-12">
                     <div className="md:col-span-7">
                         <div className="aspect-video bg-white rounded-[32px] border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden">
@@ -77,6 +80,7 @@ const ProjectDetailPage: React.FC = () => {
                     </div>
                 </div>
 
+                {/* --- SECCIÓN INFERIOR --- */}
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
                     <div className="md:col-span-8">
                         <section className="bg-white rounded-[32px] p-8 border border-slate-200 shadow-sm mb-8">
@@ -86,32 +90,9 @@ const ProjectDetailPage: React.FC = () => {
                             </p>
                         </section>
 
-                        <section className="bg-white rounded-[32px] p-8 border border-slate-200 shadow-sm">
-                            <h3 className="text-xl font-bold text-slate-800 mb-8 flex items-center gap-2">
-                                Comentarios <span className="bg-slate-100 text-slate-400 text-sm px-2 py-0.5 rounded-md">0</span>
-                            </h3>
+                        {/* --- LLAMADA AL NUEVO COMPONENTE DE COMENTARIOS --- */}
+                        <ProjectComments proyectoId={id} />
 
-                            <div className="flex gap-4 mb-10">
-                                <div className="w-10 h-10 bg-slate-200 rounded-full flex-shrink-0"></div>
-                                <div className="flex-grow">
-                                    <textarea
-                                        value={comentario}
-                                        onChange={(e) => setComentario(e.target.value)}
-                                        placeholder="Escribe un comentario..."
-                                        className="w-full border border-slate-200 rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50"
-                                        rows={3}
-                                    />
-                                    <button className="mt-2 bg-slate-900 text-white px-6 py-2 rounded-xl text-sm font-bold flex items-center gap-2 ml-auto">
-                                        <Send size={16} /> Publicar
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="text-center py-10">
-                                <MessageSquare size={48} className="mx-auto text-slate-200 mb-3" />
-                                <p className="text-slate-400 font-medium">Aún no hay comentarios. Sé el primero.</p>
-                            </div>
-                        </section>
                     </div>
 
                     <div className="md:col-span-4">
