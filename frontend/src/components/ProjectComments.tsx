@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { MessageSquare, Send } from "lucide-react";
+import { MessageSquare, Send, Trash2 } from "lucide-react";
 import api from "../api/axios";
 
-// Interfaz para los comentarios
+// Interfaz que coincide con la respuesta de tu backend
 interface Comentario {
     id: number;
     contenido: string;
@@ -16,7 +16,6 @@ interface Comentario {
     };
 }
 
-// Propiedades que recibirá el componente
 interface ProjectCommentsProps {
     proyectoId?: string;
 }
@@ -24,27 +23,48 @@ interface ProjectCommentsProps {
 const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
     const navigate = useNavigate();
     
-    // Estado de autenticación
+    // Estados de autenticación y usuario
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
-    // Estados de los comentarios
+    // Estados para los comentarios
     const [comentarios, setComentarios] = useState<Comentario[]>([]);
     const [nuevoComentario, setNuevoComentario] = useState("");
     const [loadingComentarios, setLoadingComentarios] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [errorMensaje, setErrorMensaje] = useState("");
 
-    // Verificar si el usuario está autenticado al cargar
+    // Efecto 1: Validar sesión y recuperar ID del usuario activo
     useEffect(() => {
         const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
         setIsAuthenticated(!!token);
+
+        if (token) {
+            // Intentamos sacar el usuario del localStorage (depende de cómo guardes tu sesión)
+            const userStr = localStorage.getItem('authUser') || localStorage.getItem('user');
+            if (userStr) {
+                try {
+                    const user = JSON.parse(userStr);
+                    setCurrentUserId(user.id);
+                } catch (e) {
+                    console.error("Error parseando usuario", e);
+                }
+            } else {
+                // Si no está en storage, pedimos el perfil al backend
+                api.get('/profile').then(res => {
+                    const data = res.data.data || res.data;
+                    setCurrentUserId(data.id);
+                }).catch(() => {});
+            }
+        }
     }, []);
 
-    // Cargar los comentarios del proyecto
+    // Efecto 2: Obtener los comentarios del proyecto actual
     useEffect(() => {
         const fetchComentarios = async () => {
             try {
                 setLoadingComentarios(true);
+                // Llama al endpoint público para ver los comentarios (que solo devuelve los aprobados == 1)
                 const response = await api.get(`/proyectos/${proyectoId}/comentarios`);
                 
                 const data = Array.isArray(response.data.data) ? response.data.data : response.data;
@@ -61,7 +81,7 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
         }
     }, [proyectoId]);
 
-    // Función para enviar un nuevo comentario
+    // Función para crear un nuevo comentario
     const handleEnviarComentario = async () => {
         if (!nuevoComentario.trim()) {
             setErrorMensaje("El comentario no puede estar vacío");
@@ -78,7 +98,7 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
 
             const comentarioCreado = response.data.data || response.data;
             
-            // Añadir al principio y limpiar el input
+            // Añadimos el nuevo comentario a la vista y limpiamos la caja de texto
             setComentarios(prev => [comentarioCreado, ...prev]);
             setNuevoComentario("");
             
@@ -90,13 +110,27 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
         }
     };
 
+    // Función para que el autor pueda eliminar su propio comentario
+    const handleEliminarComentario = async (comentarioId: number) => {
+        if (!window.confirm("¿Estás seguro de que deseas eliminar tu comentario?")) return;
+
+        try {
+            await api.delete(`/comentarios/${comentarioId}`);
+            // Removemos el comentario de la lista sin recargar la página
+            setComentarios(prev => prev.filter(c => c.id !== comentarioId));
+        } catch (err) {
+            console.error("Error al eliminar:", err);
+            alert("No se pudo eliminar el comentario.");
+        }
+    };
+
     return (
         <section className="bg-white rounded-[32px] p-8 border border-slate-200 shadow-sm">
             <h3 className="text-xl font-bold text-slate-800 mb-8 flex items-center gap-2">
                 Comentarios <span className="bg-slate-100 text-slate-400 text-sm px-2 py-0.5 rounded-md">{comentarios.length}</span>
             </h3>
 
-            {/* Formulario de comentarios (solo si hay token) */}
+            {/* Muestra la caja de comentarios si el usuario inició sesión */}
             {isAuthenticated ? (
                 <div className="flex gap-4 mb-10">
                     <div className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">
@@ -136,7 +170,7 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
                 </div>
             )}
 
-            {/* Listado de comentarios */}
+            {/* Listado de comentarios aprobados */}
             <div className="mt-6 space-y-6">
                 {loadingComentarios ? (
                     <p className="text-center text-slate-400 font-medium">Cargando comentarios...</p>
@@ -147,15 +181,28 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
                     </div>
                 ) : (
                     comentarios.map((c) => (
-                        <div key={c.id} className="flex gap-4 border-b border-slate-100 pb-6 last:border-0 last:pb-0">
+                        <div key={c.id} className="flex gap-4 border-b border-slate-100 pb-6 last:border-0 last:pb-0 relative group">
                             <div className="w-10 h-10 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center font-bold flex-shrink-0">
                                 {c.autor?.nombre ? c.autor.nombre.substring(0, 2).toUpperCase() : 'U'}
                             </div>
-                            <div>
-                                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-2">
-                                    <span className="font-bold text-slate-800">{c.autor?.nombre || 'Usuario Desconocido'}</span>
-                                    <span className="text-xs text-slate-400 font-medium hidden sm:inline">•</span>
-                                    <span className="text-xs text-slate-400 font-medium">{c.fecha}</span>
+                            <div className="flex-grow">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
+                                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                                        <span className="font-bold text-slate-800">{c.autor?.nombre || 'Usuario Desconocido'}</span>
+                                        <span className="text-xs text-slate-400 font-medium hidden sm:inline">•</span>
+                                        <span className="text-xs text-slate-400 font-medium">{c.fecha}</span>
+                                    </div>
+                                    
+                                    {/* Botón de basurero: Solo se renderiza si el ID del autor coincide con el ID del usuario en sesión */}
+                                    {c.autor?.id === currentUserId && (
+                                        <button 
+                                            onClick={() => handleEliminarComentario(c.id)}
+                                            className="text-slate-400 hover:text-red-500 transition-colors p-1 rounded-md opacity-0 group-hover:opacity-100 focus:opacity-100"
+                                            title="Eliminar mi comentario"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    )}
                                 </div>
                                 <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">{c.contenido}</p>
                             </div>

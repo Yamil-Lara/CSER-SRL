@@ -80,6 +80,11 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
     // HU-11: Publicar comentario (autenticado)
     Route::post('/proyectos/{id}/comentarios', [ComentarioController::class, 'store']);
 
+    // NUEVAS RUTAS PARA LA ADMINISTRACIÓN DE COMENTARIOS
+    Route::get('/proyectos/{id}/comentarios/admin', [ComentarioController::class, 'adminIndex']);
+    Route::put('/comentarios/{id}/estado', [ComentarioController::class, 'updateEstado']);
+    Route::delete('/comentarios/{id}', [ComentarioController::class, 'destroy']);
+
     // Administración
     Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::apiResource('usuarios', AdminUserController::class);

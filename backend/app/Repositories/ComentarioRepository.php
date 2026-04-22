@@ -29,4 +29,19 @@ class ComentarioRepository
             ->where('estado', 'aprobado')
             ->first();
     }
+    
+    public function getAllByProyecto(int $proyectoId)
+    {
+        return Comentario::where('proyecto_id', $proyectoId)
+            ->with(['usuario:id,nombre,username,foto'])
+            ->latest()
+            ->get();
+    }
+
+    // NUEVO: Buscar un comentario por su ID
+    public function findById(int $comentarioId): ?Comentario
+    {
+        // Cargamos la relación 'proyecto' para verificar al dueño
+        return Comentario::with('proyecto')->find($comentarioId);
+    }
 }
