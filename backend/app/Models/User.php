@@ -101,4 +101,12 @@ class User extends Authenticatable
     {
         return $query->where('estado', 'aprobado');
     }
+   
+
+    public function visibilidadConfig()
+   {
+    return $this->hasOne(ConfiguracionVisibilidad::class);
+    }
+
+
 }

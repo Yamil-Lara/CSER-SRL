@@ -9,90 +9,71 @@ export default function PortfolioPublico() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // LLamada Real de Axios (HU-06 x HU-08)
-    axios.get(`http://localhost:8000/api/portafolio/${username}`)
-      .then(res => {
-        const user = res.data.user;
+    // LLamar a las múltiples rutas que el nuevo backend definió
+    const fetchData = async () => {
+      try {
+        const [userRes, projectsRes, experienceRes, skillsRes] = await Promise.all([
+          axios.get(`http://localhost:8000/api/portafolio/${username}`),
+          axios.get(`http://localhost:8000/api/portafolio/${username}/proyectos`),
+          axios.get(`http://localhost:8000/api/portafolio/${username}/experiencias`),
+          axios.get(`http://localhost:8000/api/portafolio/${username}/habilidades`)
+        ]);
 
-        const buildUrl = (path: string | null | undefined): string | undefined => {
-          if (!path) return undefined;
-          if (path.startsWith('http')) return path;
-          if (path.startsWith('/storage')) return `http://127.0.0.1:8000${path}`;
-          if (path.startsWith('storage')) return `http://127.0.0.1:8000/${path}`;
-          const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-          return `http://127.0.0.1:8000/storage/${cleanPath}`;
-        };
+        // Adaptado al ApiResponseTrait (res.data.data)
+        const user = userRes.data.data.usuario;
+        const redes = userRes.data.data.redes_sociales || {};
+        const proyectos = projectsRes.data.data || [];
+        const experiencias = experienceRes.data.data || [];
+        const habilidades = skillsRes.data.data || [];
         
-        // Mapeo seguro de backend a la interfaz
         const mappedData: PortfolioData = {
           name: user.nombre,
-          photo: buildUrl(user.foto),
           profession: user.profesion || 'Desarrollador Full Stack',
           technologies: user.especialidad || 'React & Node.js',
           bio: user.biografia || 'Apasionada por crear experiencias web increíbles',
           location: user.ubicacion || 'La Paz, Bolivia',
           email: user.email,
           socials: {
-            linkedin: user.linkedin || '',
-            github: user.github_perfil || '',
-            website: user.sitio_web || '',
-            facebook: user.facebook || '',
-            instagram: user.instagram || '',
-            twitter: user.twitter || '',
-            tiktok: user.tiktok || '',
-            threads: user.threads || '',
+            linkedin: redes.linkedin,
+            github: redes.github,
+            sitio_web: redes.sitio_web,
+            facebook: redes.facebook,
+            instagram: redes.instagram,
+            twitter: redes.twitter,
+            tiktok: redes.tiktok,
+            threads: redes.threads,
           },
           skills: {
-            technical: user.skills && user.skills.length > 0
-              ? user.skills.filter((s:any) => s.type === 'tecnica').map((s: any) => ({ name: s.name || s.nombre || 'Skill', percentage: s.level || s.porcentaje || s.nivel || 80 }))
-              : [],
-            soft: user.skills && user.skills.length > 0
-              ? user.skills.filter((s:any) => s.type === 'blanda').map((s: any) => ({ name: s.name || s.nombre || 'Skill', percentage: s.level || s.porcentaje || s.nivel || 80 }))
-              : []
+            technical: habilidades.filter((s:any) => s.type === 'tecnica').map((s: any) => ({ name: s.name, percentage: s.level })),
+            soft: habilidades.filter((s:any) => s.type === 'blanda').map((s: any) => ({ name: s.name, percentage: s.level }))
           },
-          experience: user.experiencias && user.experiencias.length > 0
-            ? user.experiencias.map((e: any) => {
-                const fInicio = e.fecha_inicio ? e.fecha_inicio.split('T')[0] : '';
-                const fFin = e.fecha_fin ? e.fecha_fin.split('T')[0] : 'Presente';
-                return {
-                  title: e.cargo_titulo || e.cargo || e.title || 'Cargo',
-                  company: e.institucion_empresa || e.empresa || e.company || 'Empresa',
-                  date: `${fInicio} - ${fFin}`,
-                  description: e.descripcion || e.description || '',
-                };
-              })
-            : [],
-          projects: user.proyectos && user.proyectos.length > 0
-            ? user.proyectos
-                .filter((p: any) => p.estado === 'aprobado' || p.estado === 'Aprobado')
-                .map((p: any) => ({
-                title: p.titulo || p.nombre || 'Proyecto',
-                description: p.descripcion || p.description || '',
-                tags: p.tecnologias ? p.tecnologias.split(',') : ['react']
-              }))
-            : [],
-          visibilidad: user.visibilidad ? {
-             proyectos_visible: Boolean(user.visibilidad.proyectos_visible),
-             habilidades_visible: Boolean(user.visibilidad.habilidades_visible),
-             experiencia_visible: Boolean(user.visibilidad.experiencia_visible),
-             redes_visible: Boolean(user.visibilidad.redes_visible)
-          } : {
-             proyectos_visible: true,
-             habilidades_visible: true,
-             experiencia_visible: true,
-             redes_visible: true
+          experience: experiencias.map((e: any) => ({
+                title: e.cargo_titulo || 'Cargo',
+                company: e.institucion_empresa || 'Empresa',
+                date: `${e.fecha_inicio?.split('T')[0]} - ${e.fecha_fin ? e.fecha_fin.split('T')[0] : 'Presente'}`,
+                description: e.descripcion || '',
+          })),
+          projects: proyectos.map((p: any) => ({
+                title: p.titulo,
+                description: p.descripcion,
+                tags: p.tecnologias ? p.tecnologias.split(',') : []
+          })),
+          // Por defecto todo visible ya que el backend no lo incluyó en la respuesta del nuevo endpoint
+          visibilidad: {
+             proyectos_visible: true, habilidades_visible: true,
+             experiencia_visible: true, redes_visible: true
           }
         };
 
         setData(mappedData);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error('Error fetching portfolio:', err);
-      })
-      .finally(() => {
+      } finally {
         setLoading(false);
-      });
+      }
+    };
 
+    fetchData();
   }, [username]);
 
   if (loading) {
