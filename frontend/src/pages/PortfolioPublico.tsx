@@ -19,6 +19,15 @@ export default function PortfolioPublico() {
           axios.get(`http://localhost:8000/api/portafolio/${username}/habilidades`)
         ]);
 
+        const buildUrl = (path: string | null | undefined): string | undefined => {
+          if (!path) return undefined;
+          if (path.startsWith('http')) return path;
+          if (path.startsWith('/storage')) return `http://localhost:8000${path}`;
+          if (path.startsWith('storage')) return `http://localhost:8000/${path}`;
+          const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+          return `http://localhost:8000/storage/${cleanPath}`;
+        };
+
         // Adaptado al ApiResponseTrait (res.data.data)
         const user = userRes.data.data.usuario;
         const redes = userRes.data.data.redes_sociales || {};
@@ -28,6 +37,7 @@ export default function PortfolioPublico() {
         
         const mappedData: PortfolioData = {
           name: user.nombre,
+          photo: buildUrl(user.foto),
           profession: user.profesion || 'Desarrollador Full Stack',
           technologies: user.especialidad || 'React & Node.js',
           bio: user.biografia || 'Apasionada por crear experiencias web increíbles',
@@ -36,7 +46,7 @@ export default function PortfolioPublico() {
           socials: {
             linkedin: redes.linkedin,
             github: redes.github,
-            sitio_web: redes.sitio_web,
+            website: redes.sitio_web,
             facebook: redes.facebook,
             instagram: redes.instagram,
             twitter: redes.twitter,

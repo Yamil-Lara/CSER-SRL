@@ -175,8 +175,8 @@ const PublicProjectDetail: React.FC = () => {
             <div className="bg-gray-50 p-8 rounded-xl shadow-inner border border-gray-200">
                 <h2 className="text-2xl font-semibold mb-6 text-gray-800">Comentarios</h2>
 
-                {error && <Alert type="error" className="mb-4">{error}</Alert>}
-                {successMsg && <Alert type="success" className="mb-4">{successMsg}</Alert>}
+                {error && <Alert type="error" className="mb-4" message={error} />}
+                {successMsg && <Alert type="success" className="mb-4" message={successMsg} />}
 
                 {isAuthenticated ? (
                     <form onSubmit={handleSubmitComentario} className="mb-10">
