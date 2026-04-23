@@ -9,6 +9,7 @@ use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Models\Comentario;
 
 class ComentarioController extends Controller
 {
@@ -81,4 +82,59 @@ class ComentarioController extends Controller
             return $this->errorResponse($e->getMessage(), 400);
         }
     }
+
+
+
+
+
+
+
+
+ /**
+     * Obtener TODOS los comentarios del sistema (para el panel de administración)
+     * Esta ruta es exclusiva para administradores FUE AGREGAOD POR EL JAVI XD
+     */
+    public function adminIndexAll(): JsonResponse
+    {
+        try {
+            $comentarios = Comentario::with([
+                'usuario:id,nombre,username,foto',
+                'proyecto:id,titulo,usuario_id',
+                'proyecto.usuario:id,nombre'
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function($comentario) {
+                return [
+                    'id' => $comentario->id,
+                    'contenido' => $comentario->contenido,
+                    'fecha' => $comentario->created_at->format('d/m/Y H:i'),
+                    'aprobado' => $comentario->aprobado,
+                    'autor' => $comentario->usuario ? [
+                        'id' => $comentario->usuario->id,
+                        'nombre' => $comentario->usuario->nombre,
+                        'username' => $comentario->usuario->username,
+                        'foto' => $comentario->usuario->foto ? asset('storage/' . $comentario->usuario->foto) : null,
+                    ] : null,
+                    'proyecto' => $comentario->proyecto ? [
+                        'id' => $comentario->proyecto->id,
+                        'titulo' => $comentario->proyecto->titulo,
+                        'usuario' => $comentario->proyecto->usuario ? [
+                            'nombre' => $comentario->proyecto->usuario->nombre
+                        ] : null
+                    ] : null
+                ];
+            });
+
+            return $this->successResponse($comentarios, 'Comentarios obtenidos exitosamente');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), 500);
+        }
+    }
 }
+
+
+
+
+
+    

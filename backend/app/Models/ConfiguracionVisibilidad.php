@@ -26,6 +26,6 @@ class ConfiguracionVisibilidad extends Model
 
     public function usuario(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'usuario_id');
     }
 }

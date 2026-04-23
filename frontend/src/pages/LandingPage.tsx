@@ -38,8 +38,8 @@ export const LandingPage = () => {
 
   // Función para redirigir al Dashboard
   const handleLoginClick = () => {
-    navigate('/dashboard/perfil');
-  };
+  navigate('/login');  // esto fue modificado por javi xd
+};
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -61,8 +61,9 @@ export const LandingPage = () => {
           {/* BOTÓN CON REDIRECCIÓN AL DASHBOARD */}
           <button className="btn-ghost" onClick={handleLoginClick}>Iniciar Sesión</button>
 
-          <button className="btn-primary-small">Regístrate Gratis</button>
-
+<button className="btn-primary-small" onClick={() => navigate('/login')}>
+  Regístrate Gratis
+</button>
           {/* BOTÓN DE CAMBIO DE TEMA */}
           <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="Cambiar tema">
             {isDarkMode ? (

@@ -30,6 +30,7 @@ class User extends Authenticatable
         'especialidad',
         'biografia',
         'ubicacion',
+         'telefono', //nuevo campo agregado 
         'linkedin',
         'github_perfil',
         'sitio_web',

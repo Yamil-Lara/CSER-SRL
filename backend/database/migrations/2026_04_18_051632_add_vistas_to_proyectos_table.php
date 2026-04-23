@@ -9,8 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('proyectos', function (Blueprint $table) {
-            // 👇 Solo AGREGA este campo
-            $table->unsignedInteger('vistas')->default(0)->after('estado');
+            $table->unsignedInteger('vistas')->default(0);
         });
     }
 
