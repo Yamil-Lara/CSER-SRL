@@ -5,18 +5,35 @@ import {
   Code2, LayoutDashboard, LogOut, ArrowLeft, 
   MapPin, Mail, Code, Briefcase, FolderGit2, Image as ImageIcon
 } from 'lucide-react';
-import { FiLinkedin, FiGithub } from 'react-icons/fi';
+import { FaLinkedin, FaGithub, FaGlobe, FaFacebook, FaInstagram, FaXTwitter, FaTiktok, FaThreads } from 'react-icons/fa6';
+
+// Workaround para TypeScript
+const LinkedinIcon = FaLinkedin as React.ElementType;
+const GithubIcon = FaGithub as React.ElementType;
+const GlobeIcon = FaGlobe as React.ElementType;
+const FacebookIcon = FaFacebook as React.ElementType;
+const InstagramIcon = FaInstagram as React.ElementType;
+const TwitterIcon = FaXTwitter as React.ElementType;
+const TiktokIcon = FaTiktok as React.ElementType;
+const ThreadsIcon = FaThreads as React.ElementType;
 
 export interface PortfolioData {
   name: string;
+  photo?: string;
   profession: string;
   technologies: string;
   bio: string;
   location: string;
   email: string;
   socials: {
-    linkedin: string;
-    github: string;
+    linkedin?: string;
+    github?: string;
+    website?: string;
+    facebook?: string;
+    instagram?: string;
+    twitter?: string;
+    tiktok?: string;
+    threads?: string;
   };
   skills: {
     technical: { name: string; percentage: number }[];
@@ -98,7 +115,7 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
       </header>
 
       {/* Main Container */}
-      <main className="max-w-3xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 py-8">
         
         {/* Back button */}
         <button 
@@ -122,9 +139,15 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
             
             {/* 1. Perfil Card */}
             <Card className="card flex flex-col sm:flex-row gap-6 items-start shadow-sm">
-              <div className="w-24 h-24 sm:w-32 sm:h-32 shrink-0 bg-primary/20 text-primary rounded-full flex items-center justify-center text-4xl sm:text-5xl font-bold">
-                {getInitial(data.name)}
-              </div>
+              {data.photo ? (
+                <div className="w-24 h-24 sm:w-32 sm:h-32 shrink-0 rounded-full overflow-hidden border-4 border-white shadow-sm">
+                  <img src={data.photo} alt={data.name} className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div className="w-24 h-24 sm:w-32 sm:h-32 shrink-0 bg-primary/20 text-primary rounded-full flex items-center justify-center text-4xl sm:text-5xl font-bold shadow-sm">
+                  {getInitial(data.name)}
+                </div>
+              )}
               
               <div className="flex flex-col w-full">
                 <h1 className="text-2xl sm:text-3xl font-bold mb-1">{data.name}</h1>
@@ -147,13 +170,47 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
                 </div>
 
                 {vis.redes_visible && (
-                  <div className="flex gap-3">
-                    <a href={data.socials.linkedin} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
-                      <FiLinkedin size={20} />
-                    </a>
-                    <a href={data.socials.github} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
-                      <FiGithub size={20} />
-                    </a>
+                  <div className="flex gap-3 flex-wrap">
+                    {data.socials.linkedin && data.socials.linkedin !== '#' && (
+                      <a href={data.socials.linkedin} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
+                        <LinkedinIcon size={20} />
+                      </a>
+                    )}
+                    {data.socials.github && data.socials.github !== '#' && (
+                      <a href={data.socials.github} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
+                        <GithubIcon size={20} />
+                      </a>
+                    )}
+                    {data.socials.website && (
+                      <a href={data.socials.website} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
+                        <GlobeIcon size={20} />
+                      </a>
+                    )}
+                    {data.socials.facebook && (
+                      <a href={data.socials.facebook} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
+                        <FacebookIcon size={20} />
+                      </a>
+                    )}
+                    {data.socials.twitter && (
+                      <a href={data.socials.twitter} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
+                        <TwitterIcon size={20} />
+                      </a>
+                    )}
+                    {data.socials.instagram && (
+                      <a href={data.socials.instagram} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
+                        <InstagramIcon size={20} />
+                      </a>
+                    )}
+                    {data.socials.threads && (
+                      <a href={data.socials.threads} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
+                        <ThreadsIcon size={20} />
+                      </a>
+                    )}
+                    {data.socials.tiktok && (
+                      <a href={data.socials.tiktok} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
+                        <TiktokIcon size={20} />
+                      </a>
+                    )}
                   </div>
                 )}
               </div>

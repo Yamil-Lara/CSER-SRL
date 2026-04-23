@@ -1,14 +1,14 @@
-// frontend/src/components/ProjectCard.tsx
-import { Calendar, Tag, GitBranch, ExternalLink, Edit, Trash2, FolderOpen } from 'lucide-react';
+import { Calendar, Tag, GitBranch, ExternalLink, Edit, Trash2, FolderOpen, MessageSquare } from 'lucide-react';
 import { Project } from '../pages/ProjectsPage';
 
 interface ProjectCardProps {
   project: Project;
   onDelete: (id: string) => void;
   onEdit: (project: Project) => void;
+  onManageComments: (project: Project) => void; // NUEVA PROP: Para abrir el gestor de comentarios
 }
 
-export default function ProjectCard({ project, onDelete, onEdit }: ProjectCardProps) {
+export default function ProjectCard({ project, onDelete, onEdit, onManageComments }: ProjectCardProps) {
   // Formateador de fecha seguro
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return 'Sin fecha';
@@ -21,18 +21,14 @@ export default function ProjectCard({ project, onDelete, onEdit }: ProjectCardPr
     }
   };
 
-  // Función para garantizar el color correcto según el estado
   const getStatusColor = (status?: string) => {
-    // Convertimos a minúsculas y quitamos espacios invisibles por si acaso
     const normalizedStatus = status?.trim().toLowerCase();
-
     if (normalizedStatus === 'pendiente') {
       return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
     }
     if (normalizedStatus === 'rechazado') {
       return 'bg-red-100 text-red-800 border border-red-200';
     }
-    // Por defecto (aprobado o cualquier otro)
     return 'bg-green-100 text-green-800 border border-green-200';
   };
 
@@ -44,8 +40,6 @@ export default function ProjectCard({ project, onDelete, onEdit }: ProjectCardPr
       
       <div className="project-header">
         <h3 className="project-title">{project.title}</h3>
-        
-        {/* Utilizamos clases de Tailwind para darle forma de "píldora" y aplicamos el color dinámico */}
         <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize shadow-sm ${getStatusColor(project.status)}`}>
           {project.status}
         </span>
@@ -87,12 +81,27 @@ export default function ProjectCard({ project, onDelete, onEdit }: ProjectCardPr
         )}
       </div>
 
-      <div className="project-actions">
-        <button className="btn-icon-text" onClick={() => onEdit(project)}>
+      {/* ACTUALIZACIÓN: Sección de acciones con el nuevo botón */}
+      <div className="project-actions flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-100">
+        <button 
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors flex-1 justify-center" 
+            onClick={() => onManageComments(project)}
+        >
+          <MessageSquare size={16} />
+          Comentarios
+        </button>
+        <button 
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors" 
+            onClick={() => onEdit(project)}
+        >
           <Edit size={16} />
           Editar
         </button>
-        <button className="btn-icon" onClick={() => onDelete(project.id)} title="Eliminar proyecto">
+        <button 
+            className="flex items-center justify-center p-1.5 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors" 
+            onClick={() => onDelete(project.id)} 
+            title="Eliminar proyecto"
+        >
           <Trash2 size={16} />
         </button>
       </div>

@@ -17,7 +17,7 @@ class Comentario extends Model
     ];
 
     protected $casts = [
-        'aprobado'    => 'boolean',
+        'aprobado'    => 'integer',
         'usuario_id' => 'integer',
     ];
 
