@@ -1,4 +1,236 @@
+
+
 import React, { useEffect, useState, createContext, useContext, ReactNode } from 'react';
+import api from '../utils/api';
+
+interface User {
+  id: number;
+  nombre: string;
+  email: string;
+  rol: 'admin' | 'usuario' | 'moderador';
+  activo: number;
+  estado: 'pendiente' | 'aprobado' | 'rechazado';
+  username: string;
+  foto?: string | null;
+  fecha_registro?: string;
+  profesion?: string;
+  especialidad?: string;
+  biografia?: string;
+  ubicacion?: string;
+  telefono?: string;
+}
+
+interface AuthContextType {
+  user: User | null;
+  login: (email: string, password: string) => Promise<{
+    success: boolean;
+    message: string;
+    user?: User;
+  }>;
+  register: (nombre: string, email: string, password: string) => Promise<{
+    success: boolean;
+    message: string;
+  }>;
+  logout: () => void;
+  updateUser: (userData: Partial<User>) => void;
+  isAuthenticated: boolean;
+  isAdmin: boolean;
+  loading: boolean;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Cargar sesión guardada al iniciar
+  useEffect(() => {
+    const loadStoredSession = async () => {
+      const token = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
+      
+      if (token && storedUser) {
+        try {
+          // Verificar que el token sigue siendo válido
+          api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          const response = await api.get('/profile');
+          if (response.data.data) {
+            setUser(response.data.data);
+            localStorage.setItem('user', JSON.stringify(response.data.data));
+          } else {
+            // Token inválido, limpiar sesión
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            delete api.defaults.headers.common['Authorization'];
+          }
+        } catch (error) {
+          // Token inválido o expirado
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          delete api.defaults.headers.common['Authorization'];
+        }
+      }
+      setLoading(false);
+    };
+    
+    loadStoredSession();
+  }, []);
+
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await api.post('/login', { email, password });
+      const { access_token, user: userData } = response.data.data;
+      
+      // Guardar token en localStorage
+      localStorage.setItem('token', access_token);
+      localStorage.setItem('user', JSON.stringify(userData));
+      
+      // Configurar header por defecto
+      api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+      
+      setUser(userData);
+      
+      return {
+        success: true,
+        message: 'Inicio de sesión exitoso',
+        user: userData
+      };
+    } catch (error: any) {
+      let message = 'Credenciales incorrectas';
+      if (error.response?.data?.message) {
+        message = error.response.data.message;
+      }
+      return {
+        success: false,
+        message
+      };
+    }
+  };
+
+  const register = async (nombre: string, email: string, password: string) => {
+    try {
+      // Generar username automáticamente desde el nombre
+      const baseUsername = nombre
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '');
+      
+      const response = await api.post('/register', {
+        nombre,
+        username: baseUsername,
+        email,
+        password,
+        password_confirmation: password
+      });
+      
+      return {
+        success: true,
+        message: 'Registro exitoso. Ya puedes iniciar sesión.'
+      };
+    } catch (error: any) {
+      let message = 'Error en el registro';
+      if (error.response?.data?.errors) {
+        const errors = error.response.data.errors;
+        message = Object.values(errors).flat()[0] as string;
+      } else if (error.response?.data?.message) {
+        message = error.response.data.message;
+      }
+      return {
+        success: false,
+        message
+      };
+    }
+  };
+
+ const logout = async () => {
+  try {
+    // Esperar a que termine el logout del backend
+    await api.post('/logout');
+  } catch (error) {
+    console.error('Error en logout del backend:', error);
+  } finally {
+    // Limpiar localStorage (esto siempre debe ejecutarse)
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    // Limpiar header de autorización de axios
+    delete api.defaults.headers.common['Authorization'];
+    
+    // Limpiar el estado del usuario
+    setUser(null);
+  }
+};
+
+  const updateUser = (userData: Partial<User>) => {
+    if (!user) return;
+    const updatedUser = { ...user, ...userData };
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  };
+
+  const value: AuthContextType = {
+    user,
+    login,
+    register,
+    logout,
+    updateUser,
+    isAuthenticated: !!user,
+    isAdmin: user?.rol === 'admin',
+    loading
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*import React, { useEffect, useState, createContext, useContext, ReactNode } from 'react';
 import {
   User,
   STORAGE_KEYS,
@@ -163,3 +395,7 @@ export function useAuth() {
   }
   return context;
 }
+
+
+
+*/

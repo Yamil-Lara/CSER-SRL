@@ -3,7 +3,13 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ExperiencePage } from "./pages/ExperiencePage";
-import Sidebar from "./components/Sidebar";
+//import Sidebar from "./components/Sidebar";
+
+
+
+
+
+import { Sidebar } from "./components/layout/Sidebar";
 import ProjectsPage from "./pages/ProjectsPage";
 import SkillsPage from "./pages/SkillsPage";
 import UserProfile from "./components/UserProfile";
@@ -13,6 +19,37 @@ import LinksPage from "./pages/LinksPage";
 import { VisibilitySettingsPage } from "./pages/VisibilitySettingsPage";
 import ExplorePage from "./pages/ExplorePage";
 import ProjectDetailPage from "./pages/ProjectDetailPage";
+import AdminCommentPage from "./pages/AdminCommentPage";
+import LoginPage from "./pages/LoginPage";
+
+// Componentes temporales para las rutas de admin que faltan
+const AdminDashboard = () => (
+  <div>
+    <h1 className="text-2xl font-bold text-sidebar">Panel de Administrador</h1>
+    <p className="text-sidebar/70 mt-2">Bienvenido al panel de control</p>
+  </div>
+);
+
+const AdminUsers = () => (
+  <div>
+    <h1 className="text-2xl font-bold text-sidebar">Gestión de Usuarios</h1>
+    <p className="text-sidebar/70 mt-2">Administra los usuarios del sistema</p>
+  </div>
+);
+
+const AdminAprobaciones = () => (
+  <div>
+    <h1 className="text-2xl font-bold text-sidebar">Aprobaciones</h1>
+    <p className="text-sidebar/70 mt-2">Aprueba o rechaza proyectos pendientes</p>
+  </div>
+);
+
+const AdminReportes = () => (
+  <div>
+    <h1 className="text-2xl font-bold text-sidebar">Reportes PDF</h1>
+    <p className="text-sidebar/70 mt-2">Genera reportes del sistema</p>
+  </div>
+);
 
 function App(): JSX.Element {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -29,19 +66,15 @@ function App(): JSX.Element {
       }
     };
 
-    // 1. Revisar si el usuario ya guardó una preferencia antes
     const savedTheme = localStorage.getItem('devfolio-theme');
 
     if (savedTheme) {
-      // Si hay una preferencia guardada, respetarla siempre
       applyTheme(savedTheme === 'dark');
     } else {
-      // 2. Si es la primera vez que entra, usar el tema de su sistema operativo
       const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
       applyTheme(darkModeQuery.matches);
     }
 
-    // Escuchar cambios del sistema (solo aplicará si el usuario no ha forzado un tema manualmente)
     const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e: MediaQueryListEvent) => {
       if (!localStorage.getItem('devfolio-theme')) {
@@ -57,17 +90,39 @@ function App(): JSX.Element {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* Ruta principal: ahora carga la Landing Page */}
+          {/* Ruta principal */}
           <Route path="/" element={<LandingPage />} />
+          
+          {/* Rutas públicas */}
           <Route path="/explore" element={<ExplorePage />} />
-
-          {/* Ruta pública: Explorar portafolios y proyectos */}
           <Route path="/explorar" element={<ExplorePage />} />
           <Route path="/proyecto/:id" element={<ProjectDetailPage />} />
-          {/* Redirección del login temporalmente al dashboard */}
-          <Route path="/login" element={<Navigate to="/dashboard/perfil" />} />
+          <Route path="/login" element={<LoginPage />} />
 
-          {/* Rutas Privadas / Dashboard */}
+          {/* ============================================================ */}
+          {/* RUTAS DE ADMINISTRADOR */}
+          {/* ============================================================ */}
+          <Route
+            path="/admin/*"
+            element={
+              <div className={`app-layout ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
+                <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
+                <main className="main-content">
+                  <Routes>
+                    <Route path="dashboard" element={<AdminDashboard />} />
+                    <Route path="usuarios" element={<AdminUsers />} />
+                    <Route path="aprobaciones" element={<AdminAprobaciones />} />
+                    <Route path="moderacion" element={<AdminCommentPage />} />
+                    <Route path="reportes" element={<AdminReportes />} />
+                  </Routes>
+                </main>
+              </div>
+            }
+          />
+
+          {/* ============================================================ */}
+          {/* RUTAS DE USUARIO NORMAL */}
+          {/* ============================================================ */}
           <Route
             path="/dashboard/*"
             element={
@@ -81,16 +136,17 @@ function App(): JSX.Element {
                     <Route path="experiencia" element={<ExperiencePage />} />
                     <Route path="enlaces" element={<LinksPage />} />
                     <Route path="visibilidad" element={<VisibilitySettingsPage />} />
+                    <Route path="moderacion" element={<AdminCommentPage />} />
                   </Routes>
                 </main>
               </div>
             }
           />
 
-          {/* Ruta del Portafolio Público (HU-06) */}
+          {/* Ruta del Portafolio Público */}
           <Route path="/portfolio/:username" element={<PortfolioPublico />} />
 
-          {/* Ruta para manejar 404 - Página no encontrada */}
+          {/* Ruta 404 */}
           <Route path="*" element={<div>Página no encontrada</div>} />
         </Routes>
       </AuthProvider>
