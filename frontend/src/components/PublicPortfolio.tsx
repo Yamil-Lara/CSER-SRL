@@ -50,6 +50,7 @@ export interface PortfolioData {
     title: string;
     description: string;
     tags: string[];
+    image?: string;
   }[];
   visibilidad: {
     proyectos_visible: boolean;

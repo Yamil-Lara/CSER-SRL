@@ -114,6 +114,15 @@ const ExplorePage: React.FC = () => {
     }
   };
 
+  const buildUrl = (path: string | null | undefined): string | undefined => {
+    if (!path) return undefined;
+    if (path.startsWith('http')) return path;
+    if (path.startsWith('/storage')) return `http://localhost:8000${path}`;
+    if (path.startsWith('storage')) return `http://localhost:8000/${path}`;
+    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    return `http://localhost:8000/storage/${cleanPath}`;
+  };
+
   return (
     <div className="min-h-screen bg-[#F1F5F9] transition-colors duration-300">
       <nav className="flex justify-between items-center px-8 py-4 bg-white shadow-sm border-b border-slate-200">
@@ -204,7 +213,7 @@ const ExplorePage: React.FC = () => {
                     >
                       <div className="aspect-[16/10] bg-slate-100 flex flex-col items-center justify-center text-slate-400 border-b border-slate-100 relative overflow-hidden">
                         {proy.imagen ? (
-                          <img src={proy.imagen} alt={proy.titulo} className="w-full h-full object-cover" />
+                          <img src={buildUrl(proy.imagen)} alt={proy.titulo} className="w-full h-full object-cover" />
                         ) : (
                           <>
                             <FolderGit2 size={48} className="opacity-20 mb-2 group-hover:scale-110 transition-transform" />
@@ -235,7 +244,7 @@ const ExplorePage: React.FC = () => {
                         </div>
                         <div className="flex items-center gap-3 pt-4 border-t border-slate-100 mt-auto">
                           {proy.autor?.foto ? (
-                            <img src={proy.autor.foto} alt={proy.autor.nombre} className="w-8 h-8 rounded-full object-cover" />
+                            <img src={buildUrl(proy.autor.foto)} alt={proy.autor.nombre} className="w-8 h-8 rounded-full object-cover" />
                           ) : (
                             <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
                               <User size={14} />
@@ -266,7 +275,7 @@ const ExplorePage: React.FC = () => {
                     >
                       <div className="w-24 h-24 rounded-full bg-slate-100 mb-4 overflow-hidden border-4 border-white shadow-md">
                         {user.foto ? (
-                          <img src={user.foto} alt={user.nombre} className="w-full h-full object-cover" />
+                          <img src={buildUrl(user.foto)} alt={user.nombre} className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-slate-400">
                             <User size={40} />
