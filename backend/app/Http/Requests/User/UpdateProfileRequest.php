@@ -35,7 +35,7 @@ class UpdateProfileRequest extends FormRequest
             'tiktok' => 'nullable|url|max:255',
             'threads' => 'nullable|url|max:255',
             'sitio_web' => 'nullable|url|max:255',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // 2MB max
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240', // 10MB max
         ];
     }
 
@@ -65,8 +65,8 @@ class UpdateProfileRequest extends FormRequest
             'threads.url' => 'El enlace de Threads debe ser una URL válida',
             'sitio_web.url' => 'El sitio web debe ser una URL válida',
             'foto.image' => 'El archivo debe ser una imagen',
-            'foto.mimes' => 'La foto debe ser de tipo: jpeg, png, jpg',
-            'foto.max' => 'La foto no puede superar los 2MB',
+            'foto.mimes' => 'La foto debe ser de tipo: jpeg, png, jpg, webp',
+            'foto.max' => 'La foto no puede superar los 10MB',
         ];
     }
 
