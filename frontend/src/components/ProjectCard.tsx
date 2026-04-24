@@ -1,5 +1,6 @@
 import { Calendar, Tag, GitBranch, ExternalLink, Edit, Trash2, FolderOpen, MessageSquare } from 'lucide-react';
 import { Project } from '../pages/ProjectsPage';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface ProjectCardProps {
   project: Project;
@@ -9,6 +10,14 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project, onDelete, onEdit, onManageComments }: ProjectCardProps) {
+  const navigate = useNavigate();
+  const { username } = useParams(); // Si estás en la vista del portafolio
+
+  const handleClick = () => {
+    // Te lleva a la vista individual del proyecto para ver/dejar comentarios
+    navigate(`/portfolio/${username}/proyecto/${project.id}`);
+  };
+
   // Formateador de fecha seguro
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return 'Sin fecha';

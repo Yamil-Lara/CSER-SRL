@@ -29,6 +29,7 @@ class UserService
             'especialidad' => $user->especialidad,
             'biografia' => $user->biografia,
             'ubicacion' => $user->ubicacion,
+            'telefono' => $user->telefono,
             'linkedin' => $user->linkedin,
             'github_perfil' => $user->github_perfil,
             'sitio_web' => $user->sitio_web,

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { 
   Code2, LayoutDashboard, User, FolderGit2, Wrench, 
-  Briefcase, Link as LinkIcon, EyeOff, ChevronLeft, ChevronRight, LogOut 
+  Briefcase, Link as LinkIcon, Eye, EyeOff, ChevronLeft, ChevronRight, LogOut 
 } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -54,7 +54,7 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
 
       <div className="sidebar-footer">
         <SidebarItem 
-          icon={<EyeOff size={18} />} 
+          icon={<Eye size={18} />} 
           text="Ver Portafolio" 
           isCollapsed={isCollapsed} 
           onClick={() => {
@@ -69,7 +69,7 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
           {!isCollapsed && <span>Colapsar</span>}
         </div>
         
-        <SidebarItem icon={<LogOut size={18} />} text="Cerrar sesión" isCollapsed={isCollapsed} danger />
+        <SidebarItem to="/" icon={<LogOut size={18} />} text="Cerrar sesión" isCollapsed={isCollapsed} danger />
       </div>
     </aside>
   );

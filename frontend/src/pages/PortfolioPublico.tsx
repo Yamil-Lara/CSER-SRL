@@ -19,6 +19,15 @@ export default function PortfolioPublico() {
           axios.get(`http://localhost:8000/api/portafolio/${username}/habilidades`)
         ]);
 
+        const buildUrl = (path: string | null | undefined): string | undefined => {
+          if (!path) return undefined;
+          if (path.startsWith('http')) return path;
+          if (path.startsWith('/storage')) return `http://localhost:8000${path}`;
+          if (path.startsWith('storage')) return `http://localhost:8000/${path}`;
+          const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+          return `http://localhost:8000/storage/${cleanPath}`;
+        };
+
         // Adaptado al ApiResponseTrait (res.data.data)
         const user = userRes.data.data.usuario;
         const redes = userRes.data.data.redes_sociales || {};
@@ -28,6 +37,7 @@ export default function PortfolioPublico() {
         
         const mappedData: PortfolioData = {
           name: user.nombre,
+          photo: buildUrl(user.foto),
           profession: user.profesion || 'Desarrollador Full Stack',
           technologies: user.especialidad || 'React & Node.js',
           bio: user.biografia || 'Apasionada por crear experiencias web increíbles',
@@ -36,7 +46,7 @@ export default function PortfolioPublico() {
           socials: {
             linkedin: redes.linkedin,
             github: redes.github,
-            sitio_web: redes.sitio_web,
+            website: redes.sitio_web,
             facebook: redes.facebook,
             instagram: redes.instagram,
             twitter: redes.twitter,
@@ -53,11 +63,23 @@ export default function PortfolioPublico() {
                 date: `${e.fecha_inicio?.split('T')[0]} - ${e.fecha_fin ? e.fecha_fin.split('T')[0] : 'Presente'}`,
                 description: e.descripcion || '',
           })),
-          projects: proyectos.map((p: any) => ({
-                title: p.titulo,
-                description: p.descripcion,
-                tags: p.tecnologias ? p.tecnologias.split(',') : []
-          })),
+          projects: proyectos.map((p: any) => {
+                let parsedTags: string[] = [];
+                if (p.tecnologias) {
+                   try {
+                       parsedTags = p.tecnologias.startsWith('[') ? JSON.parse(p.tecnologias) : p.tecnologias.split(',');
+                   } catch {
+                       parsedTags = [];
+                   }
+                }
+                return {
+                    id: p.id,
+                    title: p.titulo,
+                    description: p.descripcion,
+                    tags: parsedTags,
+                    image: p.imagen ? (p.imagen.startsWith('http') ? p.imagen : `http://localhost:8000/storage/${p.imagen}`) : undefined
+                };
+          }),
           // Por defecto todo visible ya que el backend no lo incluyó en la respuesta del nuevo endpoint
           visibilidad: {
              proyectos_visible: true, habilidades_visible: true,

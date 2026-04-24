@@ -18,6 +18,7 @@ import PortfolioPublico from "./pages/PortfolioPublico";
 import LinksPage from "./pages/LinksPage"; 
 import { VisibilitySettingsPage } from "./pages/VisibilitySettingsPage";
 import ExplorePage from "./pages/ExplorePage";
+import PublicProjectDetail from './pages/PublicProjectDetail';
 import ProjectDetailPage from "./pages/ProjectDetailPage";
 import AdminCommentPage from "./pages/AdminCommentPage";
 import LoginPage from "./pages/LoginPage";
@@ -145,6 +146,7 @@ function App(): JSX.Element {
 
           {/* Ruta del Portafolio Público */}
           <Route path="/portfolio/:username" element={<PortfolioPublico />} />
+          <Route path="/portfolio/:username/proyecto/:projectId" element={<PublicProjectDetail />} />
 
           {/* Ruta 404 */}
           <Route path="*" element={<div>Página no encontrada</div>} />

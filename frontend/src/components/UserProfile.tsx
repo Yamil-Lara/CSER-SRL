@@ -6,6 +6,8 @@ import { Input } from './ui/Input';
 import { Button } from './ui/Button';
 import { Textarea } from './ui/Textarea';
 import { User, FileText, GraduationCap, Eye, EyeOff, Save } from 'lucide-react';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 const API_URL = 'http://127.0.0.1:8000/api';
 const STORAGE_URL = 'http://127.0.0.1:8000/storage';
@@ -88,13 +90,70 @@ const UserProfile: React.FC = () => {
       .catch((error) => console.error('Error cargando perfil:', error));
   }, []);
 
+  const validateField = (name: string, value: string | undefined | null): string => {
+    const val = value || '';
+    let errorMsg = '';
+    if (['nombre', 'profesion', 'especialidad', 'ubicacion', 'carrera'].includes(name)) {
+      if (/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s\.,\-]/g.test(val)) {
+        errorMsg = 'Solo se aceptan letras, puntos y comas.';
+      }
+    }
+    if (name === 'universidad') {
+      if (/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\.,\-]/g.test(val)) {
+        errorMsg = 'Solo se aceptan letras, números, puntos y comas.';
+      }
+    }
+    if (name === 'email') {
+      if (!val.includes('@')) {
+        errorMsg = 'El formato de correo es incorrecto (falta el @)';
+      } else {
+        const domainSplit = val.split('@');
+        if (domainSplit.length === 2 && domainSplit[1]) {
+          const domain = domainSplit[1].toLowerCase();
+          if (domain.includes('.')) {
+             if (!domain.endsWith('.com') && !domain.endsWith('.bo') && 
+                 !domain.endsWith('.io') && !domain.endsWith('.dev') && 
+                 !domain.endsWith('.tech') && !domain.endsWith('.edu')) {
+               errorMsg = 'Formato inválido. Extensiones válidas: .com, .bo, .io, .dev, .tech, .edu';
+             }
+          } else {
+             errorMsg = 'Falta el dominio tras el @ (.com, .edu, etc)';
+          }
+        } else {
+           errorMsg = 'Falta el dominio del correo';
+        }
+      }
+    }
+    return errorMsg;
+  };
+
   const validate = (): boolean => {
     const nextErrors: Record<string, string> = {};
 
+    const nomErr = validateField('nombre', profile.nombre);
     if (!profile.nombre.trim()) nextErrors.nombre = 'El nombre es requerido.';
+    else if (nomErr) nextErrors.nombre = nomErr;
+
+    const emailErr = validateField('email', profile.email);
     if (!profile.email.trim()) nextErrors.email = 'El correo es requerido.';
+    else if (emailErr) nextErrors.email = emailErr;
+
+    const profErr = validateField('profesion', profile.profesion);
     if (!profile.profesion.trim()) nextErrors.profesion = 'La profesión es requerida.';
+    else if (profErr) nextErrors.profesion = profErr;
+
+    const espErr = validateField('especialidad', profile.especialidad);
     if (!profile.especialidad.trim()) nextErrors.especialidad = 'La especialidad es requerida.';
+    else if (espErr) nextErrors.especialidad = espErr;
+
+    const ubiErr = validateField('ubicacion', profile.ubicacion || '');
+    if (ubiErr) nextErrors.ubicacion = ubiErr;
+
+    const uniErr = validateField('universidad', profile.universidad || '');
+    if (uniErr) nextErrors.universidad = uniErr;
+
+    const carrErr = validateField('carrera', profile.carrera || '');
+    if (carrErr) nextErrors.carrera = carrErr;
 
     if (fotoFile) {
       const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
@@ -113,6 +172,17 @@ const UserProfile: React.FC = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
     setProfile((current) => ({ ...current, [name]: value }));
+
+    const fieldError = validateField(name, value);
+    setErrors(prev => {
+      const next = { ...prev };
+      if (fieldError) {
+        next[name] = fieldError;
+      } else {
+        delete next[name];
+      }
+      return next;
+    });
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -349,14 +419,26 @@ const UserProfile: React.FC = () => {
               placeholder="Ej. La Paz, Bolivia" 
               value={profile.ubicacion || ''} 
               onChange={handleChange} 
+              error={errors.ubicacion}
             />
-            <Input 
-              label="Teléfono" 
-              name="telefono" 
-              placeholder="Ej: +591 12345678" 
-              value={profile.telefono || ''} 
-              onChange={handleChange} 
-            />
+            
+            <div className="w-full">
+              <label className="block text-sm font-medium text-sidebar mb-1.5">Teléfono</label>
+              <PhoneInput
+                international
+                defaultCountry="BO"
+                value={profile.telefono}
+                onChange={(value) => setProfile((current) => ({ ...current, telefono: value || '' }))}
+                className={`w-full px-4 py-2.5 bg-card border rounded-lg text-sidebar placeholder:text-sidebar/40 
+                  focus-within:ring-2 focus-within:ring-primary focus-within:border-transparent
+                  transition-all ${errors.telefono ? 'border-destructive focus-within:ring-destructive' : 'border-muted'}`}
+                placeholder="Ej: +591 12345678"
+              />
+              <style dangerouslySetInnerHTML={{__html: `
+                .PhoneInputInput { border: none !important; outline: none !important; background: transparent !important; flex: 1; }
+                .PhoneInput { display: flex; align-items: center; }
+              `}} />
+            </div>
           </div>
 
           <div className="mt-2">
@@ -386,6 +468,7 @@ const UserProfile: React.FC = () => {
               placeholder="Ej. Universidad Mayor de San Simón" 
               value={profile.universidad || ''} 
               onChange={handleChange} 
+              error={errors.universidad}
             />
             <Input 
               label="Carrera" 
@@ -393,6 +476,7 @@ const UserProfile: React.FC = () => {
               placeholder="Ej. Ingeniería de Sistemas" 
               value={profile.carrera || ''} 
               onChange={handleChange} 
+              error={errors.carrera} 
             />
           </div>
         </Card>
