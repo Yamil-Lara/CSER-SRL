@@ -2,6 +2,7 @@
 // app/Services/UserService.php
 
 namespace App\Services;
+use Illuminate\Support\Facades\Hash;
 
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -47,7 +48,15 @@ class UserService
 
     public function updateProfile(User $user, array $data, $photo = null): array
     {
-        if ($photo) {
+        
+    
+    
+    if (isset($data['password']) && !empty($data['password'])) {
+        $data['password'] = Hash::make($data['password']);
+    }
+    
+    
+    if ($photo) {
             if ($user->foto && Storage::disk('public')->exists($user->foto)) {
                 Storage::disk('public')->delete($user->foto);
             }

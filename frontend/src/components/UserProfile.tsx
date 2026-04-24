@@ -245,7 +245,7 @@ const UserProfile: React.FC = () => {
     const token = localStorage.getItem('token');
 
     try {
-      const response = await axios.post(`${API_URL}/profile`, formData, {
+const response = await axios.post(`${API_URL}/profile`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -266,23 +266,28 @@ const UserProfile: React.FC = () => {
       
       setTimeout(() => setShowSuccessMessage(false), 3500);
     } catch (error: any) {
-      if (error.response?.status === 422) {
-        const validationErrors = error.response.data.errors;
-        if (validationErrors) {
-          const errorMessages: Record<string, string> = {};
-          Object.keys(validationErrors).forEach((key) => {
-            errorMessages[key] = validationErrors[key][0];
-          });
-          setErrors(errorMessages);
-        } else {
-          setErrors({ submit: 'Errores de validación en el servidor.' });
-        }
-      } else {
-        setErrors({ submit: error.response?.data?.message || 'Error al guardar el perfil.' });
-      }
-    } finally {
-      setLoading(false);
+  console.log(' RESPUESTA COMPLETA:', error.response);
+  console.log(' ERRORES:', error.response?.data?.errors);
+  
+  if (error.response?.status === 422) {
+    const validationErrors = error.response.data.errors;
+    console.log(' Validation errors:', validationErrors);
+    
+    if (validationErrors) {
+      const errorMessages: Record<string, string> = {};
+      Object.keys(validationErrors).forEach((key) => {
+        errorMessages[key] = validationErrors[key][0];
+      });
+      setErrors(errorMessages);
+    } else {
+      setErrors({ submit: 'Errores de validación en el servidor.' });
     }
+  } else {
+    setErrors({ submit: error.response?.data?.message || 'Error al guardar el perfil.' });
+  }
+} finally {
+  setLoading(false);
+}
   };
 
   return (
