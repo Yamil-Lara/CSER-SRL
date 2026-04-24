@@ -22,7 +22,7 @@ class UpdateProfileRequest extends FormRequest
         'email' => ['sometimes', 'email', Rule::unique('usuarios')->ignore($this->user()->id)],
 
 
-
+           'password' => 'sometimes|string|min:8', 
             'profesion' => 'nullable|string|max:255',
             'biografia' => 'nullable|string|max:1000',
             'ubicacion' => 'nullable|string|max:255',
@@ -49,6 +49,10 @@ class UpdateProfileRequest extends FormRequest
         'username.max' => 'El nombre de usuario no puede superar los 255 caracteres',
         'email.unique' => 'Este correo electrónico ya está registrado',
         'email.email' => 'Debe ingresar un correo electrónico válido',
+
+
+         'password.min' => 'La contraseña debe tener al menos 8 caracteres',
+
 
 
 
