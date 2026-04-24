@@ -17,6 +17,12 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             'nombre' => 'sometimes|string|max:255',
+
+            'username' => ['sometimes', 'string', 'max:255', Rule::unique('usuarios')->ignore($this->user()->id)],
+        'email' => ['sometimes', 'email', Rule::unique('usuarios')->ignore($this->user()->id)],
+
+
+
             'profesion' => 'nullable|string|max:255',
             'biografia' => 'nullable|string|max:1000',
             'ubicacion' => 'nullable|string|max:255',
@@ -37,6 +43,16 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             'nombre.max' => 'El nombre no puede superar los 255 caracteres',
+
+
+        'username.unique' => 'Este nombre de usuario ya está en uso',
+        'username.max' => 'El nombre de usuario no puede superar los 255 caracteres',
+        'email.unique' => 'Este correo electrónico ya está registrado',
+        'email.email' => 'Debe ingresar un correo electrónico válido',
+
+
+
+
             'profesion.max' => 'La profesión no puede superar los 255 caracteres',
             'biografia.max' => 'La biografía no puede superar los 1000 caracteres',
             'telefono.max' => 'El teléfono no puede superar los 20 caracteres',
