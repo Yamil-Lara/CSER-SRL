@@ -1,23 +1,82 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft, ExternalLink, MessageSquare, Send } from "lucide-react";
+import { ChevronLeft, ExternalLink, MessageSquare, Send, Moon, Sun } from "lucide-react";
 import { FiGithub as FiGithubIcon } from "react-icons/fi";
 import ProjectComments from "../components/ProjectComments";
+import api from "../utils/api";
 
 const FiGithub: any = FiGithubIcon;
+
+interface Categoria {
+  id: number;
+  nombre: string;
+}
+
+interface Usuario {
+  id: number;
+  nombre: string;
+  email: string;
+  foto: string | null;
+}
+
+interface Proyecto {
+  id: number;
+  titulo: string;
+  descripcion: string;
+  tecnologias: string | null;
+  imagen: string | null;
+  github: string | null;
+  demo: string | null;
+  fecha_proyecto: string | null;
+  categoria: Categoria | null;
+  usuario: Usuario | null;
+}
 
 const ProjectDetailPage: React.FC = () => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const [comentario, setComentario] = useState("");
+    const [proyecto, setProyecto] = useState<Proyecto | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
 
-    // Mock de datos interno para mostrar info coherente con el clic
-    const proyectosMock = {
-        "1": { titulo: "ejemplo1", autor: "Ana García", cat: "Desarrollo Web" },
-        "2": { titulo: "ejemplo2", autor: "Carlos Ruiz", cat: "Mobile" }
+    const toggleTheme = () => {
+        const html = document.documentElement;
+        if (html.classList.contains('dark')) {
+            html.classList.remove('dark');
+            html.removeAttribute('data-theme');
+            localStorage.setItem('devfolio-theme', 'light');
+            setIsDark(false);
+        } else {
+            html.classList.add('dark');
+            html.setAttribute('data-theme', 'dark');
+            localStorage.setItem('devfolio-theme', 'dark');
+            setIsDark(true);
+        }
     };
 
-    const info = proyectosMock[id as keyof typeof proyectosMock] || { titulo: "Proyecto", autor: "Autor", cat: "Categoría" };
+    useEffect(() => {
+        const fetchProject = async () => {
+            try {
+                setLoading(true);
+                const response = await api.get(`/proyectos/${id}`);
+                if (response.data.success) {
+                    setProyecto(response.data.data);
+                } else {
+                    setError("No se pudo cargar el proyecto");
+                }
+            } catch (err: any) {
+                console.error("Error fetching project:", err);
+                setError(err.response?.data?.message || "Error al cargar el proyecto");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchProject();
+        }
+    }, [id]);
 
     const Badge = ({ children }: { children: React.ReactNode }) => (
         <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold border border-slate-200">
@@ -25,57 +84,109 @@ const ProjectDetailPage: React.FC = () => {
         </span>
     );
 
+    if (loading) {
+        return <div className="min-h-screen bg-[#F1F5F9] flex items-center justify-center">Cargando...</div>;
+    }
+
+    if (error || !proyecto) {
+        return <div className="min-h-screen bg-[#F1F5F9] flex items-center justify-center text-red-500">{error || "Proyecto no encontrado"}</div>;
+    }
+
+    let tecnologiasArray: string[] = [];
+    try {
+        if (proyecto.tecnologias) {
+            tecnologiasArray = proyecto.tecnologias.startsWith('[') 
+                ? JSON.parse(proyecto.tecnologias) 
+                : proyecto.tecnologias.split(',').map((t: string) => t.trim());
+        }
+    } catch (e) {
+        console.error("Error parsing technologies:", e);
+    }
+
+    const getImageUrl = (path: string | null) => {
+        if (!path) return null;
+        if (path.startsWith('http')) return path;
+        return `http://localhost:8000/storage/${path}`;
+    };
+
     return (
-        <div className="min-h-screen bg-[#F1F5F9]">
-            <nav className="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center shadow-sm">
+        <div className="min-h-screen bg-[#F1F5F9] font-sans">
+            <nav className="flex justify-between items-center px-8 py-4 bg-white shadow-sm border-b border-slate-200 z-10 relative">
                 <div className="text-2xl font-extrabold text-[#3B82F6] cursor-pointer" onClick={() => navigate('/')}>DevFolio</div>
-                <button
-                    onClick={() => navigate('/explorar')}
-                    className="flex items-center gap-2 text-slate-500 hover:text-[#3B82F6] font-medium transition-colors"
-                >
-                    <ChevronLeft size={20} /> Volver al explorador
-                </button>
+                <div className="hidden md:flex gap-8 items-center text-sm font-medium text-slate-500">
+                    <a href="#" className="hover:text-[#3B82F6]">Características</a>
+                    <a href="#" className="text-[#3B82F6] font-semibold" onClick={() => navigate('/explore')}>Explorar</a>
+                    <a href="#" className="hover:text-[#3B82F6]">Cómo Funciona</a>
+                    <a href="#" className="hover:text-[#3B82F6]">Nosotros</a>
+                </div>
+                <div className="flex gap-4 items-center">
+                    <button className="text-sm font-medium text-slate-700" onClick={() => navigate('/login')}>Iniciar Sesión</button>
+                    <button className="bg-[#3B82F6] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-600 transition-colors">Regístrate Gratis</button>
+                    <button onClick={toggleTheme} className="p-2 rounded-full bg-slate-100 text-slate-600">
+                        {isDark ? <Sun size={18} /> : <Moon size={18} />}
+                    </button>
+                </div>
             </nav>
 
             <main className="max-w-5xl mx-auto py-12 px-6">
+                <button
+                    onClick={() => navigate('/explorar')}
+                    className="flex items-center gap-2 text-slate-500 hover:text-[#3B82F6] font-medium transition-colors mb-6"
+                >
+                    <ChevronLeft size={20} /> Volver al explorador
+                </button>
+                
                 {/* --- SECCIÓN SUPERIOR: Info del proyecto --- */}
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-12">
                     <div className="md:col-span-7">
-                        <div className="aspect-video bg-white rounded-[32px] border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden">
-                            <div className="text-slate-200 flex flex-col items-center">
-                                <div className="w-20 h-2 bg-slate-100 rounded-full mb-2"></div>
-                                <div className="w-32 h-2 bg-slate-50 rounded-full"></div>
-                            </div>
+                        <div className="aspect-video bg-slate-100 rounded-[32px] border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden">
+                            {proyecto.imagen ? (
+                                <img src={getImageUrl(proyecto.imagen) || ""} alt={proyecto.titulo} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="text-slate-400 flex flex-col items-center">
+                                    <span className="text-sm font-bold uppercase">Sin imagen</span>
+                                </div>
+                            )}
                         </div>
                     </div>
 
                     <div className="md:col-span-5 flex flex-col justify-center">
-                        <Badge>{info.cat}</Badge>
-                        <h1 className="text-4xl font-black text-slate-900 mt-4 mb-6">{info.titulo}</h1>
+                        <Badge>{proyecto.categoria?.nombre || "Sin categoría"}</Badge>
+                        <h1 className="text-4xl font-black text-slate-900 mt-4 mb-6">{proyecto.titulo}</h1>
 
                         <div className="space-y-4 mb-8">
-                            <div className="flex justify-between border-b border-slate-200 pb-2">
-                                <span className="text-slate-400 text-sm font-bold uppercase tracking-wider">Fecha de realización</span>
-                                <span className="text-slate-700 font-medium">11 de marzo de 2026</span>
-                            </div>
-                            <div className="flex items-center gap-3 mt-4">
-                                <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-                                    {info.autor.substring(0, 2).toUpperCase()}
+                            {proyecto.fecha_proyecto && (
+                                <div className="flex justify-between border-b border-slate-200 pb-2">
+                                    <span className="text-slate-400 text-sm font-bold uppercase tracking-wider">Fecha de realización</span>
+                                    <span className="text-slate-700 font-medium">{new Date(proyecto.fecha_proyecto).toLocaleDateString()}</span>
                                 </div>
+                            )}
+                            <div className="flex items-center gap-3 mt-4">
+                                {proyecto.usuario?.foto ? (
+                                    <img src={getImageUrl(proyecto.usuario.foto) || ""} alt={proyecto.usuario.nombre} className="w-10 h-10 rounded-full object-cover" />
+                                ) : (
+                                    <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+                                        {proyecto.usuario?.nombre.substring(0, 2).toUpperCase() || "US"}
+                                    </div>
+                                )}
                                 <div>
                                     <p className="text-xs text-slate-400 font-bold uppercase">Autor</p>
-                                    <p className="text-slate-800 font-bold">{info.autor}</p>
+                                    <p className="text-slate-800 font-bold">{proyecto.usuario?.nombre || "Desconocido"}</p>
                                 </div>
                             </div>
                         </div>
 
                         <div className="flex gap-3">
-                            <button className="flex-1 bg-[#3B82F6] text-white font-bold py-3 rounded-xl hover:bg-blue-600 shadow-lg flex items-center justify-center gap-2">
-                                <ExternalLink size={18} /> Demo
-                            </button>
-                            <button className="flex-1 bg-white text-slate-700 border border-slate-200 font-bold py-3 rounded-xl hover:bg-slate-50 flex items-center justify-center gap-2">
-                                <FiGithub size={18} /> Código
-                            </button>
+                            {proyecto.demo && (
+                                <a href={proyecto.demo} target="_blank" rel="noopener noreferrer" className="flex-1 bg-[#3B82F6] text-white font-bold py-3 rounded-xl hover:bg-blue-600 shadow-lg flex items-center justify-center gap-2">
+                                    <ExternalLink size={18} /> Demo
+                                </a>
+                            )}
+                            {proyecto.github && (
+                                <a href={proyecto.github} target="_blank" rel="noopener noreferrer" className="flex-1 bg-white text-slate-700 border border-slate-200 font-bold py-3 rounded-xl hover:bg-slate-50 flex items-center justify-center gap-2">
+                                    <FiGithub size={18} /> Código
+                                </a>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -85,8 +196,8 @@ const ProjectDetailPage: React.FC = () => {
                     <div className="md:col-span-8">
                         <section className="bg-white rounded-[32px] p-8 border border-slate-200 shadow-sm mb-8">
                             <h3 className="text-xl font-bold text-slate-800 mb-4">Sobre el proyecto</h3>
-                            <p className="text-slate-600 leading-relaxed">
-                                Esta es la descripción detallada del proyecto tal como se solicita en el criterio de aceptación 1 de la HU-07.
+                            <p className="text-slate-600 leading-relaxed whitespace-pre-wrap">
+                                {proyecto.descripcion || "Sin descripción detallada."}
                             </p>
                         </section>
 
@@ -99,9 +210,11 @@ const ProjectDetailPage: React.FC = () => {
                         <div className="bg-white rounded-[32px] p-8 border border-slate-200 shadow-sm sticky top-8">
                             <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-6">Tecnologías</h4>
                             <div className="flex flex-wrap gap-2">
-                                {["React", "Tailwind", "Lucide Icons", "Vite"].map(tech => (
-                                    <Badge key={tech}>{tech}</Badge>
-                                ))}
+                                {tecnologiasArray.length > 0 ? tecnologiasArray.map((tech: string, index: number) => (
+                                    <Badge key={index}>{tech}</Badge>
+                                )) : (
+                                    <span className="text-slate-500 text-sm">No especificadas</span>
+                                )}
                             </div>
                         </div>
                     </div>
