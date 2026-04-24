@@ -1,21 +1,103 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Moon, Sun, FolderGit2, ChevronDown } from "lucide-react";
+import { Search, Moon, Sun, FolderGit2, ChevronDown, User, MapPin, Briefcase, GraduationCap } from "lucide-react";
+import api from "../utils/api";
 
-const mockProyectos = [
-  { id: 1, titulo: "ejemplo1", tecnologia: "React", autor: "Ana García", categoria: "Desarrollo Web" },
-  { id: 2, titulo: "ejemplo2", tecnologia: "Flutter", autor: "Carlos Ruiz", categoria: "Mobile" }
-];
+interface Categoria {
+  id: number;
+  nombre: string;
+  icono?: string;
+  color?: string;
+}
 
-const categorias = ["Todas las categorías", "Desarrollo Web", "UI/UX Design", "Aplicaciones Móviles", "Data Science"];
+interface Autor {
+  id: number;
+  nombre: string;
+  username: string;
+  foto?: string | null;
+}
+
+interface Proyecto {
+  id: number;
+  titulo: string;
+  descripcion: string;
+  tecnologias: string[] | string | null;
+  imagen: string | null;
+  categoria: Categoria | null;
+  autor: Autor | null;
+}
+
+interface Usuario {
+  id: number;
+  nombre: string;
+  username: string;
+  foto: string | null;
+  profesion: string | null;
+  especialidad: string | null;
+  ubicacion: string | null;
+  universidad: string | null;
+  carrera: string | null;
+  proyectos_count: number;
+  tipo_perfil: string;
+}
 
 const ExplorePage: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"portafolios" | "proyectos">("proyectos");
-  const [filter, setFilter] = useState("Todos");
+  const [searchQuery, setSearchQuery] = useState("");
   const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
   const [selectedCategoria, setSelectedCategoria] = useState("Todas las categorías");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const [proyectos, setProyectos] = useState<Proyecto[]>([]);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const res = await api.get('/categorias');
+        if (res.data.success) {
+          setCategorias(res.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching categories", error);
+      }
+    };
+    fetchCategorias();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        if (activeTab === "proyectos") {
+          const categoryId = categorias.find(c => c.nombre === selectedCategoria)?.id;
+          const params: any = { search: searchQuery };
+          if (selectedCategoria !== "Todas las categorías" && categoryId) {
+            params.categoria_id = categoryId;
+          }
+          const response = await api.get('/explore/projects', { params });
+          if (response.data.success) {
+            setProyectos(response.data.data.data);
+          }
+        } else {
+          const response = await api.get('/explore/users', { params: { search: searchQuery } });
+          if (response.data.success) {
+            setUsuarios(response.data.data.data);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    const timeoutId = setTimeout(() => fetchData(), 300);
+    return () => clearTimeout(timeoutId);
+  }, [activeTab, searchQuery, selectedCategoria, categorias]);
 
   const toggleTheme = () => {
     const html = document.documentElement;
@@ -61,7 +143,13 @@ const ExplorePage: React.FC = () => {
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-slate-400" />
               </div>
-              <input type="text" className="block w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Busca por nombre..." />
+              <input 
+                type="text" 
+                className="block w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 outline-none" 
+                placeholder="Busca por nombre..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
             <button className="bg-[#3B82F6] text-white px-8 py-3 rounded-xl font-bold shadow-md hover:bg-blue-600">Buscar</button>
           </div>
@@ -92,36 +180,130 @@ const ExplorePage: React.FC = () => {
                 </button>
                 {isDropdownOpen && (
                   <div className="absolute top-[85px] mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 overflow-hidden py-2">
+                    <button onClick={() => { setSelectedCategoria("Todas las categorías"); setIsDropdownOpen(false); }} className="w-full text-left px-5 py-3 text-sm text-slate-600 hover:bg-slate-50">
+                      Todas las categorías
+                    </button>
                     {categorias.map((cat) => (
-                      <button key={cat} onClick={() => { setSelectedCategoria(cat); setIsDropdownOpen(false); }} className="w-full text-left px-5 py-3 text-sm text-slate-600 hover:bg-slate-50">
-                        {cat}
+                      <button key={cat.id} onClick={() => { setSelectedCategoria(cat.nombre); setIsDropdownOpen(false); }} className="w-full text-left px-5 py-3 text-sm text-slate-600 hover:bg-slate-50">
+                        {cat.nombre}
                       </button>
                     ))}
                   </div>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
-                {mockProyectos.map((proy) => (
-                  <div
-                    key={proy.id}
-                    onClick={() => navigate(`/proyecto/${proy.id}`)}
-                    className="bg-white rounded-[24px] border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group cursor-pointer"
-                  >
-                    <div className="aspect-[16/10] bg-[#F8FAFC] flex flex-col items-center justify-center text-[#3B82F6]/30 border-b border-slate-100">
-                      <FolderGit2 size={48} className="opacity-20 mb-2 group-hover:scale-110 transition-transform" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{proy.categoria}</span>
-                    </div>
-                    <div className="p-6 text-left">
-                      <h3 className="text-xl font-bold text-slate-800 mb-3">{proy.titulo}</h3>
-                      <div className="mb-4">
-                        <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold border border-blue-100">{proy.tecnologia}</span>
+              {loading ? (
+                <div className="text-center py-10 text-slate-500">Cargando...</div>
+              ) : proyectos.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
+                  {proyectos.map((proy) => (
+                    <div
+                      key={proy.id}
+                      onClick={() => navigate(`/proyecto/${proy.id}`)}
+                      className="bg-white rounded-[24px] border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group cursor-pointer flex flex-col"
+                    >
+                      <div className="aspect-[16/10] bg-slate-100 flex flex-col items-center justify-center text-slate-400 border-b border-slate-100 relative overflow-hidden">
+                        {proy.imagen ? (
+                          <img src={proy.imagen} alt={proy.titulo} className="w-full h-full object-cover" />
+                        ) : (
+                          <>
+                            <FolderGit2 size={48} className="opacity-20 mb-2 group-hover:scale-110 transition-transform" />
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{proy.categoria?.nombre || "Sin categoría"}</span>
+                          </>
+                        )}
+                        {proy.categoria && proy.imagen && (
+                          <span className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-slate-700 shadow-sm">
+                            {proy.categoria.nombre}
+                          </span>
+                        )}
                       </div>
-                      <p className="text-sm text-slate-500">por <span className="text-[#3B82F6] font-medium">{proy.autor}</span></p>
+                      <div className="p-6 text-left flex-grow flex flex-col">
+                        <h3 className="text-xl font-bold text-slate-800 mb-2 line-clamp-1">{proy.titulo}</h3>
+                        <p className="text-sm text-slate-500 mb-4 line-clamp-2 flex-grow">{proy.descripcion}</p>
+                        <div className="mb-4 flex flex-wrap gap-2">
+                          {Array.isArray(proy.tecnologias) 
+                            ? proy.tecnologias.slice(0, 3).map((tech, i) => (
+                                <span key={i} className="inline-block px-2.5 py-1 rounded-md bg-blue-50 text-blue-600 text-xs font-semibold border border-blue-100">{tech}</span>
+                              ))
+                            : proy.tecnologias && (
+                                <span className="inline-block px-2.5 py-1 rounded-md bg-blue-50 text-blue-600 text-xs font-semibold border border-blue-100">{proy.tecnologias}</span>
+                              )
+                          }
+                          {Array.isArray(proy.tecnologias) && proy.tecnologias.length > 3 && (
+                            <span className="inline-block px-2.5 py-1 rounded-md bg-slate-50 text-slate-500 text-xs font-semibold border border-slate-200">+{proy.tecnologias.length - 3}</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3 pt-4 border-t border-slate-100 mt-auto">
+                          {proy.autor?.foto ? (
+                            <img src={proy.autor.foto} alt={proy.autor.nombre} className="w-8 h-8 rounded-full object-cover" />
+                          ) : (
+                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                              <User size={14} />
+                            </div>
+                          )}
+                          <p className="text-sm text-slate-500"><span className="text-slate-700 font-medium hover:text-blue-600 transition-colors">{proy.autor?.nombre}</span></p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10 text-slate-500">No se encontraron proyectos.</div>
+              )}
+            </div>
+          )}
+          {activeTab === "portafolios" && (
+            <div className="flex flex-col items-center">
+              {loading ? (
+                <div className="text-center py-10 text-slate-500">Cargando...</div>
+              ) : usuarios.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full max-w-6xl">
+                  {usuarios.map((user) => (
+                    <div
+                      key={user.id}
+                      onClick={() => navigate(`/portfolio/${user.username}`)}
+                      className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col items-center text-center shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                    >
+                      <div className="w-24 h-24 rounded-full bg-slate-100 mb-4 overflow-hidden border-4 border-white shadow-md">
+                        {user.foto ? (
+                          <img src={user.foto} alt={user.nombre} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-400">
+                            <User size={40} />
+                          </div>
+                        )}
+                      </div>
+                      <h3 className="text-lg font-bold text-slate-800">{user.nombre}</h3>
+                      <p className="text-sm text-blue-500 font-medium mb-3">@{user.username}</p>
+                      
+                      <div className="flex-grow flex flex-col items-center gap-2 mb-4">
+                        {(user.profesion || user.carrera) && (
+                          <div className="flex items-center gap-1.5 text-xs text-slate-600">
+                            {user.profesion ? <Briefcase size={14} /> : <GraduationCap size={14} />}
+                            <span className="line-clamp-1">{user.profesion || user.carrera}</span>
+                          </div>
+                        )}
+                        {user.ubicacion && (
+                          <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                            <MapPin size={14} />
+                            <span>{user.ubicacion}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="w-full pt-4 border-t border-slate-100 flex justify-between items-center">
+                        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{user.tipo_perfil}</span>
+                        <div className="flex items-center gap-1 text-sm font-bold text-slate-700">
+                          <FolderGit2 size={16} className="text-blue-500" />
+                          <span>{user.proyectos_count}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10 text-slate-500">No se encontraron portafolios.</div>
+              )}
             </div>
           )}
         </div>

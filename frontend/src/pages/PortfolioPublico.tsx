@@ -53,11 +53,23 @@ export default function PortfolioPublico() {
                 date: `${e.fecha_inicio?.split('T')[0]} - ${e.fecha_fin ? e.fecha_fin.split('T')[0] : 'Presente'}`,
                 description: e.descripcion || '',
           })),
-          projects: proyectos.map((p: any) => ({
-                title: p.titulo,
-                description: p.descripcion,
-                tags: p.tecnologias ? p.tecnologias.split(',') : []
-          })),
+          projects: proyectos.map((p: any) => {
+                let parsedTags: string[] = [];
+                if (p.tecnologias) {
+                   try {
+                       parsedTags = p.tecnologias.startsWith('[') ? JSON.parse(p.tecnologias) : p.tecnologias.split(',');
+                   } catch {
+                       parsedTags = [];
+                   }
+                }
+                return {
+                    id: p.id,
+                    title: p.titulo,
+                    description: p.descripcion,
+                    tags: parsedTags,
+                    image: p.imagen ? (p.imagen.startsWith('http') ? p.imagen : `http://localhost:8000/storage/${p.imagen}`) : undefined
+                };
+          }),
           // Por defecto todo visible ya que el backend no lo incluyó en la respuesta del nuevo endpoint
           visibilidad: {
              proyectos_visible: true, habilidades_visible: true,
