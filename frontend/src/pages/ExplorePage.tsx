@@ -48,6 +48,7 @@ const ExplorePage: React.FC = () => {
   const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
   const [selectedCategoria, setSelectedCategoria] = useState("Todas las categorías");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [userFilter, setUserFilter] = useState<"todos" | "profesional" | "estudiante">("todos");
 
   const [proyectos, setProyectos] = useState<Proyecto[]>([]);
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
@@ -78,14 +79,34 @@ const ExplorePage: React.FC = () => {
           if (selectedCategoria !== "Todas las categorías" && categoryId) {
             params.categoria_id = categoryId;
           }
+          if (userFilter !== "todos") {
+            params.tipo_perfil = userFilter;
+          }
           const response = await api.get('/explore/projects', { params });
           if (response.data.success) {
-            setProyectos(response.data.data.data);
+            let fetchedProjects = response.data.data.data;
+            if (userFilter !== "todos") {
+              fetchedProjects = fetchedProjects.filter((p: any) => 
+                p.autor && p.autor.tipo_perfil && p.autor.tipo_perfil.toLowerCase() === userFilter
+              );
+            }
+            setProyectos(fetchedProjects);
           }
         } else {
-          const response = await api.get('/explore/users', { params: { search: searchQuery } });
+          const params: any = { search: searchQuery };
+          if (userFilter !== "todos") {
+            params.tipo_perfil = userFilter;
+          }
+          const response = await api.get('/explore/users', { params });
           if (response.data.success) {
-            setUsuarios(response.data.data.data);
+            let fetchedUsers = response.data.data.data;
+            // Filtrado en el frontend por si el backend no soporta el parámetro
+            if (userFilter !== "todos") {
+              fetchedUsers = fetchedUsers.filter((u: Usuario) => 
+                u.tipo_perfil && u.tipo_perfil.toLowerCase() === userFilter
+              );
+            }
+            setUsuarios(fetchedUsers);
           }
         }
       } catch (error) {
@@ -97,7 +118,7 @@ const ExplorePage: React.FC = () => {
     
     const timeoutId = setTimeout(() => fetchData(), 300);
     return () => clearTimeout(timeoutId);
-  }, [activeTab, searchQuery, selectedCategoria, categorias]);
+  }, [activeTab, searchQuery, selectedCategoria, categorias, userFilter]);
 
   const toggleTheme = () => {
     const html = document.documentElement;
@@ -155,7 +176,7 @@ const ExplorePage: React.FC = () => {
               <input 
                 type="text" 
                 className="block w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 outline-none" 
-                placeholder="Busca por nombre..." 
+                placeholder="Busca por nombre, especialidad o categoría" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -171,6 +192,27 @@ const ExplorePage: React.FC = () => {
             <button onClick={() => setActiveTab("proyectos")} className={`pb-4 text-sm font-bold relative ${activeTab === "proyectos" ? "text-[#3B82F6]" : "text-slate-400"}`}>
               Proyectos
               {activeTab === "proyectos" && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#3B82F6]" />}
+            </button>
+          </div>
+
+          <div className="flex justify-center gap-4 mb-8">
+            <button 
+              onClick={() => setUserFilter("todos")} 
+              className={`px-8 py-3 rounded-xl font-bold text-sm shadow-sm transition-colors ${userFilter === "todos" ? "bg-[#3B82F6] text-white" : "bg-white text-slate-700 hover:bg-slate-50 border border-slate-100"}`}
+            >
+              Todos
+            </button>
+            <button 
+              onClick={() => setUserFilter("profesional")} 
+              className={`px-8 py-3 rounded-xl font-bold text-sm shadow-sm transition-colors ${userFilter === "profesional" ? "bg-[#3B82F6] text-white" : "bg-white text-slate-700 hover:bg-slate-50 border border-slate-100"}`}
+            >
+              Profesionales
+            </button>
+            <button 
+              onClick={() => setUserFilter("estudiante")} 
+              className={`px-8 py-3 rounded-xl font-bold text-sm shadow-sm transition-colors ${userFilter === "estudiante" ? "bg-[#3B82F6] text-white" : "bg-white text-slate-700 hover:bg-slate-50 border border-slate-100"}`}
+            >
+              Estudiantes
             </button>
           </div>
         </div>
