@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MessageSquare, Send, Trash2 } from "lucide-react";
-import api from "../api/axios";
+import api from "../utils/api";
 
 // Interfaz que coincide con la respuesta de tu backend
 interface Comentario {

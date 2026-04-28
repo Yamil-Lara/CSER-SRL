@@ -3,7 +3,7 @@ import { FaLinkedin, FaGithub, FaGlobe, FaFacebook, FaInstagram, FaXTwitter, FaT
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Alert } from '../components/ui/Alert';
-import axios from '../api/axios';
+import axios from '../utils/api';
 
 // Workaround para TypeScript
 const LinkedinIcon = FaLinkedin as React.ElementType;

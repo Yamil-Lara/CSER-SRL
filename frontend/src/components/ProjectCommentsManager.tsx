@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Check, X, MessageSquare, Clock, Trash2 } from "lucide-react";
-import api from "../api/axios";
+import api from "../utils/api";
 
 // Interfaz para los comentarios en la vista de administración
 interface ComentarioAdmin {
