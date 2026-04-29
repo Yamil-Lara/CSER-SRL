@@ -93,6 +93,15 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
         // AGREGAR ESTAS DOS RUTAS:
         Route::get('/proyectos', [\App\Http\Controllers\ProyectoController::class, 'adminIndex']);
         Route::put('/proyectos/{id}/estado', [\App\Http\Controllers\ProyectoController::class, 'actualizarEstado']);
+        
+        // Backups
+        Route::get('/backups', [AdminSystemController::class, 'indexBackups']);
+        Route::post('/backups', [AdminSystemController::class, 'createBackup']);
+        Route::get('/backups/download/{filename}', [AdminSystemController::class, 'downloadBackup']);
+        Route::delete('/backups/{filename}', [AdminSystemController::class, 'deleteBackup']);
+
+        // Logs
+        Route::get('/logs', [AdminSystemController::class, 'getLogs']);
     });
 
     // En la sección de RUTAS PÚBLICAS (fuera del middleware auth:sanctum)

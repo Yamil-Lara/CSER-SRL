@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
-import { Search } from 'lucide-react';
+import { Search, Users } from 'lucide-react';
 import { Badge } from '../components/ui/Badge';
 
 interface AdminUser {
@@ -55,7 +55,10 @@ export default function AdminUsersPage() {
         <div className="p-6 max-w-7xl mx-auto">
             {/* Títulos estáticos: Siempre visibles */}
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-sidebar">Gestión de Usuarios</h1>
+                <h1 className="text-3xl font-bold text-sidebar flex items-center gap-3">
+                    <Users className="w-8 h-8 text-primary" />
+                    Gestión de Usuarios
+                </h1>
                 <p className="text-sidebar/70 mt-2">Administra los usuarios registrados en la plataforma</p>
             </div>
 

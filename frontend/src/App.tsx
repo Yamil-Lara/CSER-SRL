@@ -8,6 +8,8 @@ import AdminUsersPage from "./pages/AdminUsersPage";
 import AdminAprobacionesPage from "./pages/AdminAprobacionesPage";
 import AdminBackupsPage from "./pages/AdminBackupsPage";
 import AdminLogsPage from "./pages/AdminLogsPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
+import AdminReportesPage from "./pages/AdminReportesPage";
 //import Sidebar from "./components/Sidebar";
 
 
@@ -102,11 +104,11 @@ function App(): JSX.Element {
                   <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
                   <main className="main-content">
                     <Routes>
-                      <Route path="dashboard" element={<AdminDashboard />} />
+                      <Route path="dashboard" element={<AdminDashboardPage />} />
                       <Route path="usuarios" element={<AdminUsersPage />} />
                       <Route path="aprobaciones" element={<AdminAprobacionesPage />} />
                       <Route path="moderacion" element={<AdminCommentPage />} />
-                      <Route path="reportes" element={<AdminReportes />} />
+                      <Route path="reportes" element={<AdminReportesPage />} />
                       <Route path="backups" element={<AdminBackupsPage />} />
                       <Route path="logs" element={<AdminLogsPage />} />
                     </Routes>

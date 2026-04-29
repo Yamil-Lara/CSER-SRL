@@ -57,10 +57,13 @@ export default function AdminAprobacionesPage() {
     });
 
     return (
-        <div>
+        <div className="p-6 max-w-7xl mx-auto">
             <header className="page-header">
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-sidebar">Aprobación de Proyectos</h1>
+                <div>
+                    <h1 className="text-3xl font-bold text-sidebar flex items-center gap-3">
+                        <CheckCircle className="w-8 h-8 text-primary" />
+                        Aprobación de Proyectos
+                    </h1>
                     <p className="text-sidebar/70 mt-2">Gestiona, revisa y analiza detalladamente los proyectos de la comunidad.</p>
                 </div>
             </header>
