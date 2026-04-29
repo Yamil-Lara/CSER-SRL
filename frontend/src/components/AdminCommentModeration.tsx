@@ -83,8 +83,7 @@ export default function AdminCommentModeration() {
     };
 
     return (
-        <div className="space-y-8 mt-6">
-            
+        <div>
             {/* DASHBOARD DE ESTADÍSTICAS */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Card className="p-4 flex items-center gap-4 border-l-4 border-l-sidebar">
