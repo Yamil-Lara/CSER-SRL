@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ExperiencePage } from "./pages/ExperiencePage";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 //import Sidebar from "./components/Sidebar";
 
 
@@ -106,18 +107,20 @@ function App(): JSX.Element {
           <Route
             path="/admin/*"
             element={
-              <div className={`app-layout ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
-                <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
-                <main className="main-content">
-                  <Routes>
-                    <Route path="dashboard" element={<AdminDashboard />} />
-                    <Route path="usuarios" element={<AdminUsers />} />
-                    <Route path="aprobaciones" element={<AdminAprobaciones />} />
-                    <Route path="moderacion" element={<AdminCommentPage />} />
-                    <Route path="reportes" element={<AdminReportes />} />
-                  </Routes>
-                </main>
-              </div>
+              <ProtectedRoute requireAdmin={true}>
+                <div className={`app-layout ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
+                  <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
+                  <main className="main-content">
+                    <Routes>
+                      <Route path="dashboard" element={<AdminDashboard />} />
+                      <Route path="usuarios" element={<AdminUsers />} />
+                      <Route path="aprobaciones" element={<AdminAprobaciones />} />
+                      <Route path="moderacion" element={<AdminCommentPage />} />
+                      <Route path="reportes" element={<AdminReportes />} />
+                    </Routes>
+                  </main>
+                </div>
+              </ProtectedRoute>
             }
           />
 
@@ -127,20 +130,22 @@ function App(): JSX.Element {
           <Route
             path="/dashboard/*"
             element={
-              <div className={`app-layout ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
-                <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
-                <main className="main-content">
-                  <Routes>
-                    <Route path="perfil" element={<UserProfile />} />
-                    <Route path="proyectos" element={<ProjectsPage />} />
-                    <Route path="habilidades" element={<SkillsPage />} />                  
-                    <Route path="experiencia" element={<ExperiencePage />} />
-                    <Route path="enlaces" element={<LinksPage />} />
-                    <Route path="visibilidad" element={<VisibilitySettingsPage />} />
-                    <Route path="moderacion" element={<AdminCommentPage />} />
-                  </Routes>
-                </main>
-              </div>
+              <ProtectedRoute>
+                <div className={`app-layout ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
+                  <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
+                  <main className="main-content">
+                    <Routes>
+                      <Route path="perfil" element={<UserProfile />} />
+                      <Route path="proyectos" element={<ProjectsPage />} />
+                      <Route path="habilidades" element={<SkillsPage />} />                  
+                      <Route path="experiencia" element={<ExperiencePage />} />
+                      <Route path="enlaces" element={<LinksPage />} />
+                      <Route path="visibilidad" element={<VisibilitySettingsPage />} />
+                      <Route path="moderacion" element={<AdminCommentPage />} />
+                    </Routes>
+                  </main>
+                </div>
+              </ProtectedRoute>
             }
           />
 

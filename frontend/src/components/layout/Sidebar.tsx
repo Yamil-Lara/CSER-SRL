@@ -51,10 +51,9 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {  // ← 
   console.log('pathname:', location.pathname);
 
   const handleLogout = async () => {
-    await logout();  // ← Esperar a que termine
-    navigate('/');
-    // Opcional: forzar recarga para limpiar todo
-    window.location.reload();
+    await logout();
+    // CRITERIO 1 y 5: Redirigir a login, usando replace para que no vuelva atrás con el navegador
+    navigate('/login', { replace: true });
   };
 
   // Menú para Usuario Normal
@@ -157,7 +156,10 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {  // ← 
           {isCollapsed ? <ChevronRight className="w-5 h-5 flex-shrink-0" /> : <><ChevronLeft className="w-5 h-5 flex-shrink-0" /><span className="text-sm font-medium">Colapsar</span></>}
         </button>
 
-        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-destructive/90 hover:bg-destructive/10 hover:text-destructive transition-all" title={isCollapsed ? 'Cerrar sesión' : undefined}>
+        <button 
+          onClick={handleLogout} 
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-[#F63B3B] hover:bg-[#F63B3B]/10" 
+          title={isCollapsed ? 'Cerrar sesión' : undefined}>
           <LogOut className="w-5 h-5 flex-shrink-0" />
           {!isCollapsed && <span className="text-sm font-medium">Cerrar sesión</span>}
         </button>
