@@ -102,6 +102,10 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
 
         // Logs
         Route::get('/logs', [AdminSystemController::class, 'getLogs']);
+
+        // PDF Reportes
+        Route::get('/reportes/usuarios', [ReporteController::class, 'usuariosPDF']);
+        Route::get('/reportes/proyectos', [ReporteController::class, 'proyectosPDF']);
     });
 
     // En la sección de RUTAS PÚBLICAS (fuera del middleware auth:sanctum)
