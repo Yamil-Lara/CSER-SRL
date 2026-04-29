@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -16,11 +16,12 @@ import {
   CheckCircle,
   MessageSquare,
   FileText,
-  Shield
+  Shield,
+  LucideIcon
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Badge } from '../ui/Badge';
-import { LucideIcon } from "lucide-react";
+import api from '../../utils/api';
 
 type MenuItem = {
   icon: LucideIcon;
@@ -29,30 +30,49 @@ type MenuItem = {
   badge?: number;
 };
 
-// 👇 AÑADE LAS PROPS AQUÍ
 interface SidebarProps {
   isCollapsed: boolean;
   toggleSidebar: () => void;
 }
 
-export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {  // ← RECIBE LAS PROPS
+export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout, user, isAdmin, loading } = useAuth();
   
-  // 👇 ELIMINA ESTA LÍNEA (ya no la necesitas porque viene de las props)
-  // const [isCollapsed, setIsCollapsed] = useState(false);
-  
-  console.log('=== SIDEBAR DEBUG ===');
-  console.log('isAdmin:', isAdmin);
-  console.log('user:', user);
-  console.log('user?.rol:', user?.rol);
-  console.log('loading:', loading);
-  console.log('pathname:', location.pathname);
+  // Estado para la notificación de proyectos pendientes
+  const [pendingProjects, setPendingProjects] = useState<number>(0);
+
+  // Efecto para consultar proyectos pendientes si el usuario es admin
+  // Extraemos la consulta a una función para poder reutilizarla
+  const fetchPendingProjects = () => {
+    if (isAdmin) {
+      api.get('/admin/proyectos?estado=pendiente')
+        .then(res => {
+          const pendientes = res.data?.data?.stats?.pendientes || 0;
+          setPendingProjects(pendientes);
+        })
+        .catch(err => console.error("Error al cargar notificaciones del sidebar:", err));
+    }
+  };
+
+  // Efecto para inicializar y escuchar cambios
+  useEffect(() => {
+    // 1. Consultamos al cargar el componente o cambiar de ruta
+    fetchPendingProjects();
+
+    // 2. Nos suscribimos al evento global que emite la página de aprobaciones
+    window.addEventListener('proyectoActualizado', fetchPendingProjects);
+
+    // 3. Limpieza: Nos desuscribimos si el componente se desmonta
+    return () => {
+      window.removeEventListener('proyectoActualizado', fetchPendingProjects);
+    };
+  }, [isAdmin, location.pathname]);
 
   const handleLogout = async () => {
     await logout();
-    // CRITERIO 1 y 5: Redirigir a login, usando replace para que no vuelva atrás con el navegador
+    // Redirigimos a login reemplazando el historial para evitar el botón "Atrás"
     navigate('/login', { replace: true });
   };
 
@@ -71,12 +91,17 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {  // ← 
   const adminMenuItems: MenuItem[] = [
     { icon: LayoutDashboard, label: 'Vista Global', path: '/admin/dashboard' },
     { icon: Users, label: 'Gestión de Usuarios', path: '/admin/usuarios' },
-    { icon: CheckCircle, label: 'Aprobaciones', path: '/admin/aprobaciones', badge: 3 },
+    { 
+        icon: CheckCircle, 
+        label: 'Aprobaciones', 
+        path: '/admin/aprobaciones', 
+        badge: pendingProjects > 0 ? pendingProjects : undefined 
+    },
     { icon: MessageSquare, label: 'Moderar Comentarios', path: '/admin/moderacion', badge: 5 },
     { icon: FileText, label: 'Reportes PDF', path: '/admin/reportes' }
   ];
 
-  // Si está cargando, muestra un loader
+  // Si está cargando la sesión, muestra un loader
   if (loading) {
     return (
       <aside className={`fixed left-0 top-0 h-screen bg-sidebar border-r border-sidebar/10 transition-all duration-300 z-40 flex flex-col ${isCollapsed ? 'w-20' : 'w-64'}`}>
@@ -113,7 +138,7 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {  // ← 
         </div>
       )}
 
-      {/* Navigation */}
+      {/* Navegación */}
       <nav className="flex-1 py-6 px-3 overflow-y-auto">
         <div className="space-y-1">
           {menuItems.map((item) => {
@@ -124,7 +149,8 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {  // ← 
                 key={item.path}
                 to={item.path}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all group relative ${active ? 'bg-primary/10 text-primary' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
-                title={isCollapsed ? item.label : undefined}>
+                title={isCollapsed ? item.label : undefined}
+              >
                 <Icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-primary' : ''}`} />
                 {!isCollapsed && (
                   <>
@@ -133,7 +159,7 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {  // ← 
                   </>
                 )}
                 {isCollapsed && item.badge && (
-                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-destructive rounded-full flex items-center justify-center">
+                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-destructive rounded-full flex items-center justify-center shadow-md">
                     <span className="text-xs text-white font-bold">{item.badge}</span>
                   </div>
                 )}
@@ -143,7 +169,7 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {  // ← 
         </div>
       </nav>
 
-      {/* Bottom Actions */}
+      {/* Acciones Inferiores */}
       <div className="border-t border-sidebar/10 p-3 space-y-1">
         {!isAdmin && (
           <Link to={`/portfolio/${user?.username}`} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/5 hover:text-white transition-all" title={isCollapsed ? 'Ver Portafolio Público' : undefined}>
@@ -156,10 +182,12 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {  // ← 
           {isCollapsed ? <ChevronRight className="w-5 h-5 flex-shrink-0" /> : <><ChevronLeft className="w-5 h-5 flex-shrink-0" /><span className="text-sm font-medium">Colapsar</span></>}
         </button>
 
+        {/* Botón Salir: HU-14 (Color rojo específico #F63B3B) */}
         <button 
           onClick={handleLogout} 
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-[#F63B3B] hover:bg-[#F63B3B]/10" 
-          title={isCollapsed ? 'Cerrar sesión' : undefined}>
+          title={isCollapsed ? 'Cerrar sesión' : undefined}
+        >
           <LogOut className="w-5 h-5 flex-shrink-0" />
           {!isCollapsed && <span className="text-sm font-medium">Cerrar sesión</span>}
         </button>

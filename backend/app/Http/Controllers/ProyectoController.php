@@ -153,14 +153,43 @@ class ProyectoController extends Controller
         ]);
     }
 
-    // NUEVO MÉTODO PARA APROBAR/RECHAZAR
+    public function adminIndex(Request $request)
+    {
+        // Obtenemos los conteos para el dashboard
+        $stats = [
+            'total' => \App\Models\Proyecto::count(),
+            'pendientes' => \App\Models\Proyecto::where('estado', 'pendiente')->count(),
+            'aprobados' => \App\Models\Proyecto::where('estado', 'aprobado')->count(),
+            'rechazados' => \App\Models\Proyecto::where('estado', 'rechazado')->count(),
+        ];
+
+        // Obtenemos la lista de proyectos con sus relaciones
+        $query = \App\Models\Proyecto::with(['usuario', 'categoria'])->latest();
+
+        // Filtro opcional por estado
+        if ($request->has('estado') && $request->estado !== 'todos') {
+            $query->where('estado', $request->estado);
+        }
+
+        $proyectos = $query->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'stats' => $stats,
+                'proyectos' => $proyectos
+            ]
+        ]);
+    }
+
     public function actualizarEstado(Request $request, $id)
     {
         $request->validate([
-            'estado' => 'required|in:aprobado,rechazado'
+            // Asegura que los estados sean válidos, incluyendo 'pendiente'
+            'estado' => 'required|in:pendiente,aprobado,rechazado' 
         ]);
 
-        $proyecto = Proyecto::findOrFail($id);
+        $proyecto = \App\Models\Proyecto::findOrFail($id);
         $proyecto->estado = $request->estado;
         $proyecto->save();
 
