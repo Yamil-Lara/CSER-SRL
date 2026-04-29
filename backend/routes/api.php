@@ -88,10 +88,12 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
     // Administración
     Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::apiResource('usuarios', AdminUserController::class);
-      //EL JAVI AGREGO ESTO XD
-     Route::get('/comentarios/pendientes', [ComentarioController::class, 'adminIndexAll']);
-    
-        });
+        Route::get('/comentarios/pendientes', [ComentarioController::class, 'adminIndexAll']);
+        
+        // NUEVAS RUTAS PARA APROBACIÓN DE PROYECTOS
+        Route::get('/proyectos/pendientes', [\App\Http\Controllers\ProyectoController::class, 'pendientes']);
+        Route::put('/proyectos/{id}/estado', [\App\Http\Controllers\ProyectoController::class, 'actualizarEstado']);
+    });
 
     // En la sección de RUTAS PÚBLICAS (fuera del middleware auth:sanctum)
     Route::get('/proyectos/{proyectoId}/comentarios', [\App\Http\Controllers\ComentarioController::class, 'index']);

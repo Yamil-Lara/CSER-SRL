@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Proyecto\StoreProyectoRequest;
 use App\Http\Requests\Proyecto\UpdateProyectoRequest;
 use App\Models\Proyecto;
+use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -135,5 +136,38 @@ class ProyectoController extends Controller
         $proyecto->delete();
 
         return $this->successResponse(null, 'Proyecto eliminado exitosamente');
+    }
+
+    // NUEVO MÉTODO PARA EL ADMINISTRADOR
+    public function pendientes()
+    {
+        // Traemos los proyectos con estado 'pendiente', incluyendo datos del usuario y la categoría
+        $proyectos = Proyecto::with(['usuario', 'categoria'])
+            ->where('estado', 'pendiente')
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $proyectos
+        ]);
+    }
+
+    // NUEVO MÉTODO PARA APROBAR/RECHAZAR
+    public function actualizarEstado(Request $request, $id)
+    {
+        $request->validate([
+            'estado' => 'required|in:aprobado,rechazado'
+        ]);
+
+        $proyecto = Proyecto::findOrFail($id);
+        $proyecto->estado = $request->estado;
+        $proyecto->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Estado del proyecto actualizado.',
+            'data' => $proyecto
+        ]);
     }
 }
