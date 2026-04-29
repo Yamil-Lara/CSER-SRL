@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ExperiencePage } from "./pages/ExperiencePage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import AdminUsersPage from "./pages/AdminUsersPage";
 //import Sidebar from "./components/Sidebar";
 
 
@@ -29,13 +30,6 @@ const AdminDashboard = () => (
   <div>
     <h1 className="text-2xl font-bold text-sidebar">Panel de Administrador</h1>
     <p className="text-sidebar/70 mt-2">Bienvenido al panel de control</p>
-  </div>
-);
-
-const AdminUsers = () => (
-  <div>
-    <h1 className="text-2xl font-bold text-sidebar">Gestión de Usuarios</h1>
-    <p className="text-sidebar/70 mt-2">Administra los usuarios del sistema</p>
   </div>
 );
 
@@ -113,7 +107,7 @@ function App(): JSX.Element {
                   <main className="main-content">
                     <Routes>
                       <Route path="dashboard" element={<AdminDashboard />} />
-                      <Route path="usuarios" element={<AdminUsers />} />
+                      <Route path="usuarios" element={<AdminUsersPage />} />
                       <Route path="aprobaciones" element={<AdminAprobaciones />} />
                       <Route path="moderacion" element={<AdminCommentPage />} />
                       <Route path="reportes" element={<AdminReportes />} />
