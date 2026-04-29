@@ -6,6 +6,8 @@ import { ExperiencePage } from "./pages/ExperiencePage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import AdminAprobacionesPage from "./pages/AdminAprobacionesPage";
+import AdminBackupsPage from "./pages/AdminBackupsPage";
+import AdminLogsPage from "./pages/AdminLogsPage";
 //import Sidebar from "./components/Sidebar";
 
 
@@ -105,6 +107,8 @@ function App(): JSX.Element {
                       <Route path="aprobaciones" element={<AdminAprobacionesPage />} />
                       <Route path="moderacion" element={<AdminCommentPage />} />
                       <Route path="reportes" element={<AdminReportes />} />
+                      <Route path="backups" element={<AdminBackupsPage />} />
+                      <Route path="logs" element={<AdminLogsPage />} />
                     </Routes>
                   </main>
                 </div>

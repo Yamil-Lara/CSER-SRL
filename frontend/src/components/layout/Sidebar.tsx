@@ -17,7 +17,9 @@ import {
   FileText,
   Shield,
   LucideIcon,
-  Eye
+  Eye,
+  Database,
+  Activity
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Badge } from '../ui/Badge';
@@ -116,7 +118,10 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
         path: '/admin/moderacion', 
         badge: pendingComments > 0 ? pendingComments : undefined 
     },
-    { icon: FileText, label: 'Reportes PDF', path: '/admin/reportes' }
+    { icon: FileText, label: 'Reportes PDF', path: '/admin/reportes' },
+    // NUEVAS RUTAS
+    { icon: Database, label: 'Backups', path: '/admin/backups' },
+    { icon: Activity, label: 'Logs', path: '/admin/logs' }
   ];
 
   if (loading) return null;
