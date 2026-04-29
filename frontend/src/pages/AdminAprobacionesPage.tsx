@@ -57,11 +57,13 @@ export default function AdminAprobacionesPage() {
     });
 
     return (
-        <div className="p-6 max-w-7xl mx-auto space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold text-sidebar">Aprobación de Proyectos</h1>
-                <p className="text-sidebar/70 mt-2">Gestiona, revisa y analiza detalladamente los proyectos de la comunidad.</p>
-            </div>
+        <div>
+            <header className="page-header">
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-sidebar">Aprobación de Proyectos</h1>
+                    <p className="text-sidebar/70 mt-2">Gestiona, revisa y analiza detalladamente los proyectos de la comunidad.</p>
+                </div>
+            </header>
 
             {/* DASHBOARD DE ESTADÍSTICAS */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

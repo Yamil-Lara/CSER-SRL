@@ -7,7 +7,6 @@ import {
   Code,
   Briefcase,
   Link as LinkIcon,
-  Eye,
   EyeOff,
   LogOut,
   ChevronLeft,
@@ -17,7 +16,8 @@ import {
   MessageSquare,
   FileText,
   Shield,
-  LucideIcon
+  LucideIcon,
+  Eye
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Badge } from '../ui/Badge';
@@ -40,11 +40,11 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
   const navigate = useNavigate();
   const { logout, user, isAdmin, loading } = useAuth();
   
-  // Estado para la notificación de proyectos pendientes
+  // Estados para las notificaciones dinámicas
   const [pendingProjects, setPendingProjects] = useState<number>(0);
+  const [pendingComments, setPendingComments] = useState<number>(0);
 
-  // Efecto para consultar proyectos pendientes si el usuario es admin
-  // Extraemos la consulta a una función para poder reutilizarla
+  // Funciones de consulta a la API
   const fetchPendingProjects = () => {
     if (isAdmin) {
       api.get('/admin/proyectos?estado=pendiente')
@@ -52,31 +52,45 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
           const pendientes = res.data?.data?.stats?.pendientes || 0;
           setPendingProjects(pendientes);
         })
-        .catch(err => console.error("Error al cargar notificaciones del sidebar:", err));
+        .catch(err => console.error("Error al cargar notificaciones de proyectos:", err));
     }
   };
 
-  // Efecto para inicializar y escuchar cambios
+  const fetchPendingComments = () => {
+    if (isAdmin) {
+      api.get('/admin/comentarios/pendientes')
+        .then(res => {
+          // Filtramos localmente los que tienen estado 'aprobado === 0' (pendiente)
+          const allComments = res.data?.data || [];
+          const pendingCount = allComments.filter((c: any) => c.aprobado === 0).length;
+          setPendingComments(pendingCount);
+        })
+        .catch(err => console.error("Error al cargar notificaciones de comentarios:", err));
+    }
+  };
+
+  // Efecto para inicializar contadores y escuchar actualizaciones "en vivo"
   useEffect(() => {
-    // 1. Consultamos al cargar el componente o cambiar de ruta
     fetchPendingProjects();
+    fetchPendingComments();
 
-    // 2. Nos suscribimos al evento global que emite la página de aprobaciones
+    // Escuchamos los eventos que disparan las páginas de moderación al aprobar/rechazar
     window.addEventListener('proyectoActualizado', fetchPendingProjects);
+    window.addEventListener('comentarioActualizado', fetchPendingComments);
 
-    // 3. Limpieza: Nos desuscribimos si el componente se desmonta
     return () => {
       window.removeEventListener('proyectoActualizado', fetchPendingProjects);
+      window.removeEventListener('comentarioActualizado', fetchPendingComments);
     };
   }, [isAdmin, location.pathname]);
 
   const handleLogout = async () => {
     await logout();
-    // Redirigimos a login reemplazando el historial para evitar el botón "Atrás"
+    // Redirección limpia al login para cumplir con la HU-14
     navigate('/login', { replace: true });
   };
 
-  // Menú para Usuario Normal
+  // Configuración de Menús según Rol
   const userMenuItems: MenuItem[] = [
     { icon: LayoutDashboard, label: 'Mi Resumen', path: '/dashboard' },
     { icon: User, label: 'Editar Perfil', path: '/dashboard/perfil' },
@@ -87,7 +101,6 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
     { icon: EyeOff, label: 'Visibilidad', path: '/dashboard/visibilidad' }
   ];
 
-  // Menú para Administrador
   const adminMenuItems: MenuItem[] = [
     { icon: LayoutDashboard, label: 'Vista Global', path: '/admin/dashboard' },
     { icon: Users, label: 'Gestión de Usuarios', path: '/admin/usuarios' },
@@ -97,49 +110,45 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
         path: '/admin/aprobaciones', 
         badge: pendingProjects > 0 ? pendingProjects : undefined 
     },
-    { icon: MessageSquare, label: 'Moderar Comentarios', path: '/admin/moderacion', badge: 5 },
+    { 
+        icon: MessageSquare, 
+        label: 'Moderación', 
+        path: '/admin/moderacion', 
+        badge: pendingComments > 0 ? pendingComments : undefined 
+    },
     { icon: FileText, label: 'Reportes PDF', path: '/admin/reportes' }
   ];
 
-  // Si está cargando la sesión, muestra un loader
-  if (loading) {
-    return (
-      <aside className={`fixed left-0 top-0 h-screen bg-sidebar border-r border-sidebar/10 transition-all duration-300 z-40 flex flex-col ${isCollapsed ? 'w-20' : 'w-64'}`}>
-        <div className="flex items-center justify-center h-full">
-          <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      </aside>
-    );
-  }
+  if (loading) return null;
 
-  // Seleccionar menú según el rol
   const menuItems = isAdmin ? adminMenuItems : userMenuItems;
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <aside className={`fixed left-0 top-0 h-screen bg-sidebar border-r border-sidebar/10 transition-all duration-300 z-40 flex flex-col ${isCollapsed ? 'w-20' : 'w-64'}`}>
-      {/* Logo */}
+      
+      {/* Logo de la aplicación */}
       <div className="h-16 flex items-center px-6 border-b border-sidebar/10">
         <Link to={isAdmin ? '/admin/dashboard' : '/dashboard'} className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/20">
             <span className="text-white font-bold text-sm">&lt;/&gt;</span>
           </div>
           {!isCollapsed && <span className="text-white font-bold text-lg tracking-tight">DevFolio</span>}
         </Link>
       </div>
 
-      {/* Admin Badge */}
+      {/* Identificador de Administrador */}
       {isAdmin && !isCollapsed && (
         <div className="px-3 py-3 border-b border-sidebar/10">
           <div className="flex items-center gap-2 px-3 py-2 bg-primary/10 rounded-lg">
             <Shield className="w-4 h-4 text-primary flex-shrink-0" />
-            <span className="text-xs font-semibold text-primary">Rol: ADMIN</span>
+            <span className="text-[10px] font-bold text-primary uppercase tracking-wider">Acceso Administrativo</span>
           </div>
         </div>
       )}
 
-      {/* Navegación */}
-      <nav className="flex-1 py-6 px-3 overflow-y-auto">
+      {/* Navegación Principal */}
+      <nav className="flex-1 py-6 px-3 overflow-y-auto scrollbar-hide">
         <div className="space-y-1">
           {menuItems.map((item) => {
             const Icon = item.icon;
@@ -151,16 +160,21 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all group relative ${active ? 'bg-primary/10 text-primary' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
                 title={isCollapsed ? item.label : undefined}
               >
-                <Icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-primary' : ''}`} />
+                <Icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-primary' : 'group-hover:scale-110 transition-transform'}`} />
                 {!isCollapsed && (
                   <>
                     <span className="text-sm font-medium flex-1">{item.label}</span>
-                    {item.badge && <Badge variant="destructive" size="sm" className="ml-auto">{item.badge}</Badge>}
+                    {item.badge !== undefined && (
+                      <Badge variant="destructive" className="ml-auto px-1.5 h-5 min-w-[20px] flex items-center justify-center text-[10px] animate-pulse">
+                        {item.badge}
+                      </Badge>
+                    )}
                   </>
                 )}
-                {isCollapsed && item.badge && (
-                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-destructive rounded-full flex items-center justify-center shadow-md">
-                    <span className="text-xs text-white font-bold">{item.badge}</span>
+                {/* Badge flotante para modo colapsado */}
+                {isCollapsed && item.badge !== undefined && (
+                  <div className="absolute top-1 right-2 w-4 h-4 bg-destructive rounded-full flex items-center justify-center border-2 border-sidebar">
+                    <span className="text-[8px] text-white font-bold">{item.badge}</span>
                   </div>
                 )}
               </Link>
@@ -169,27 +183,27 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
         </div>
       </nav>
 
-      {/* Acciones Inferiores */}
+      {/* Acciones de Cuenta y Sistema */}
       <div className="border-t border-sidebar/10 p-3 space-y-1">
         {!isAdmin && (
-          <Link to={`/portfolio/${user?.username}`} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/5 hover:text-white transition-all" title={isCollapsed ? 'Ver Portafolio Público' : undefined}>
+          <Link to={`/portfolio/${user?.username}`} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/5 hover:text-white transition-all" title={isCollapsed ? 'Ver Portafolio' : undefined}>
             <Eye className="w-5 h-5 flex-shrink-0" />
-            {!isCollapsed && <span className="text-sm font-medium">Ver mi Portafolio Público</span>}
+            {!isCollapsed && <span className="text-sm font-medium">Ver mi Portafolio</span>}
           </Link>
         )}
 
-        <button onClick={toggleSidebar} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/5 hover:text-white transition-all" title={isCollapsed ? 'Expandir' : 'Colapsar'}>
-          {isCollapsed ? <ChevronRight className="w-5 h-5 flex-shrink-0" /> : <><ChevronLeft className="w-5 h-5 flex-shrink-0" /><span className="text-sm font-medium">Colapsar</span></>}
+        <button onClick={toggleSidebar} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/5 hover:text-white transition-all">
+          {isCollapsed ? <ChevronRight className="w-5 h-5 flex-shrink-0" /> : <><ChevronLeft className="w-5 h-5 flex-shrink-0" /><span className="text-sm font-medium">Colapsar menú</span></>}
         </button>
 
-        {/* Botón Salir: HU-14 (Color rojo específico #F63B3B) */}
+        {/* Botón Salir: HU-14 (Diferenciado en color #F63B3B) */}
         <button 
           onClick={handleLogout} 
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-[#F63B3B] hover:bg-[#F63B3B]/10" 
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-[#F63B3B] hover:bg-[#F63B3B]/10 group" 
           title={isCollapsed ? 'Cerrar sesión' : undefined}
         >
-          <LogOut className="w-5 h-5 flex-shrink-0" />
-          {!isCollapsed && <span className="text-sm font-medium">Cerrar sesión</span>}
+          <LogOut className="w-5 h-5 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+          {!isCollapsed && <span className="text-sm font-bold tracking-wide">Cerrar sesión</span>}
         </button>
       </div>
     </aside>

@@ -81,11 +81,13 @@ export default function AdminUsersPage() {
     }
 
     return (
-        <div className="p-6 max-w-7xl mx-auto">
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-sidebar">Gestión de Usuarios</h1>
-                <p className="text-sidebar/70 mt-2">Administra los usuarios registrados en la plataforma</p>
-            </div>
+        <div>
+            <header className="page-header">
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-sidebar">Gestión de Usuarios</h1>
+                    <p className="text-sidebar/70 mt-2">Administra los usuarios registrados en la plataforma</p>
+                </div>
+            </header>
 
             {/* Buscador */}
             <div className="bg-card border border-muted rounded-xl p-2 mb-6 shadow-sm">
