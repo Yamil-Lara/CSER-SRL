@@ -47,7 +47,7 @@ class AdminSystemController extends Controller
                 Storage::makeDirectory('backups');
             }
 
-            $filename = 'backup_completo_' . date('Ymd_His') . '.sql';
+            $filename = 'Backup_' . date('Y-m-d_H-i-s') . '.sql';
             
             // Usamos la conexión base de PDO para mayor seguridad al escapar strings
             $pdo = DB::connection()->getPdo();
