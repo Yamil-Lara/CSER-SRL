@@ -88,10 +88,25 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
     // Administración
     Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::apiResource('usuarios', AdminUserController::class);
-      //EL JAVI AGREGO ESTO XD
-     Route::get('/comentarios/pendientes', [ComentarioController::class, 'adminIndexAll']);
-    
-        });
+        Route::get('/comentarios/pendientes', [ComentarioController::class, 'adminIndexAll']);
+        
+        // AGREGAR ESTAS DOS RUTAS:
+        Route::get('/proyectos', [\App\Http\Controllers\ProyectoController::class, 'adminIndex']);
+        Route::put('/proyectos/{id}/estado', [\App\Http\Controllers\ProyectoController::class, 'actualizarEstado']);
+        
+        // Backups
+        Route::get('/backups', [AdminSystemController::class, 'indexBackups']);
+        Route::post('/backups', [AdminSystemController::class, 'createBackup']);
+        Route::get('/backups/download/{filename}', [AdminSystemController::class, 'downloadBackup']);
+        Route::delete('/backups/{filename}', [AdminSystemController::class, 'deleteBackup']);
+
+        // Logs
+        Route::get('/logs', [AdminSystemController::class, 'getLogs']);
+
+        // PDF Reportes
+        Route::get('/reportes/usuarios', [ReporteController::class, 'usuariosPDF']);
+        Route::get('/reportes/proyectos', [ReporteController::class, 'proyectosPDF']);
+    });
 
     // En la sección de RUTAS PÚBLICAS (fuera del middleware auth:sanctum)
     Route::get('/proyectos/{proyectoId}/comentarios', [\App\Http\Controllers\ComentarioController::class, 'index']);

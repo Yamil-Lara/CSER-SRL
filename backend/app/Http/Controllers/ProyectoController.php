@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Proyecto\StoreProyectoRequest;
 use App\Http\Requests\Proyecto\UpdateProyectoRequest;
 use App\Models\Proyecto;
+use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -135,5 +136,67 @@ class ProyectoController extends Controller
         $proyecto->delete();
 
         return $this->successResponse(null, 'Proyecto eliminado exitosamente');
+    }
+
+    // NUEVO MÉTODO PARA EL ADMINISTRADOR
+    public function pendientes()
+    {
+        // Traemos los proyectos con estado 'pendiente', incluyendo datos del usuario y la categoría
+        $proyectos = Proyecto::with(['usuario', 'categoria'])
+            ->where('estado', 'pendiente')
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $proyectos
+        ]);
+    }
+
+    public function adminIndex(Request $request)
+    {
+        // Obtenemos los conteos para el dashboard
+        $stats = [
+            'total' => \App\Models\Proyecto::count(),
+            'pendientes' => \App\Models\Proyecto::where('estado', 'pendiente')->count(),
+            'aprobados' => \App\Models\Proyecto::where('estado', 'aprobado')->count(),
+            'rechazados' => \App\Models\Proyecto::where('estado', 'rechazado')->count(),
+        ];
+
+        // Obtenemos la lista de proyectos con sus relaciones
+        $query = \App\Models\Proyecto::with(['usuario', 'categoria'])->latest();
+
+        // Filtro opcional por estado
+        if ($request->has('estado') && $request->estado !== 'todos') {
+            $query->where('estado', $request->estado);
+        }
+
+        $proyectos = $query->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'stats' => $stats,
+                'proyectos' => $proyectos
+            ]
+        ]);
+    }
+
+    public function actualizarEstado(Request $request, $id)
+    {
+        $request->validate([
+            // Asegura que los estados sean válidos, incluyendo 'pendiente'
+            'estado' => 'required|in:pendiente,aprobado,rechazado' 
+        ]);
+
+        $proyecto = \App\Models\Proyecto::findOrFail($id);
+        $proyecto->estado = $request->estado;
+        $proyecto->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Estado del proyecto actualizado.',
+            'data' => $proyecto
+        ]);
     }
 }
