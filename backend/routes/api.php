@@ -13,6 +13,7 @@ use App\Http\Controllers\SkillController;
 use App\Http\Controllers\User\AdminUserController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\VisibilidadController;
+use App\Http\Controllers\AdminSystemController;
 use Illuminate\Support\Facades\Route;
 
 // ============================================================
@@ -95,17 +96,18 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
         Route::put('/proyectos/{id}/estado', [\App\Http\Controllers\ProyectoController::class, 'actualizarEstado']);
         
         // Backups
-        Route::get('/backups', [AdminSystemController::class, 'indexBackups']);
-        Route::post('/backups', [AdminSystemController::class, 'createBackup']);
-        Route::get('/backups/download/{filename}', [AdminSystemController::class, 'downloadBackup']);
-        Route::delete('/backups/{filename}', [AdminSystemController::class, 'deleteBackup']);
+        Route::get('/backups', [\App\Http\Controllers\AdminSystemController::class, 'indexBackups']);
+        Route::post('/backups', [\App\Http\Controllers\AdminSystemController::class, 'createBackup']);
+        Route::get('/backups/download/{filename}', [\App\Http\Controllers\AdminSystemController::class, 'downloadBackup']);
+        Route::delete('/backups/{filename}', [\App\Http\Controllers\AdminSystemController::class, 'deleteBackup']);
 
         // Logs
         Route::get('/logs', [AdminSystemController::class, 'getLogs']);
 
         // PDF Reportes
-        Route::get('/reportes/usuarios', [ReporteController::class, 'usuariosPDF']);
-        Route::get('/reportes/proyectos', [ReporteController::class, 'proyectosPDF']);
+        Route::get('/reportes/usuarios', [\App\Http\Controllers\ReporteController::class, 'usuariosPDF']);
+        Route::get('/reportes/proyectos', [\App\Http\Controllers\ReporteController::class, 'proyectosPDF']);
+        Route::get('/reportes/comentarios', [\App\Http\Controllers\ReporteController::class, 'comentariosPDF']);
     });
 
     // En la sección de RUTAS PÚBLICAS (fuera del middleware auth:sanctum)

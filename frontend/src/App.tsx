@@ -107,10 +107,10 @@ function App(): JSX.Element {
                       <Route path="dashboard" element={<AdminDashboardPage />} />
                       <Route path="usuarios" element={<AdminUsersPage />} />
                       <Route path="aprobaciones" element={<AdminAprobacionesPage />} />
-                      <Route path="moderacion" element={<AdminCommentPage />} />
-                      <Route path="reportes" element={<AdminReportesPage />} />
+                      <Route path="moderacion" element={<AdminCommentPage />} />                      
                       <Route path="backups" element={<AdminBackupsPage />} />
                       <Route path="logs" element={<AdminLogsPage />} />
+                      <Route path="reportes" element={<AdminReportesPage />} />
                     </Routes>
                   </main>
                 </div>
