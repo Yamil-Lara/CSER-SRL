@@ -13,6 +13,7 @@ use App\Http\Controllers\SkillController;
 use App\Http\Controllers\User\AdminUserController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\VisibilidadController;
+use App\Http\Controllers\AdminSystemController;
 use Illuminate\Support\Facades\Route;
 
 // ============================================================
@@ -95,10 +96,10 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
         Route::put('/proyectos/{id}/estado', [\App\Http\Controllers\ProyectoController::class, 'actualizarEstado']);
         
         // Backups
-        Route::get('/backups', [AdminSystemController::class, 'indexBackups']);
-        Route::post('/backups', [AdminSystemController::class, 'createBackup']);
-        Route::get('/backups/download/{filename}', [AdminSystemController::class, 'downloadBackup']);
-        Route::delete('/backups/{filename}', [AdminSystemController::class, 'deleteBackup']);
+        Route::get('/backups', [\App\Http\Controllers\AdminSystemController::class, 'indexBackups']);
+        Route::post('/backups', [\App\Http\Controllers\AdminSystemController::class, 'createBackup']);
+        Route::get('/backups/download/{filename}', [\App\Http\Controllers\AdminSystemController::class, 'downloadBackup']);
+        Route::delete('/backups/{filename}', [\App\Http\Controllers\AdminSystemController::class, 'deleteBackup']);
 
         // Logs
         Route::get('/logs', [AdminSystemController::class, 'getLogs']);

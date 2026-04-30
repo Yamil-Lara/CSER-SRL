@@ -28,8 +28,32 @@ export default function AdminBackupsPage() {
         } catch (err) { alert("Error al generar backup"); }
     };
 
-    const handleDownload = (filename: string) => {
-        window.open(`http://localhost:8000/api/admin/backups/download/${filename}`, '_blank');
+    const handleDownload = async (filename: string) => {
+        try {
+            // 1. Hacemos la petición con Axios para que incluya el Token de sesión
+            // IMPORTANTE: responseType: 'blob' le dice a Axios que recibirá un archivo
+            const response = await api.get(`/admin/backups/download/${filename}`, {
+                responseType: 'blob' 
+            });
+
+            // 2. Creamos un enlace temporal en memoria con el archivo recibido
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            
+            // 3. Le asignamos el nombre original al archivo y forzamos la descarga
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            
+            // 4. Limpiamos la memoria
+            link.parentNode?.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            
+        } catch (error) {
+            console.error("Error al descargar el backup:", error);
+            alert("Hubo un error al descargar el archivo. Verifica la consola para más detalles.");
+        }
     };
 
     const handleDelete = async (filename: string) => {
