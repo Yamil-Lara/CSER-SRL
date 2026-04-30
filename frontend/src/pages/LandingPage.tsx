@@ -61,7 +61,7 @@ export const LandingPage = () => {
           {/* BOTÓN CON REDIRECCIÓN AL DASHBOARD */}
           <button className="btn-ghost" onClick={handleLoginClick}>Iniciar Sesión</button>
 
-<button className="btn-primary-small" onClick={() => navigate('/login')}>
+<button className="btn-primary-small" onClick={() => navigate('/register')}>
   Regístrate Gratis
 </button>
           {/* BOTÓN DE CAMBIO DE TEMA */}
