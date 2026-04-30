@@ -118,10 +118,9 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
         path: '/admin/moderacion', 
         badge: pendingComments > 0 ? pendingComments : undefined 
     },
-    { icon: FileText, label: 'Reportes PDF', path: '/admin/reportes' },
-    // NUEVAS RUTAS
     { icon: Database, label: 'Backups', path: '/admin/backups' },
-    { icon: Activity, label: 'Logs', path: '/admin/logs' }
+    { icon: Activity, label: 'Logs', path: '/admin/logs' },
+    { icon: FileText, label: 'Reportes PDF', path: '/admin/reportes' }
   ];
 
   if (loading) return null;

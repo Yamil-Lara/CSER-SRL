@@ -1,13 +1,35 @@
 import React from 'react';
-import { FileText, Download, Users, FolderGit2, PieChart } from 'lucide-react';
+import api from '../utils/api'; 
+import { FileText, Download, Users, FolderGit2, MessageSquare, PieChart } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 
 export default function AdminReportesPage() {
     
-    const handleDownload = (type: string) => {
-        // Abrimos en una nueva pestaña para disparar la descarga del PDF de Laravel
-        const url = `http://localhost:8000/api/admin/reportes/${type}`;
-        window.open(url, '_blank');
+    const handleDownload = async (type: string) => {
+        try {
+            // 1. Hacemos la petición con Axios para que incluya el Token de sesión
+            const response = await api.get(`/admin/reportes/${type}`, {
+                responseType: 'blob' 
+            });
+
+            // 2. Creamos un enlace temporal en memoria con el archivo recibido
+            const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+            const link = document.createElement('a');
+            link.href = url;
+            
+            // 3. Le asignamos un nombre al archivo y forzamos la descarga
+            link.setAttribute('download', `reporte_${type}_${new Date().getTime()}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            
+            // 4. Limpiamos la memoria
+            link.parentNode?.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            
+        } catch (error) {
+            console.error("Error al descargar el PDF:", error);
+            alert("Hubo un error al generar el reporte. Verifica la consola para más detalles.");
+        }
     };
 
     return (
@@ -51,6 +73,23 @@ export default function AdminReportesPage() {
                     </p>
                     <button 
                         onClick={() => handleDownload('proyectos')}
+                        className="w-full flex items-center justify-center gap-2 bg-primary text-white py-2.5 rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                    >
+                        <Download className="w-4 h-4" /> Descargar PDF
+                    </button>
+                </Card>
+
+                {/* Reporte de Comentarios */}
+                <Card className="p-6 hover:shadow-lg transition-shadow border-muted">
+                    <div className="bg-orange-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                        <MessageSquare className="text-orange-600 w-6 h-6" />
+                    </div>
+                    <h3 className="text-lg font-bold text-sidebar">Moderación de Comentarios</h3>
+                    <p className="text-sm text-sidebar/60 mt-2 mb-6">
+                        Auditoría completa del feedback de los usuarios, incluyendo estados de aprobación y proyectos destino.
+                    </p>
+                    <button 
+                        onClick={() => handleDownload('comentarios')}
                         className="w-full flex items-center justify-center gap-2 bg-primary text-white py-2.5 rounded-lg font-medium hover:bg-primary/90 transition-colors"
                     >
                         <Download className="w-4 h-4" /> Descargar PDF
