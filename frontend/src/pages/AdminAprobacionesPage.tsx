@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api from '../utils/api';
+import api, { buildUrl } from '../utils/api';
 import { 
     CheckCircle, XCircle, Clock, LayoutGrid, Code, ExternalLink, 
     Search, Calendar, User, Tag, Briefcase, Wrench, Eye 
@@ -129,7 +129,7 @@ export default function AdminAprobacionesPage() {
                                 {/* Imagen del proyecto (si existe) */}
                                 {p.imagen && (
                                     <div className="lg:w-64 h-48 lg:h-auto bg-muted">
-                                        <img src={p.imagen} alt={p.titulo} className="w-full h-full object-cover" />
+                                        <img src={buildUrl(p.imagen)} alt={p.titulo} className="w-full h-full object-cover" />
                                     </div>
                                 )}
                                 

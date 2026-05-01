@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from '../utils/api';
+import axios, { buildUrl } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/Button';
 import { Textarea } from '../components/ui/Textarea';
@@ -113,7 +113,7 @@ const PublicProjectDetail: React.FC = () => {
                 {/* CORRECCIÓN: Usar 'imagen' en lugar de 'imagen_url' y armar la ruta si es local */}
                 {proyecto.imagen && (
                     <img 
-                        src={proyecto.imagen.startsWith('http') ? proyecto.imagen : `http://localhost:8000/storage/${proyecto.imagen}`} 
+                        src={buildUrl(proyecto.imagen)} 
                         alt={proyecto.titulo} 
                         className="w-full h-80 object-cover" 
                         onError={(e) => { e.currentTarget.style.display = 'none'; }}

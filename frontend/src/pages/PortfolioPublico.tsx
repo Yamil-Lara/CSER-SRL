@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import api, { buildUrl } from '../utils/api';
 import PublicPortfolio, { PortfolioData } from '../components/PublicPortfolio';
 
 export default function PortfolioPublico() {
@@ -13,20 +13,11 @@ export default function PortfolioPublico() {
     const fetchData = async () => {
       try {
         const [userRes, projectsRes, experienceRes, skillsRes] = await Promise.all([
-          axios.get(`http://localhost:8000/api/portafolio/${username}`),
-          axios.get(`http://localhost:8000/api/portafolio/${username}/proyectos`),
-          axios.get(`http://localhost:8000/api/portafolio/${username}/experiencias`),
-          axios.get(`http://localhost:8000/api/portafolio/${username}/habilidades`)
+          api.get(`/portafolio/${username}`),
+          api.get(`/portafolio/${username}/proyectos`),
+          api.get(`/portafolio/${username}/experiencias`),
+          api.get(`/portafolio/${username}/habilidades`)
         ]);
-
-        const buildUrl = (path: string | null | undefined): string | undefined => {
-          if (!path) return undefined;
-          if (path.startsWith('http')) return path;
-          if (path.startsWith('/storage')) return `http://localhost:8000${path}`;
-          if (path.startsWith('storage')) return `http://localhost:8000/${path}`;
-          const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-          return `http://localhost:8000/storage/${cleanPath}`;
-        };
 
         // Adaptado al ApiResponseTrait (res.data.data)
         const user = userRes.data.data.usuario;
@@ -77,7 +68,7 @@ export default function PortfolioPublico() {
                     title: p.titulo,
                     description: p.descripcion,
                     tags: parsedTags,
-                    image: p.imagen ? (p.imagen.startsWith('http') ? p.imagen : `http://localhost:8000/storage/${p.imagen}`) : undefined
+                    image: buildUrl(p.imagen)
                 };
           }),
           // Por defecto todo visible ya que el backend no lo incluyó en la respuesta del nuevo endpoint

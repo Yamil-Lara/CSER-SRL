@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, ExternalLink, MessageSquare, Send, Moon, Sun } from "lucide-react";
 import { FiGithub as FiGithubIcon } from "react-icons/fi";
 import ProjectComments from "../components/ProjectComments";
-import api from "../utils/api";
+import api, { buildUrl } from "../utils/api";
 
 const FiGithub: any = FiGithubIcon;
 
@@ -103,11 +103,6 @@ const ProjectDetailPage: React.FC = () => {
         console.error("Error parsing technologies:", e);
     }
 
-    const getImageUrl = (path: string | null) => {
-        if (!path) return null;
-        if (path.startsWith('http')) return path;
-        return `http://localhost:8000/storage/${path}`;
-    };
 
     return (
         <div className="min-h-screen bg-[#F1F5F9] font-sans">
@@ -141,7 +136,7 @@ const ProjectDetailPage: React.FC = () => {
                     <div className="md:col-span-7">
                         <div className="aspect-video bg-slate-100 rounded-[32px] border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden">
                             {proyecto.imagen ? (
-                                <img src={getImageUrl(proyecto.imagen) || ""} alt={proyecto.titulo} className="w-full h-full object-cover" />
+                                <img src={buildUrl(proyecto.imagen) || ""} alt={proyecto.titulo} className="w-full h-full object-cover" />
                             ) : (
                                 <div className="text-slate-400 flex flex-col items-center">
                                     <span className="text-sm font-bold uppercase">Sin imagen</span>
@@ -163,7 +158,7 @@ const ProjectDetailPage: React.FC = () => {
                             )}
                             <div className="flex items-center gap-3 mt-4">
                                 {proyecto.usuario?.foto ? (
-                                    <img src={getImageUrl(proyecto.usuario.foto) || ""} alt={proyecto.usuario.nombre} className="w-10 h-10 rounded-full object-cover" />
+                                    <img src={buildUrl(proyecto.usuario.foto) || ""} alt={proyecto.usuario.nombre} className="w-10 h-10 rounded-full object-cover" />
                                 ) : (
                                     <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
                                         {proyecto.usuario?.nombre.substring(0, 2).toUpperCase() || "US"}

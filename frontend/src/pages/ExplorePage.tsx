@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Moon, Sun, FolderGit2, ChevronDown, User, MapPin, Briefcase, GraduationCap } from "lucide-react";
-import api from "../utils/api";
+import api, { buildUrl } from '../utils/api';
 
 interface Categoria {
   id: number;
@@ -133,15 +133,6 @@ const ExplorePage: React.FC = () => {
       localStorage.setItem('devfolio-theme', 'dark');
       setIsDark(true);
     }
-  };
-
-  const buildUrl = (path: string | null | undefined): string | undefined => {
-    if (!path) return undefined;
-    if (path.startsWith('http')) return path;
-    if (path.startsWith('/storage')) return `http://localhost:8000${path}`;
-    if (path.startsWith('storage')) return `http://localhost:8000/${path}`;
-    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-    return `http://localhost:8000/storage/${cleanPath}`;
   };
 
   return (

@@ -8,6 +8,22 @@ const api = axios.create({
   }
 });
 
+// Función centralizada para construir URLs de imágenes dinámicamente
+export const buildUrl = (path: string | null | undefined): string | undefined => {
+  if (!path) return undefined;
+  if (path.startsWith('http')) return path;
+
+  // Extraemos la base (ej: http://localhost:8000 o http://cser.tis.cs.umss.edu.bo)
+  const baseApiUrl = api.defaults.baseURL || 'http://localhost:8000/api';
+  const domain = baseApiUrl.replace(/\/api$/, '');
+
+  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+  if (cleanPath.startsWith('storage/')) {
+    return `${domain}/${cleanPath}`;
+  }
+  return `${domain}/storage/${cleanPath}`;
+};
+
 // Interceptor de Peticiones: Inyecta el token en cada petición automáticamente
 api.interceptors.request.use((config) => {
   // Buscamos el token usando 'token' o 'auth_token'

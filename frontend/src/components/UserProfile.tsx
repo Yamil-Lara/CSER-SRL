@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import api, { buildUrl } from '../utils/api';
 import { ProfileData } from '../types';
 import { Card } from './ui/Card';
 import { Input } from './ui/Input';
@@ -9,8 +10,6 @@ import { User, FileText, GraduationCap, Eye, EyeOff, Save } from 'lucide-react';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 
-const API_URL = 'http://127.0.0.1:8000/api';
-const STORAGE_URL = 'http://127.0.0.1:8000/storage';
 
 const defaultProfile: ProfileData = {
   nombre: '',
@@ -37,18 +36,7 @@ const UserProfile: React.FC = () => {
   const [fotoFile, setFotoFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const buildUrl = (path: string | null | undefined): string | null => {
-    if (!path) return null;
-    if (path.startsWith('http')) return path;
-    if (path.startsWith('/storage')) {
-      return `http://127.0.0.1:8000${path}`;
-    }
-    if (path.startsWith('storage')) {
-      return `http://127.0.0.1:8000/${path}`;
-    }
-    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-    return `${STORAGE_URL}/${cleanPath}`;
-  };
+
 
   const normalizeUserData = (payload: any) => {
     if (!payload) return null;
@@ -59,8 +47,8 @@ const UserProfile: React.FC = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    axios
-      .get(`${API_URL}/profile`, {
+    api
+      .get(`/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -245,7 +233,7 @@ const UserProfile: React.FC = () => {
     const token = localStorage.getItem('token');
 
     try {
-const response = await axios.post(`${API_URL}/profile`, formData, {
+const response = await api.post(`/profile`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
