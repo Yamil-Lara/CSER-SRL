@@ -8,7 +8,7 @@ export default function AdminReportesPage() {
     const handleDownload = async (type: string) => {
         try {
             // 1. Hacemos la petición con Axios para que incluya el Token de sesión
-            const response = await api.get(`/admin/reportes/${type}`, {
+            const response = await api.get(`/panel/reportes/${type}`, {
                 responseType: 'blob' 
             });
 

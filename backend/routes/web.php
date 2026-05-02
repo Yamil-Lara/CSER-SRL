@@ -13,6 +13,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/storage/{path}', function ($path) {
+    $filePath = storage_path('app/public/' . $path);
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+    
+    // Auto-detect MIME type for proper image rendering
+    $mimeType = mime_content_type($filePath) ?: 'application/octet-stream';
+    return response()->file($filePath, ['Content-Type' => $mimeType]);
+})->where('path', '.*');
+
 Route::get('/{any}', function () {
     return view('index');
 })->where('any', '.*');

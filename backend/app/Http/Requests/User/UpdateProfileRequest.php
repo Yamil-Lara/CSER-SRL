@@ -35,7 +35,19 @@ class UpdateProfileRequest extends FormRequest
             'tiktok' => 'nullable|url|max:255',
             'threads' => 'nullable|url|max:255',
             'sitio_web' => 'nullable|url|max:255',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240', // 10MB max
+            'foto' => [
+                'nullable',
+                'file',
+                'max:10240',
+                function ($attribute, $value, $fail) {
+                    if ($value instanceof \Illuminate\Http\UploadedFile) {
+                        $extension = strtolower($value->getClientOriginalExtension());
+                        if (!in_array($extension, ['jpeg', 'png', 'jpg', 'webp'])) {
+                            $fail('La foto debe ser de tipo: jpeg, png, jpg, webp');
+                        }
+                    }
+                },
+            ],
         ];
     }
 

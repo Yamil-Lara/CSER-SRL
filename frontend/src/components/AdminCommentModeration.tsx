@@ -18,7 +18,7 @@ export default function AdminCommentModeration() {
         setLoading(true);
         try {
             // Utilizamos la ruta que creaste para traer todos los comentarios
-            const res = await api.get('/admin/comentarios/pendientes');
+            const res = await api.get('/panel/comentarios/pendientes');
             const data = res.data?.data || [];
             setComentarios(data);
         } catch (err) {

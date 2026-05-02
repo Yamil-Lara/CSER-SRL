@@ -21,7 +21,19 @@ class StoreProyectoRequest extends FormRequest
             'descripcion' => 'required|string|min:50|max:5000',
             'tecnologias' => 'required|string|min:3|max:1000',
             'herramientas' => 'nullable|string|max:1000',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240', // 10MB max
+            'imagen' => [
+                'nullable',
+                'file',
+                'max:10240',
+                function ($attribute, $value, $fail) {
+                    if ($value instanceof \Illuminate\Http\UploadedFile) {
+                        $extension = strtolower($value->getClientOriginalExtension());
+                        if (!in_array($extension, ['jpeg', 'png', 'jpg', 'webp'])) {
+                            $fail('La imagen debe ser de tipo: jpeg, png, jpg, webp');
+                        }
+                    }
+                },
+            ],
             'github' => 'nullable|url|max:255',
             'demo' => 'nullable|url|max:255',
             'cliente' => 'nullable|string|max:255',

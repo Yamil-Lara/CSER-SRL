@@ -10,7 +10,7 @@ export default function AdminBackupsPage() {
     const fetchBackups = async () => {
         setLoading(true);
         try {
-            const res = await api.get('/admin/backups');
+            const res = await api.get('/panel/backups');
             setBackups(res.data.data);
         } catch (err) {
             console.error("Error al cargar backups");
@@ -23,7 +23,7 @@ export default function AdminBackupsPage() {
 
     const handleCreate = async () => {
         try {
-            await api.post('/admin/backups');
+            await api.post('/panel/backups');
             fetchBackups();
         } catch (err) { alert("Error al generar backup"); }
     };
@@ -32,7 +32,7 @@ export default function AdminBackupsPage() {
         try {
             // 1. Hacemos la petición con Axios para que incluya el Token de sesión
             // IMPORTANTE: responseType: 'blob' le dice a Axios que recibirá un archivo
-            const response = await api.get(`/admin/backups/download/${filename}`, {
+            const response = await api.get(`/panel/backups/download/${filename}`, {
                 responseType: 'blob' 
             });
 
@@ -59,7 +59,7 @@ export default function AdminBackupsPage() {
     const handleDelete = async (filename: string) => {
         if (!confirm("¿Eliminar este respaldo?")) return;
         try {
-            await api.delete(`/admin/backups/${filename}`);
+            await api.delete(`/panel/backups/${filename}`);
             fetchBackups();
         } catch (err) { alert("Error al eliminar"); }
     };
