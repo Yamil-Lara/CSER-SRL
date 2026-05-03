@@ -57,8 +57,8 @@ export default function AdminAprobacionesPage() {
     });
 
     return (
-        <div className="p-6 max-w-7xl mx-auto">
-            <header className="page-header">
+        <div className="p-6 max-w-7xl mx-auto space-y-2">
+            <header>
                 <div>
                     <h1 className="text-3xl font-bold text-sidebar flex items-center gap-3">
                         <CheckCircle className="w-8 h-8 text-primary" />
