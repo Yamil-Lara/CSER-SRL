@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Code, FolderGit2, Globe, Layout, ShieldCheck, Sparkles, Terminal, Users } from 'lucide-react';
 import '../index.css';
+import logoEmpresa from "../assets/logo.png";
 
 export const LandingPage = () => {
   const navigate = useNavigate();
@@ -46,24 +47,24 @@ export const LandingPage = () => {
 
       {/* HEADER / NAVEGACIÓN */}
       <nav className="navbar">
-        <div className="logo">DevFolio</div>
+        <div className="flex items-center justify-start gap-2">
+          {/* Usa la variable importada en el atributo src */}
+          <img src={logoEmpresa} alt="Logo de DevFolio" className="w-16 h-auto" />
+          <span className="logo">DevFolio</span>
+        </div>
 
         <div className="nav-links">
           <a href="#features">Características</a>
-          <a onClick={() => navigate('/explorar')} style={{ cursor: 'pointer' }}>
-            Explorar
-          </a>
+          <a onClick={() => navigate('/explorar')} style={{ cursor: 'pointer' }}>Explorar</a>
           <a href="#how-it-works">Cómo Funciona</a>
-          <a href="#nosotros">Nosotros</a>
+          <a href="#About-Us">Nosotros</a>
         </div>
 
         <div className="nav-actions">
           {/* BOTÓN CON REDIRECCIÓN AL DASHBOARD */}
           <button className="btn-ghost" onClick={handleLoginClick}>Iniciar Sesión</button>
 
-<button className="btn-primary-small" onClick={() => navigate('/login')}>
-  Regístrate Gratis
-</button>
+          <button className="btn-primary-small" onClick={() => navigate('/login')}>Regístrate Gratis</button>
           {/* BOTÓN DE CAMBIO DE TEMA */}
           <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="Cambiar tema">
             {isDarkMode ? (
@@ -193,17 +194,14 @@ export const LandingPage = () => {
         </section>
 
         {/* CTA SECTION */}
-        <section className="cta-section">
+        <section id="About-Us" className="cta-section">
           <h2 className="cta-title">¿Listo para destacar en la industria tech?</h2>
-          <p className="cta-text">
-            Únete a cientos de desarrolladores que ya están utilizando DevFolio para impulsar sus carreras profesionales.
-          </p>
+          <p className="cta-text">Únete a cientos de desarrolladores que ya están utilizando DevFolio para impulsar sus carreras profesionales.</p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
             <button className="btn-primary" style={{ padding: '1rem 2rem' }}>Crear mi portafolio gratis</button>
             <button className="btn-ghost" style={{ border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}>Explorar ejemplos</button>
           </div>
         </section>
-
       </main>
     </div>
   );
