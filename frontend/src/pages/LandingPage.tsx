@@ -88,7 +88,9 @@ export const LandingPage = () => {
           {/* BOTÓN CON REDIRECCIÓN AL DASHBOARD */}
           <button className="btn-ghost" onClick={() => navigate('/login')}>Iniciar Sesión</button>
 
-          <button className="btn-primary-small" onClick={() => navigate('/register')}>Regístrate Gratis</button>
+<button className="btn-primary-small" onClick={() => navigate('/register')}>
+  Regístrate Gratis
+</button>
           {/* BOTÓN DE CAMBIO DE TEMA */}
           <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="Cambiar tema">
             {isDarkMode ? (
