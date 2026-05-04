@@ -118,11 +118,11 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className="relative">
-      <header className="page-header flex justify-between items-center mb-8">
+    <div>
+      <header className="page-header">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Mis Proyectos</h1>
-          <p className="text-slate-500 mt-1">Gestiona tu portafolio de proyectos de software</p>
+          <h1 className="page-title">Mis Proyectos</h1>
+          <p className="page-subtitle">Gestiona tu portafolio de proyectos de software</p>
         </div>
         <button 
           className="flex items-center gap-2 bg-[#3B82F6] hover:bg-blue-600 text-white px-4 py-2 rounded-xl font-bold transition-colors shadow-sm" 

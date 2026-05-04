@@ -3,6 +3,13 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ExperiencePage } from "./pages/ExperiencePage";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import AdminUsersPage from "./pages/AdminUsersPage";
+import AdminAprobacionesPage from "./pages/AdminAprobacionesPage";
+import AdminBackupsPage from "./pages/AdminBackupsPage";
+import AdminLogsPage from "./pages/AdminLogsPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
+import AdminReportesPage from "./pages/AdminReportesPage";
 //import Sidebar from "./components/Sidebar";
 
 
@@ -28,20 +35,6 @@ const AdminDashboard = () => (
   <div>
     <h1 className="text-2xl font-bold text-sidebar">Panel de Administrador</h1>
     <p className="text-sidebar/70 mt-2">Bienvenido al panel de control</p>
-  </div>
-);
-
-const AdminUsers = () => (
-  <div>
-    <h1 className="text-2xl font-bold text-sidebar">Gestión de Usuarios</h1>
-    <p className="text-sidebar/70 mt-2">Administra los usuarios del sistema</p>
-  </div>
-);
-
-const AdminAprobaciones = () => (
-  <div>
-    <h1 className="text-2xl font-bold text-sidebar">Aprobaciones</h1>
-    <p className="text-sidebar/70 mt-2">Aprueba o rechaza proyectos pendientes</p>
   </div>
 );
 
@@ -106,18 +99,22 @@ function App(): JSX.Element {
           <Route
             path="/admin/*"
             element={
-              <div className={`app-layout ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
-                <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
-                <main className="main-content">
-                  <Routes>
-                    <Route path="dashboard" element={<AdminDashboard />} />
-                    <Route path="usuarios" element={<AdminUsers />} />
-                    <Route path="aprobaciones" element={<AdminAprobaciones />} />
-                    <Route path="moderacion" element={<AdminCommentPage />} />
-                    <Route path="reportes" element={<AdminReportes />} />
-                  </Routes>
-                </main>
-              </div>
+              <ProtectedRoute requireAdmin={true}>
+                <div className={`app-layout ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
+                  <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
+                  <main className="main-content">
+                    <Routes>
+                      <Route path="dashboard" element={<AdminDashboardPage />} />
+                      <Route path="usuarios" element={<AdminUsersPage />} />
+                      <Route path="aprobaciones" element={<AdminAprobacionesPage />} />
+                      <Route path="moderacion" element={<AdminCommentPage />} />                      
+                      <Route path="backups" element={<AdminBackupsPage />} />
+                      <Route path="logs" element={<AdminLogsPage />} />
+                      <Route path="reportes" element={<AdminReportesPage />} />
+                    </Routes>
+                  </main>
+                </div>
+              </ProtectedRoute>
             }
           />
 
@@ -127,20 +124,22 @@ function App(): JSX.Element {
           <Route
             path="/dashboard/*"
             element={
-              <div className={`app-layout ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
-                <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
-                <main className="main-content">
-                  <Routes>
-                    <Route path="perfil" element={<UserProfile />} />
-                    <Route path="proyectos" element={<ProjectsPage />} />
-                    <Route path="habilidades" element={<SkillsPage />} />                  
-                    <Route path="experiencia" element={<ExperiencePage />} />
-                    <Route path="enlaces" element={<LinksPage />} />
-                    <Route path="visibilidad" element={<VisibilitySettingsPage />} />
-                    <Route path="moderacion" element={<AdminCommentPage />} />
-                  </Routes>
-                </main>
-              </div>
+              <ProtectedRoute>
+                <div className={`app-layout ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
+                  <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
+                  <main className="main-content">
+                    <Routes>
+                      <Route path="perfil" element={<UserProfile />} />
+                      <Route path="proyectos" element={<ProjectsPage />} />
+                      <Route path="habilidades" element={<SkillsPage />} />                  
+                      <Route path="experiencia" element={<ExperiencePage />} />
+                      <Route path="enlaces" element={<LinksPage />} />
+                      <Route path="visibilidad" element={<VisibilitySettingsPage />} />
+                      <Route path="moderacion" element={<AdminCommentPage />} />
+                    </Routes>
+                  </main>
+                </div>
+              </ProtectedRoute>
             }
           />
 

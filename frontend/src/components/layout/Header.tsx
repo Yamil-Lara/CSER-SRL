@@ -9,7 +9,7 @@ export function Header() {
   const navigate = useNavigate();
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('/login', { replace: true }); // CRITERIO 1 y 5
     setIsMobileMenuOpen(false);
   };
   return (
@@ -96,10 +96,9 @@ export function Header() {
                   </Button>
                 </Link>
                 <Button
-                variant="ghost"
-                onClick={handleLogout}
-                className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10">
-                
+                  variant="ghost"
+                  onClick={handleLogout}
+                  className="gap-2 text-[#F63B3B] hover:text-[#F63B3B] hover:bg-[#F63B3B]/10">
                   <LogOut className="w-4 h-4" />
                   Salir
                 </Button>
@@ -204,11 +203,10 @@ export function Header() {
                   </Button>
                 </Link>
                 <Button
-              variant="ghost"
-              fullWidth
-              onClick={handleLogout}
-              className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10">
-              
+                  variant="ghost"
+                  fullWidth
+                  onClick={handleLogout}
+                  className="gap-2 text-[#F63B3B] hover:text-[#F63B3B] hover:bg-[#F63B3B]/10">
                   <LogOut className="w-4 h-4" />
                   Salir
                 </Button>
