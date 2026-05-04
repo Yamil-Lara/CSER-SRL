@@ -32,8 +32,16 @@ export function RegisterPage() {
     }
     if (!formData.password) {
       newErrors.password = 'La contraseña es obligatoria'
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'La contraseña debe tener al menos 6 caracteres'
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'La contraseña debe tener al menos 8 caracteres'
+    } else if (!/[a-z]/.test(formData.password)) {
+      newErrors.password = 'La contraseña debe contener al menos una letra minúscula'
+    } else if (!/[A-Z]/.test(formData.password)) {
+      newErrors.password = 'La contraseña debe contener al menos una letra mayúscula'
+    } else if (!/[0-9]/.test(formData.password)) {
+      newErrors.password = 'La contraseña debe contener al menos un número'
+    } else if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(formData.password)) {
+      newErrors.password = 'La contraseña debe contener al menos un símbolo (!@#$%^&*...)'
     }
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = 'Confirma tu contraseña'
@@ -54,6 +62,7 @@ export function RegisterPage() {
         formData.nombre,
         formData.email,
         formData.password,
+        formData.confirmPassword,
       )
       if (result.success) {
         navigate('/login', {
@@ -138,7 +147,7 @@ export function RegisterPage() {
                 label="Contraseña"
                 name="password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Mín. 8 caracteres, mayúscula, número y símbolo"
                 value={formData.password}
                 onChange={handleChange}
                 error={errors.password}
