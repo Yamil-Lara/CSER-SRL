@@ -1,10 +1,35 @@
 // src/pages/LandingPage.tsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { ArrowRight, Code, FolderGit2, Globe, Layout, ShieldCheck, Sparkles, Terminal, Users } from 'lucide-react';
 import '../index.css';
+import logoEmpresa from "../assets/logo.png";
 
 export const LandingPage = () => {
+  // Estado para controlar si el menú hamburguesa está abierto o cerrado
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  // Estado para manejar el scroll del Header
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Efecto para detectar el scroll y cambiar el tamaño del header
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const navigate = useNavigate();
 
   // Lógica del Tema Oscuro/Claro con memoria (localStorage)
@@ -36,44 +61,47 @@ export const LandingPage = () => {
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
-  // Función para redirigir al Dashboard
-  const handleLoginClick = () => {
-  navigate('/login');  // esto fue modificado por javi xd
-};
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-
       {/* HEADER / NAVEGACIÓN */}
-      <nav className="navbar">
-        <div className="logo">DevFolio</div>
+      <header
+        className={`navbar fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${
+          isScrolled
+            ? 'py-3 dark:bg-white/0 backdrop-blur-md shadow-lg' // Glassmorphism + Grosor reducido
+            : 'py-6 bg-transparent' // Grosor original
+        }`}
+      >
+        <div className="flex items-center justify-start gap-2">
+          {/* Usa la variable importada en el atributo src */}
+          <img src={logoEmpresa} alt="Logo de DevFolio" className="w-16 h-auto" />
+          <a href="#top" className="logo">DevFolio</a>
+        </div>
 
         <div className="nav-links">
           <a href="#features">Características</a>
-          <a onClick={() => navigate('/explorar')} style={{ cursor: 'pointer' }}>
-            Explorar
-          </a>
+          <a onClick={() => navigate('/explorar')} style={{ cursor: 'pointer' }}>Explorar</a>
           <a href="#how-it-works">Cómo Funciona</a>
-          <a href="#nosotros">Nosotros</a>
+          <a href="#About-Us">Nosotros</a>
         </div>
 
         <div className="nav-actions">
           {/* BOTÓN CON REDIRECCIÓN AL DASHBOARD */}
-          <button className="btn-ghost" onClick={handleLoginClick}>Iniciar Sesión</button>
+          <button className="btn-ghost" onClick={() => navigate('/login')}>Iniciar Sesión</button>
 
-<button className="btn-primary-small" onClick={() => navigate('/login')}>
+<button className="btn-primary-small" onClick={() => navigate('/register')}>
   Regístrate Gratis
 </button>
           {/* BOTÓN DE CAMBIO DE TEMA */}
           <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="Cambiar tema">
             {isDarkMode ? (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
             ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79"/></svg>
             )}
           </button>
         </div>
-      </nav>
+        
+      </header>
 
       <main style={{ flexGrow: 1 }}>
         {/* HERO SECTION */}
@@ -95,13 +123,8 @@ export const LandingPage = () => {
           </p>
 
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', alignItems: 'center' }}>
-            <button className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              Comenzar ahora
-              <ArrowRight size={18} />
-            </button>
-            <button className="btn-ghost" style={{ border: '1px solid var(--muted)', borderRadius: '8px' }}>
-              Ver demostración
-            </button>
+            <button className="btn-primary" onClick={() => navigate('/register')} style={{ padding: '1rem 2rem'}}>Comenzar ahora<ArrowRight size={18} /></button>
+            <button className="btn-ghost" onClick={() => navigate('/explorar')} style={{ padding: '1rem 2rem'}}>Ver demostración</button>
           </div>
 
           {/* MOCKUP DE TERMINAL */}
@@ -192,18 +215,22 @@ export const LandingPage = () => {
           </div>
         </section>
 
-        {/* CTA SECTION */}
-        <section className="cta-section">
+        {/* SOBRE NOSOTROS */}
+        <section id="About-Us" className="cta-section">
           <h2 className="cta-title">¿Listo para destacar en la industria tech?</h2>
-          <p className="cta-text">
-            Únete a cientos de desarrolladores que ya están utilizando DevFolio para impulsar sus carreras profesionales.
-          </p>
+          <p className="cta-text">Únete a cientos de desarrolladores que ya están utilizando DevFolio para impulsar sus carreras profesionales.</p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-            <button className="btn-primary" style={{ padding: '1rem 2rem' }}>Crear mi portafolio gratis</button>
-            <button className="btn-ghost" style={{ border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}>Explorar ejemplos</button>
+            <button className="btn-primary" onClick={() => navigate('/register')} style={{ padding: '1rem 2rem'}}>Crear mi portafolio gratis</button>
+            <button className="btn-ghost" onClick={() => navigate('/explorar')}>Explorar ejemplos</button>
           </div>
         </section>
 
+        {/* FOOTER */}
+        <footer>
+          <div className="container mx-auto px-4 py-8 text-center text-gray-600 dark:text-gray-400">
+            <p>© {new Date().getFullYear()} CSER S.R.L. Todos los derechos reservados.</p>
+          </div>
+        </footer>
       </main>
     </div>
   );

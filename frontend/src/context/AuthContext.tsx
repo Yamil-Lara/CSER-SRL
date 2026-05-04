@@ -27,7 +27,7 @@ interface AuthContextType {
     message: string;
     user?: User;
   }>;
-  register: (nombre: string, email: string, password: string) => Promise<{
+  register: (nombre: string, email: string, password: string, confirmPassword?: string) => Promise<{
     success: boolean;
     message: string;
   }>;
@@ -108,22 +108,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (nombre: string, email: string, password: string) => {
+  const register = async (nombre: string, email: string, password: string, confirmPassword?: string) => {
     try {
-      // Generar username automáticamente desde el nombre
+      // Generar username automáticamente desde el nombre con sufijo aleatorio para unicidad
       const baseUsername = nombre
         .toLowerCase()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .replace(/\s+/g, '-')
         .replace(/[^a-z0-9-]/g, '');
+      const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+      const username = `${baseUsername}-${randomSuffix}`;
       
       const response = await api.post('/register', {
         nombre,
-        username: baseUsername,
+        username,
         email,
         password,
-        password_confirmation: password
+        password_confirmation: confirmPassword || password
       });
       
       return {
@@ -134,7 +136,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       let message = 'Error en el registro';
       if (error.response?.data?.errors) {
         const errors = error.response.data.errors;
-        message = Object.values(errors).flat()[0] as string;
+        // Collect all validation error messages for clarity
+        const allMessages = Object.values(errors).flat() as string[];
+        message = allMessages.join('. ');
       } else if (error.response?.data?.message) {
         message = error.response.data.message;
       }

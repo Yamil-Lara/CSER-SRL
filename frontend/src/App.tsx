@@ -29,6 +29,7 @@ import PublicProjectDetail from './pages/PublicProjectDetail';
 import ProjectDetailPage from "./pages/ProjectDetailPage";
 import AdminCommentPage from "./pages/AdminCommentPage";
 import LoginPage from "./pages/LoginPage";
+import { RegisterPage } from "./pages/RegisterPage";
 
 // Componentes temporales para las rutas de admin que faltan
 const AdminDashboard = () => (
@@ -92,6 +93,7 @@ function App(): JSX.Element {
           <Route path="/explorar" element={<ExplorePage />} />
           <Route path="/proyecto/:id" element={<ProjectDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
           {/* ============================================================ */}
           {/* RUTAS DE ADMINISTRADOR */}
