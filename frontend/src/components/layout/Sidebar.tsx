@@ -49,7 +49,7 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
   // Funciones de consulta a la API
   const fetchPendingProjects = () => {
     if (isAdmin) {
-      api.get('/panel/proyectos?estado=pendiente')
+      api.get('/gestion/proyectos?estado=pendiente')
         .then(res => {
           const pendientes = res.data?.data?.stats?.pendientes || 0;
           setPendingProjects(pendientes);
@@ -60,7 +60,7 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
 
   const fetchPendingComments = () => {
     if (isAdmin) {
-      api.get('/panel/comentarios/pendientes')
+      api.get('/gestion/comentarios/pendientes')
         .then(res => {
           // Filtramos localmente los que tienen estado 'aprobado === 0' (pendiente)
           const allComments = res.data?.data || [];

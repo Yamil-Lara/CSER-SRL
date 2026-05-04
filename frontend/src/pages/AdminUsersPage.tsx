@@ -18,7 +18,7 @@ export default function AdminUsersPage() {
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        api.get('/panel/usuarios')
+        api.get('/gestion/usuarios')
            .then(res => {
                // Normalización de la respuesta del backend
                let fetchedUsers = [];
@@ -38,7 +38,7 @@ export default function AdminUsersPage() {
     const handleToggleStatus = async (userId: number, currentStatus: number | boolean) => {
         const newStatus = !currentStatus;
         try {
-            await api.put(`/panel/usuarios/${userId}`, { activo: newStatus });
+            await api.put(`/gestion/usuarios/${userId}`, { activo: newStatus });
             setUsers(users.map(user => user.id === userId ? { ...user, activo: newStatus } : user));
         } catch (err) {
             console.error("Error al actualizar el estado:", err);

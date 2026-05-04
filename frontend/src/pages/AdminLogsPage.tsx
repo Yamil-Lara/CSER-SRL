@@ -48,7 +48,7 @@ export default function AdminLogsPage() {
     const fetchLogs = async () => {
         setLoading(true);
         try {
-            const res = await api.get('/panel/logs');
+            const res = await api.get('/gestion/logs');
             setLogs(res.data.data);
         } catch (err) { 
             console.error("Error al cargar logs"); 

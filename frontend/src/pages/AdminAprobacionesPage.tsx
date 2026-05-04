@@ -21,7 +21,7 @@ export default function AdminAprobacionesPage() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const res = await api.get(`/panel/proyectos?estado=${filter}`);
+            const res = await api.get(`/gestion/proyectos?estado=${filter}`);
             const data = res.data?.data;
             setProyectos(data?.proyectos || []);
             setStats(data?.stats || { total: 0, pendientes: 0, aprobados: 0, rechazados: 0 });
@@ -34,7 +34,7 @@ export default function AdminAprobacionesPage() {
 
     const handleUpdateStatus = async (id: number, nuevoEstado: string) => {
         try {
-            await api.put(`/panel/proyectos/${id}/estado`, { estado: nuevoEstado });
+            await api.put(`/gestion/proyectos/${id}/estado`, { estado: nuevoEstado });
             fetchData(); // Recargamos la lista local de la página
             
             // NUEVO: Disparamos un evento global para avisarle al Sidebar

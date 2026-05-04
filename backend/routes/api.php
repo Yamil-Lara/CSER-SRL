@@ -86,7 +86,7 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
     Route::put('/comentarios/{id}/estado', [ComentarioController::class, 'updateEstado']);
     Route::delete('/comentarios/{id}', [ComentarioController::class, 'destroy']);
 
-    Route::middleware(['admin'])->prefix('panel')->group(function () {
+    Route::middleware(['admin'])->prefix('gestion')->group(function () {
         Route::apiResource('usuarios', AdminUserController::class);
         Route::get('/comentarios/pendientes', [ComentarioController::class, 'adminIndexAll']);
         
