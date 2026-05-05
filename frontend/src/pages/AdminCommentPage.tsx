@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api from '../utils/api';
+import api, { buildUrl } from '../utils/api';
 import { CheckCircle, XCircle, Clock, LayoutGrid, Search, User, FolderGit2, Calendar, MessageSquare } from 'lucide-react';
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
@@ -160,7 +160,7 @@ export default function AdminCommentModeration() {
                                   <div className="flex justify-between items-start">
                                       <div className="flex items-center gap-3">
                                           {c.autor?.foto ? (
-                                              <img src={c.autor.foto} alt="Avatar" className="w-10 h-10 rounded-full object-cover border border-muted" />
+                                              <img src={buildUrl(c.autor.foto)} alt="Avatar" className="w-10 h-10 rounded-full object-cover border border-muted" />
                                           ) : (
                                               <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
                                                   {c.autor?.nombre?.charAt(0) || 'U'}

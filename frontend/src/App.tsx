@@ -94,12 +94,13 @@ function App(): JSX.Element {
           <Route path="/proyecto/:id" element={<ProjectDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/portfolio/:username" element={<PortfolioPublico />} />
 
           {/* ============================================================ */}
           {/* RUTAS DE ADMINISTRADOR */}
           {/* ============================================================ */}
           <Route
-            path="/admin/*"
+            path="/gestion/*"
             element={
               <ProtectedRoute requireAdmin={true}>
                 <div className={`app-layout ${isCollapsed ? 'sidebar-collapsed' : ''}`}>

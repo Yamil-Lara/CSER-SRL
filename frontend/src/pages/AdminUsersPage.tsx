@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
-import { Search, Users } from 'lucide-react';
+import { Search, Users, Trash2 } from 'lucide-react';
 import { Badge } from '../components/ui/Badge';
 
 interface AdminUser {
@@ -42,6 +42,19 @@ export default function AdminUsersPage() {
             setUsers(users.map(user => user.id === userId ? { ...user, activo: newStatus } : user));
         } catch (err) {
             console.error("Error al actualizar el estado:", err);
+        }
+    };
+
+    const handleDeleteUser = async (userId: number) => {
+        if (!window.confirm("¿Estás seguro de que deseas eliminar permanentemente a este usuario? Esta acción no se puede deshacer.")) {
+            return;
+        }
+        try {
+            await api.delete(`/gestion/usuarios/${userId}`);
+            setUsers(users.filter(user => user.id !== userId));
+        } catch (err) {
+            console.error("Error al eliminar el usuario:", err);
+            alert("No se pudo eliminar al usuario. Es posible que tenga proyectos asociados.");
         }
     };
 
@@ -91,6 +104,7 @@ export default function AdminUsersPage() {
                                 <th className="py-4 px-6 font-semibold text-sm text-sidebar/70">Profesión</th>
                                 <th className="py-4 px-6 font-semibold text-sm text-sidebar/70">Rol</th>
                                 <th className="py-4 px-6 font-semibold text-sm text-sidebar/70 text-center">Estado</th>
+                                <th className="py-4 px-6 font-semibold text-sm text-sidebar/70 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -108,9 +122,19 @@ export default function AdminUsersPage() {
                                         <div 
                                             onClick={() => handleToggleStatus(user.id, user.activo)}
                                             className={`relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors ${user.activo ? 'bg-green-500' : 'bg-gray-300'}`}
+                                            title={user.activo ? "Bloquear Usuario" : "Desbloquear Usuario"}
                                         >
                                             <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${user.activo ? 'translate-x-6' : 'translate-x-1'}`} />
                                         </div>
+                                    </td>
+                                    <td className="py-4 px-6 text-sm text-center">
+                                        <button 
+                                            onClick={() => handleDeleteUser(user.id)}
+                                            className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                                            title="Eliminar permanentemente"
+                                        >
+                                            <Trash2 className="w-5 h-5" />
+                                        </button>
                                     </td>
                                 </tr>
                             ))}

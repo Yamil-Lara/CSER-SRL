@@ -32,7 +32,7 @@ export default function LoginPage() {
       if (result.success) {
         // Redirigir según el rol
         if (result.user?.rol === 'admin') {
-          navigate('/admin/dashboard');
+          navigate('/gestion/dashboard');
         } else {
           navigate('/dashboard/perfil');
         }

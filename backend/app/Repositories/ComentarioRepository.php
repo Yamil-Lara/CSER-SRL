@@ -29,4 +29,20 @@ class ComentarioRepository
             ->where('estado', 'aprobado')
             ->first();
     }
+
+    // NUEVAS FUNCIONES PARA EL ADMIN
+    public function findById(int $id): ?Comentario
+    {
+        return Comentario::find($id);
+    }
+
+    public function getAllByProyecto(int $proyectoId)
+    {
+        return Comentario::where('proyecto_id', $proyectoId)
+            ->with([
+                'usuario:id,nombre,username,foto',
+            ])
+            ->latest()
+            ->get();
+    }
 }

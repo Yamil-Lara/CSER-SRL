@@ -27,7 +27,6 @@ class ExploreRepository
                 'activo',
             ])
             ->where('activo', true)
-            ->where('estado', 'aprobado')
             ->where('rol', '!=', 'admin')
             ->withCount(['proyectos' => fn($q) => $q->where('estado', 'aprobado')]);
 

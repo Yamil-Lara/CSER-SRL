@@ -104,23 +104,23 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
   ];
 
   const adminMenuItems: MenuItem[] = [
-    { icon: LayoutDashboard, label: 'Vista Global', path: '/admin/dashboard' },
-    { icon: Users, label: 'Gestión de Usuarios', path: '/admin/usuarios' },
+    { icon: LayoutDashboard, label: 'Vista Global', path: '/gestion/dashboard' },
+    { icon: Users, label: 'Gestión de Usuarios', path: '/gestion/usuarios' },
     { 
         icon: CheckCircle, 
         label: 'Aprobaciones', 
-        path: '/admin/aprobaciones', 
+        path: '/gestion/aprobaciones', 
         badge: pendingProjects > 0 ? pendingProjects : undefined 
     },
     { 
         icon: MessageSquare, 
         label: 'Moderación', 
-        path: '/admin/moderacion', 
+        path: '/gestion/moderacion', 
         badge: pendingComments > 0 ? pendingComments : undefined 
     },
-    { icon: Database, label: 'Backups', path: '/admin/backups' },
-    { icon: Activity, label: 'Logs', path: '/admin/logs' },
-    { icon: FileText, label: 'Reportes PDF', path: '/admin/reportes' }
+    { icon: Database, label: 'Backups', path: '/gestion/backups' },
+    { icon: Activity, label: 'Logs', path: '/gestion/logs' },
+    { icon: FileText, label: 'Reportes PDF', path: '/gestion/reportes' }
   ];
 
   if (loading) return null;
@@ -133,7 +133,7 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
       
       {/* Logo de la aplicación */}
       <div className="h-16 flex items-center px-6 border-b border-sidebar/10">
-        <Link to={isAdmin ? '/admin/dashboard' : '/dashboard'} className="flex items-center gap-3">
+        <Link to={isAdmin ? '/gestion/dashboard' : '/dashboard'} className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/20">
             <span className="text-white font-bold text-sm">&lt;/&gt;</span>
           </div>

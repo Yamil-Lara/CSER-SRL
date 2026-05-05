@@ -114,7 +114,7 @@ class ComentarioController extends Controller
                         'id' => $comentario->usuario->id,
                         'nombre' => $comentario->usuario->nombre,
                         'username' => $comentario->usuario->username,
-                        'foto' => $comentario->usuario->foto ? asset('storage/' . $comentario->usuario->foto) : null,
+                        'foto' => $comentario->usuario->foto ? $comentario->usuario->foto : null,
                     ] : null,
                     'proyecto' => $comentario->proyecto ? [
                         'id' => $comentario->proyecto->id,

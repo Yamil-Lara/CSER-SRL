@@ -89,7 +89,7 @@ export function Header() {
               </> :
 
             <>
-                <Link to={isAdmin ? '/admin/dashboard' : '/dashboard'}>
+                <Link to={isAdmin ? '/gestion/dashboard' : '/dashboard'}>
                   <Button variant="ghost" className="gap-2">
                     <LayoutDashboard className="w-4 h-4" />
                     {isAdmin ? 'Panel Admin' : 'Mi Dashboard'}
@@ -194,7 +194,7 @@ export function Header() {
 
           <>
                 <Link
-              to={isAdmin ? '/admin/dashboard' : '/dashboard'}
+              to={isAdmin ? '/gestion/dashboard' : '/dashboard'}
               onClick={() => setIsMobileMenuOpen(false)}>
               
                   <Button variant="outline" fullWidth className="gap-2">

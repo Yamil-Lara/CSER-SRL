@@ -21,7 +21,6 @@ class PortafolioController extends Controller
     {
         $user = User::where('username', $username)
             ->where('activo', true)
-            ->where('estado', 'aprobado')
             ->first();
 
         if (!$user) {
@@ -93,7 +92,6 @@ class PortafolioController extends Controller
     {
         $user = User::where('username', $username)
             ->where('activo', true)
-            ->where('estado', 'aprobado')
             ->first();
 
         if (!$user) {
@@ -124,7 +122,6 @@ class PortafolioController extends Controller
     {
         $user = User::where('username', $username)
             ->where('activo', true)
-            ->where('estado', 'aprobado')
             ->first();
 
         if (!$user) {
@@ -151,7 +148,6 @@ class PortafolioController extends Controller
     {
         $user = User::where('username', $username)
             ->where('activo', true)
-            ->where('estado', 'aprobado')
             ->first();
  
         if (!$user) {
