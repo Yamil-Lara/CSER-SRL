@@ -33,7 +33,7 @@ class ExploreService
             'id'               => $user->id,
             'nombre'           => $user->nombre,
             'username'         => $user->username,
-            'foto'             => $user->foto ? asset('storage/' . $user->foto) : null,
+            'foto'             => $user->foto ? (str_starts_with($user->foto, 'http') ? $user->foto : asset('storage/' . $user->foto)) : null,
             'profesion'        => $user->profesion,
             'especialidad'     => $user->especialidad,
             'ubicacion'        => $user->ubicacion,
@@ -80,7 +80,7 @@ class ExploreService
             'titulo' => $proyecto->titulo,
             'descripcion' => $proyecto->descripcion,
             'tecnologias' => $proyecto->tecnologias,
-            'imagen' => $proyecto->imagen ? asset('storage/' . $proyecto->imagen) : null,
+            'imagen' => $proyecto->imagen ? (str_starts_with($proyecto->imagen, 'http') ? $proyecto->imagen : asset('storage/' . $proyecto->imagen)) : null,
             'categoria' => $proyecto->categoria ? [
                 'id' => $proyecto->categoria->id,
                 'nombre' => $proyecto->categoria->nombre,
@@ -91,7 +91,7 @@ class ExploreService
                 'id' => $proyecto->usuario->id,
                 'nombre' => $proyecto->usuario->nombre,
                 'username' => $proyecto->usuario->username,
-                'foto' => $proyecto->usuario->foto ? asset('storage/' . $proyecto->usuario->foto) : null,
+                'foto' => $proyecto->usuario->foto ? (str_starts_with($proyecto->usuario->foto, 'http') ? $proyecto->usuario->foto : asset('storage/' . $proyecto->usuario->foto)) : null,
             ] : null,
         ];
     }

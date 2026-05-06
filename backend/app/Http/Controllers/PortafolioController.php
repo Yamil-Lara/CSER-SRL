@@ -39,7 +39,7 @@ class PortafolioController extends Controller
                 'especialidad' => $user->especialidad,
                 'biografia' => $user->biografia,
                 'ubicacion' => $user->ubicacion,
-                'foto' => $user->foto ? asset('storage/' . $user->foto) : null,
+                'foto' => $user->foto ? (str_starts_with($user->foto, 'http') ? $user->foto : asset('storage/' . $user->foto)) : null,
             ]
         ];
 

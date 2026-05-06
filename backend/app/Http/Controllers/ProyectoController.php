@@ -41,7 +41,8 @@ class ProyectoController extends Controller
         $data['estado'] = 'pendiente';
 
         if ($request->hasFile('imagen')) {
-            $data['imagen'] = $request->file('imagen')->store('proyectos', 'public');
+            $uploadedFileUrl = cloudinary()->upload($request->file('imagen')->getRealPath(), ['folder' => 'cser_proyectos'])->getSecurePath();
+            $data['imagen'] = $uploadedFileUrl;
         }
 
         $proyecto = Proyecto::create($data);
@@ -102,10 +103,13 @@ class ProyectoController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('imagen')) {
-            if ($proyecto->imagen && Storage::disk('public')->exists($proyecto->imagen)) {
-                Storage::disk('public')->delete($proyecto->imagen);
+            if ($proyecto->imagen && str_starts_with($proyecto->imagen, 'http')) {
+                // Ignore local delete
+            } elseif ($proyecto->imagen && \Illuminate\Support\Facades\Storage::disk('public')->exists($proyecto->imagen)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($proyecto->imagen);
             }
-            $data['imagen'] = $request->file('imagen')->store('proyectos', 'public');
+            $uploadedFileUrl = cloudinary()->upload($request->file('imagen')->getRealPath(), ['folder' => 'cser_proyectos'])->getSecurePath();
+            $data['imagen'] = $uploadedFileUrl;
         }
 
         $proyecto->update($data);
@@ -129,8 +133,10 @@ class ProyectoController extends Controller
             return $this->errorResponse('No tienes permiso para eliminar este proyecto', 403);
         }
 
-        if ($proyecto->imagen && Storage::disk('public')->exists($proyecto->imagen)) {
-            Storage::disk('public')->delete($proyecto->imagen);
+        if ($proyecto->imagen && str_starts_with($proyecto->imagen, 'http')) {
+            // Ignore
+        } elseif ($proyecto->imagen && \Illuminate\Support\Facades\Storage::disk('public')->exists($proyecto->imagen)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($proyecto->imagen);
         }
 
         $proyecto->delete();

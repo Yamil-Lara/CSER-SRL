@@ -56,11 +56,14 @@ class UserService
     }
     
     
-    if ($photo) {
-            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
-                Storage::disk('public')->delete($user->foto);
+        if ($photo) {
+            if ($user->foto && str_starts_with($user->foto, 'http')) {
+                // Ignore local deletion if it's already an external URL
+            } elseif ($user->foto && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->foto)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->foto);
             }
-            $data['foto'] = $photo->store('perfiles', 'public');
+            $uploadedFileUrl = cloudinary()->upload($photo->getRealPath(), ['folder' => 'cser_profiles'])->getSecurePath();
+            $data['foto'] = $uploadedFileUrl;
         }
 
         $user->update($data);
@@ -70,8 +73,10 @@ class UserService
 
     public function deleteAccount(User $user): void
     {
-        if ($user->foto && Storage::disk('public')->exists($user->foto)) {
-            Storage::disk('public')->delete($user->foto);
+        if ($user->foto && str_starts_with($user->foto, 'http')) {
+            // Can't delete external cloudinary files easily without public_id, so ignore for now
+        } elseif ($user->foto && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->foto)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($user->foto);
         }
         $user->tokens()->delete();
         $user->delete();
@@ -105,8 +110,10 @@ class UserService
             return ['success' => false, 'message' => 'Usuario no encontrado'];
         }
 
-        if ($user->foto && Storage::disk('public')->exists($user->foto)) {
-            Storage::disk('public')->delete($user->foto);
+        if ($user->foto && str_starts_with($user->foto, 'http')) {
+            // Ignore
+        } elseif ($user->foto && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->foto)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($user->foto);
         }
 
         $user->tokens()->delete();

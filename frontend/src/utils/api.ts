@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api', // CAMBIA ESTO A 'http://cser.tis.cs.umss.edu.bo/api' ANTES DE HACER BUILD
+  baseURL: `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api`,
   headers: {
     'Accept': 'application/json'
   }
