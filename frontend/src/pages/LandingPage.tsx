@@ -1,111 +1,26 @@
 // src/pages/LandingPage.tsx
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Code, FolderGit2, Globe, Layout, ShieldCheck, Sparkles, Terminal, Users } from 'lucide-react';
 import '../index.css';
-import logoEmpresa from "../assets/logo.png";
+import { PublicHeader } from '../components/layout/PublicHeader'; // <-- Importar componente
 
 export const LandingPage = () => {
-  // Estado para controlar si el menú hamburguesa está abierto o cerrado
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  // Estado para manejar el scroll del Header
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  // Efecto para detectar el scroll y cambiar el tamaño del header
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   const navigate = useNavigate();
 
-  // Lógica del Tema Oscuro/Claro con memoria (localStorage)
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    // 1. Prioridad 1: Leer lo que el usuario eligió antes
-    const savedTheme = localStorage.getItem('devfolio-theme');
-    if (savedTheme) {
-      return savedTheme === 'dark';
-    }
-    // 2. Prioridad 2: Leer el sistema
-    return document.documentElement.classList.contains('dark') ||
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
-
-  useEffect(() => {
-    const htmlElement = document.documentElement;
-    if (isDarkMode) {
-      htmlElement.classList.add('dark');
-      htmlElement.setAttribute('data-theme', 'dark');
-      // Guardar elección en la memoria del navegador
-      localStorage.setItem('devfolio-theme', 'dark');
-    } else {
-      htmlElement.classList.remove('dark');
-      htmlElement.removeAttribute('data-theme');
-      // Guardar elección en la memoria del navegador
-      localStorage.setItem('devfolio-theme', 'light');
-    }
-  }, [isDarkMode]);
-
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
+  // El estado isMenuOpen se mantiene si vas a usarlo posteriormente en un menú móvil en esta vista
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      {/* HEADER / NAVEGACIÓN */}
-      <header
-        className={`navbar fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${
-          isScrolled
-            ? 'py-3 dark:bg-white/0 backdrop-blur-md shadow-lg' // Glassmorphism + Grosor reducido
-            : 'py-6 bg-transparent' // Grosor original
-        }`}
-      >
-        <div className="flex items-center justify-start gap-2">
-          {/* Usa la variable importada en el atributo src */}
-          <img src={logoEmpresa} alt="Logo de DevFolio" className="w-16 h-auto" />
-          <a href="#top" className="logo">DevFolio</a>
-        </div>
-
-        <div className="nav-links">
-          <a href="#features">Características</a>
-          <a onClick={() => navigate('/explorar')} style={{ cursor: 'pointer' }}>Explorar</a>
-          <a href="#how-it-works">Cómo Funciona</a>
-          <a href="#About-Us">Nosotros</a>
-        </div>
-
-        <div className="nav-actions">
-          {/* BOTÓN CON REDIRECCIÓN AL DASHBOARD */}
-          <button className="btn-ghost" onClick={() => navigate('/login')}>Iniciar Sesión</button>
-
-<button className="btn-primary-small" onClick={() => navigate('/register')}>
-  Regístrate Gratis
-</button>
-          {/* BOTÓN DE CAMBIO DE TEMA */}
-          <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="Cambiar tema">
-            {isDarkMode ? (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79"/></svg>
-            )}
-          </button>
-        </div>
-        
-      </header>
+      
+      {/* HEADER / NAVEGACIÓN IMPORTADO */}
+      <PublicHeader />
 
       <main style={{ flexGrow: 1 }}>
         {/* HERO SECTION */}
-        <section className="hero-section">
+        <section className="hero-section" id="top">
           <div className="badge">
             <Sparkles size={16} />
             <span>La nueva forma de mostrar tu código</span>
@@ -145,6 +60,7 @@ export const LandingPage = () => {
 
         {/* FEATURES SECTION */}
         <section id="features" style={{ backgroundColor: 'var(--card)' }} className="section">
+          {/* ... Todo el contenido original se mantiene intacto ... */}
           <div className="text-center">
             <h2 className="section-title">Todo lo que necesitas para destacar</h2>
             <p className="section-subtitle">
@@ -154,7 +70,8 @@ export const LandingPage = () => {
           </div>
 
           <div className="grid-3">
-            <div className="feature-card">
+             {/* Tarjetas de Features */}
+             <div className="feature-card">
               <div className="feature-icon icon-primary"><FolderGit2 size={24} /></div>
               <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Gestión de Proyectos</h3>
               <p style={{ color: 'var(--text-muted)' }}>Documenta tus proyectos con descripciones detalladas, tecnologías utilizadas y demos.</p>
@@ -189,6 +106,7 @@ export const LandingPage = () => {
 
         {/* CÓMO FUNCIONA */}
         <section id="how-it-works" className="section">
+          {/* ... Todo el contenido original se mantiene intacto ... */}
           <div className="text-center mb-6">
             <h2 className="section-title">Cómo funciona</h2>
             <p className="section-subtitle">
@@ -217,6 +135,7 @@ export const LandingPage = () => {
 
         {/* SOBRE NOSOTROS */}
         <section id="About-Us" className="cta-section">
+          {/* ... Todo el contenido original se mantiene intacto ... */}
           <h2 className="cta-title">¿Listo para destacar en la industria tech?</h2>
           <p className="cta-text">Únete a cientos de desarrolladores que ya están utilizando DevFolio para impulsar sus carreras profesionales.</p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
