@@ -116,17 +116,18 @@ export default function AdminCommentModeration() {
 
       {/* FILTROS (Tabs y Buscador) */}
       <div className="space-y-4">
-          <div className="flex gap-2 border-b border-muted pb-px">
-              {['todos', 'pendiente', 'aprobado', 'rechazado'].map((opt) => (
-                  <button
-                      key={opt}
-                      onClick={() => setFilter(opt)}
-                      className={`px-6 py-3 text-sm font-medium transition-all border-b-2 capitalize ${filter === opt ? 'border-primary text-primary' : 'border-transparent text-sidebar/60 hover:text-sidebar'}`}
-                  >
-                      {opt === 'todos' ? 'Ver Todos' : opt + 's'}
-                  </button>
-              ))}
-          </div>
+        {/* Contenedor scrollable horizontal para móviles */}
+        <div className="flex gap-2 border-b border-muted pb-px overflow-x-auto scrollbar-hide whitespace-nowrap">
+            {['todos', 'pendiente', 'aprobado', 'rechazado'].map((opt) => (
+                <button
+                    key={opt}
+                    onClick={() => setFilter(opt)}
+                    className={`px-4 md:px-6 py-3 text-sm font-medium transition-all border-b-2 capitalize flex-shrink-0 ${filter === opt ? 'border-primary text-primary' : 'border-transparent text-sidebar/60 hover:text-sidebar'}`}
+                >
+                    {opt === 'todos' ? 'Ver Todos' : opt + 's'}
+                </button>
+            ))}
+        </div>
 
           <div className="bg-card border border-muted rounded-xl p-2 shadow-sm">
               <div className="relative">
