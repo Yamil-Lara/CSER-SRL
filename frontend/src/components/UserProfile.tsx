@@ -72,7 +72,7 @@ const UserProfile: React.FC = () => {
 
         const imagePath = userData.foto || userData.image_url;
         if (imagePath) {
-          setPreviewUrl(buildUrl(imagePath));
+          setPreviewUrl(buildUrl(imagePath) ?? null);
         }
       })
       .catch((error) => console.error('Error cargando perfil:', error));
@@ -178,7 +178,7 @@ const UserProfile: React.FC = () => {
 
     if (!file) {
       setFotoFile(null);
-      setPreviewUrl(buildUrl(profile.image_url));
+      setPreviewUrl(buildUrl(profile.image_url) ?? null);
       return;
     }
 
@@ -246,7 +246,7 @@ const response = await api.post(`/profile`, formData, {
 
       const imagePath = updatedProfile?.foto ?? updatedProfile?.image_url;
       if (imagePath) {
-        setPreviewUrl(buildUrl(imagePath));
+        setPreviewUrl(buildUrl(imagePath) ?? null);
       }
       setSuccessMessage('¡Datos guardados correctamente!');
       setShowSuccessMessage(true);

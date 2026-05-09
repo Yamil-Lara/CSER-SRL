@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Moon, Sun, FolderGit2, ChevronDown, User, MapPin, Briefcase, GraduationCap } from "lucide-react";
+import { Search, FolderGit2, ChevronDown, User, MapPin, Briefcase, GraduationCap } from "lucide-react";
 import api, { buildUrl } from '../utils/api';
+import { PublicHeader } from '../components/layout/PublicHeader';
 
 interface Categoria {
   id: number;
@@ -45,7 +46,6 @@ const ExplorePage: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"portafolios" | "proyectos">("proyectos");
   const [searchQuery, setSearchQuery] = useState("");
-  const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
   const [selectedCategoria, setSelectedCategoria] = useState("Todas las categorías");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [userFilter, setUserFilter] = useState<"todos" | "profesional" | "estudiante">("todos");
@@ -120,41 +120,12 @@ const ExplorePage: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [activeTab, searchQuery, selectedCategoria, categorias, userFilter]);
 
-  const toggleTheme = () => {
-    const html = document.documentElement;
-    if (html.classList.contains('dark')) {
-      html.classList.remove('dark');
-      html.removeAttribute('data-theme');
-      localStorage.setItem('devfolio-theme', 'light');
-      setIsDark(false);
-    } else {
-      html.classList.add('dark');
-      html.setAttribute('data-theme', 'dark');
-      localStorage.setItem('devfolio-theme', 'dark');
-      setIsDark(true);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-[#F1F5F9] transition-colors duration-300">
-      <nav className="flex justify-between items-center px-8 py-4 bg-white shadow-sm border-b border-slate-200">
-        <div className="text-2xl font-extrabold text-[#3B82F6] cursor-pointer" onClick={() => navigate('/')}>DevFolio</div>
-        <div className="hidden md:flex gap-8 items-center text-sm font-medium text-slate-500">
-          <a href="#" className="hover:text-[#3B82F6]">Características</a>
-          <a href="#" className="text-[#3B82F6] font-semibold">Explorar</a>
-          <a href="#" className="hover:text-[#3B82F6]">Cómo Funciona</a>
-          <a href="#" className="hover:text-[#3B82F6]">Nosotros</a>
-        </div>
-        <div className="flex gap-4 items-center">
-          <button className="text-sm font-medium text-slate-700" onClick={() => navigate('/login')}>Iniciar Sesión</button>
-          <button className="bg-[#3B82F6] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-600 transition-colors">Regístrate Gratis</button>
-          <button onClick={toggleTheme} className="p-2 rounded-full bg-slate-100 text-slate-600">
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-        </div>
-      </nav>
+      <PublicHeader />
 
-      <div className="max-w-6xl mx-auto mt-16 px-4">
+      <div className="max-w-6xl mx-auto pt-32 pb-8 px-4">
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-4xl font-extrabold mb-4 text-slate-900">Explorar</h1>
           <p className="text-lg mb-8 text-slate-500">Descubre portafolios de profesionales y proyectos de software.</p>
