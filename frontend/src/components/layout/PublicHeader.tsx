@@ -2,9 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoEmpresa from "../../assets/logo.png"; // Ajusta la ruta del logo si es necesario
+import { useAuth } from '../../context/AuthContext';
 
 export const PublicHeader = () => {
   const navigate = useNavigate();
+  // Extraemos isAdmin además de isAuthenticated y logout
+  const { isAuthenticated, logout, isAdmin } = useAuth(); 
 
   // Estado para manejar el scroll del Header
   const [isScrolled, setIsScrolled] = useState(false);
@@ -48,6 +51,12 @@ export const PublicHeader = () => {
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
+  // Función para manejar el cierre de sesión
+  const handleLogout = async () => {
+    await logout();
+    navigate('/'); 
+  };
+
   return (
     <header
       className={`navbar fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${
@@ -69,10 +78,35 @@ export const PublicHeader = () => {
       </div>
 
       <div className="nav-actions">
-        <button className="btn-ghost" onClick={() => navigate('/login')}>Iniciar Sesión</button>
-        <button className="btn-primary-small" onClick={() => navigate('/register')}>
-          Regístrate Gratis
-        </button>
+        {/* Lógica de renderizado condicional por rol */}
+        {isAuthenticated ? (
+          <>
+            {isAdmin ? (
+              // Botón para Administrador
+              <button className="btn-ghost" onClick={() => navigate('/admin/dashboard')}>
+                Vista Global
+              </button>
+            ) : (
+              // Botón para Usuario Normal
+              <button className="btn-ghost" onClick={() => navigate('/dashboard')}>
+                Dashboard
+              </button>
+            )}
+            
+            <button className="btn-primary-small" onClick={handleLogout}>
+              Cerrar Sesión
+            </button>
+          </>
+        ) : (
+          <>
+            <button className="btn-ghost" onClick={() => navigate('/login')}>
+              Iniciar Sesión
+            </button>
+            <button className="btn-primary-small" onClick={() => navigate('/register')}>
+              Regístrate Gratis
+            </button>
+          </>
+        )}
         
         {/* BOTÓN DE CAMBIO DE TEMA */}
         <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="Cambiar tema">
