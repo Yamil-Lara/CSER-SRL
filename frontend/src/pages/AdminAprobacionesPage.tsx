@@ -90,12 +90,13 @@ export default function AdminAprobacionesPage() {
 
             {/* FILTROS */}
             <div className="space-y-4">
-                <div className="flex gap-2 border-b border-muted pb-px">
+                {/* Contenedor scrollable horizontal para móviles */}
+                <div className="flex gap-2 border-b border-muted pb-px overflow-x-auto scrollbar-hide whitespace-nowrap">
                     {['todos', 'pendiente', 'aprobado', 'rechazado'].map((opt) => (
                         <button
                             key={opt}
                             onClick={() => setFilter(opt)}
-                            className={`px-6 py-3 text-sm font-medium transition-all border-b-2 capitalize ${filter === opt ? 'border-primary text-primary' : 'border-transparent text-sidebar/60 hover:text-sidebar'}`}
+                            className={`px-4 md:px-6 py-3 text-sm font-medium transition-all border-b-2 capitalize flex-shrink-0 ${filter === opt ? 'border-primary text-primary' : 'border-transparent text-sidebar/60 hover:text-sidebar'}`}
                         >
                             {opt === 'todos' ? 'Ver Todos' : opt + 's'}
                         </button>
@@ -128,12 +129,12 @@ export default function AdminAprobacionesPage() {
                             <div className="flex flex-col lg:flex-row">
                                 {/* Imagen del proyecto (si existe) */}
                                 {p.imagen && (
-                                    <div className="lg:w-64 h-48 lg:h-auto bg-muted">
+                                    <div className="w-full lg:w-64 h-48 bg-muted flex-shrink-0">
                                         <img src={buildUrl(p.imagen)} alt={p.titulo} className="w-full h-full object-cover" />
                                     </div>
                                 )}
                                 
-                                <div className="p-6 flex-1 space-y-4">
+                                <div className="p-4 md:p-6 flex-1 space-y-4 min-w-0">
                                     {/* Encabezado */}
                                     <div className="flex flex-wrap items-start justify-between gap-4">
                                         <div>
@@ -181,7 +182,7 @@ export default function AdminAprobacionesPage() {
                                     </div>
 
                                     {/* Footer de la tarjeta: Vistas y Links */}
-                                    <div className="flex items-center justify-between pt-4 border-t border-muted">
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-4 border-t border-muted gap-4">
                                         <div className="flex items-center gap-6 text-sm">
                                             <span className="flex items-center gap-1.5 text-sidebar/60"><Eye className="w-4 h-4"/> {p.vistas || 0} vistas</span>
                                             <div className="flex gap-4">
@@ -191,7 +192,7 @@ export default function AdminAprobacionesPage() {
                                         </div>
 
                                         {/* Botones de acción lateral */}
-                                        <div className="flex gap-2">
+                                        <div className="flex gap-2 w-full sm:w-auto">
                                             {p.estado !== 'aprobado' && (
                                                 <button onClick={() => handleUpdateStatus(p.id, 'aprobado')} className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all text-xs font-bold">
                                                     <CheckCircle className="w-4 h-4" /> APROBAR

@@ -66,15 +66,15 @@ export default function AdminBackupsPage() {
 
     return (
         <div className="p-6 max-w-7xl mx-auto space-y-8">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-sidebar flex items-center gap-3">
-                        <Database className="w-8 h-8 text-primary" />
+                    <h1 className="text-2xl sm:text-3xl font-bold text-sidebar flex items-center gap-3">
+                        <Database className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                         Respaldo de Información
                     </h1>
-                    <p className="text-sidebar/70 mt-2">Seguridad y Copias del Sistema</p>
+                    <p className="text-sidebar/70 mt-2 text-sm sm:text-base">Seguridad y Copias del Sistema</p>
                 </div>
-                <button onClick={handleCreate} className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-lg shadow-primary/20">
+                <button onClick={handleCreate} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-lg shadow-primary/20">
                     <RefreshCw className="w-4 h-4" /> Generar Nuevo Backup
                 </button>
             </div>
@@ -83,7 +83,7 @@ export default function AdminBackupsPage() {
                 <div className="flex justify-center py-12"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
             ) : (
                 <div className="bg-card border border-muted rounded-xl shadow-sm overflow-hidden">
-                    <table className="w-full text-left border-collapse">
+                    <table className="w-full text-left border-collapse min-w-[800px]">
                         <thead className="bg-muted/30">
                             <tr>
                                 <th className="py-4 px-6 text-xs font-bold text-sidebar/50 uppercase">Nombre del Archivo</th>
