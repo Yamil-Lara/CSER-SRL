@@ -82,8 +82,8 @@ const UserProfile: React.FC = () => {
     const val = value || '';
     let errorMsg = '';
     if (['nombre', 'profesion', 'especialidad', 'ubicacion', 'carrera'].includes(name)) {
-      if (/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s\.,\-]/g.test(val)) {
-        errorMsg = 'Solo se aceptan letras, puntos y comas.';
+      if (/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s\.,\-&]/g.test(val)) {
+        errorMsg = 'Solo se aceptan letras, puntos, comas, guiones y el símbolo &.';
       }
     }
     if (name === 'universidad') {

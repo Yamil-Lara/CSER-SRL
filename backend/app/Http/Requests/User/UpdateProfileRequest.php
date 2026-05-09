@@ -24,6 +24,10 @@ class UpdateProfileRequest extends FormRequest
 
            'password' => 'sometimes|string|min:8', 
             'profesion' => 'nullable|string|max:255',
+            'especialidad' => 'nullable|string|max:255',
+            'universidad' => 'nullable|string|max:255',
+            'carrera' => 'nullable|string|max:255',
+            'nivel_estudios' => 'nullable|string|max:255',
             'biografia' => 'nullable|string|max:1000',
             'ubicacion' => 'nullable|string|max:255',
             'telefono' => 'nullable|string|max:20',
@@ -70,6 +74,10 @@ class UpdateProfileRequest extends FormRequest
 
 
             'profesion.max' => 'La profesión no puede superar los 255 caracteres',
+            'especialidad.max' => 'La especialidad no puede superar los 255 caracteres',
+            'universidad.max' => 'La universidad no puede superar los 255 caracteres',
+            'carrera.max' => 'La carrera no puede superar los 255 caracteres',
+            'nivel_estudios.max' => 'El nivel de estudios no puede superar los 255 caracteres',
             'biografia.max' => 'La biografía no puede superar los 1000 caracteres',
             'telefono.max' => 'El teléfono no puede superar los 20 caracteres',
             'linkedin.url' => 'El enlace de LinkedIn debe ser una URL válida',

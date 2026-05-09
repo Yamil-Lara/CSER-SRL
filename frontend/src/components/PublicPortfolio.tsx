@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from './ui/Card';
 import { 
-  Code2, MapPin, Mail, Code, Briefcase, FolderGit2, Image as ImageIcon, Moon, Sun
+  Code2, MapPin, Mail, Code, Briefcase, FolderGit2, Image as ImageIcon
 } from 'lucide-react';
+import { PublicHeader } from './layout/PublicHeader';
 import { FaLinkedin, FaGithub, FaGlobe, FaFacebook, FaInstagram, FaXTwitter, FaTiktok, FaThreads } from 'react-icons/fa6';
 
 // Workaround para TypeScript
@@ -66,22 +67,6 @@ interface PublicPortfolioProps {
 
 export default function PublicPortfolio({ data }: PublicPortfolioProps) {
   const navigate = useNavigate();
-  const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
-
-  const toggleTheme = () => {
-    const html = document.documentElement;
-    if (html.classList.contains('dark')) {
-      html.classList.remove('dark');
-      html.removeAttribute('data-theme');
-      localStorage.setItem('devfolio-theme', 'light');
-      setIsDark(false);
-    } else {
-      html.classList.add('dark');
-      html.setAttribute('data-theme', 'dark');
-      localStorage.setItem('devfolio-theme', 'dark');
-      setIsDark(true);
-    }
-  };
 
   // Helper para sacar la inicial
   const getInitial = (name: string) => name ? name.charAt(0).toUpperCase() : 'U';
@@ -93,25 +78,9 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
     <div className="min-h-screen font-sans" style={{ backgroundColor: 'var(--bg-color)' }}>
       
       {/* Header Recreado para Vista Pública */}
-      <nav className="flex justify-between items-center px-8 py-4 bg-white shadow-sm border-b border-slate-200 z-10 relative">
-        <div className="text-2xl font-extrabold text-[#3B82F6] cursor-pointer" onClick={() => navigate('/')}>DevFolio</div>
-        <div className="hidden md:flex gap-8 items-center text-sm font-medium text-slate-500">
-          <a href="#" className="hover:text-[#3B82F6]">Características</a>
-          <a href="#" className="text-[#3B82F6] font-semibold" onClick={() => navigate('/explore')}>Explorar</a>
-          <a href="#" className="hover:text-[#3B82F6]">Cómo Funciona</a>
-          <a href="#" className="hover:text-[#3B82F6]">Nosotros</a>
-        </div>
-        <div className="flex gap-4 items-center">
-          <button className="text-sm font-medium text-slate-700" onClick={() => navigate('/login')}>Iniciar Sesión</button>
-          <button onClick={() => navigate('/register')} className="bg-[#3B82F6] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-600 transition-colors">Regístrate Gratis</button>
-          <button onClick={toggleTheme} className="p-2 rounded-full bg-slate-100 text-slate-600">
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-        </div>
-      </nav>
+      <PublicHeader />
 
-      {/* Main Container */}
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 pt-32 pb-8">
         
 
 
