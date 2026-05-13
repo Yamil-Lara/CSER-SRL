@@ -44,8 +44,14 @@ class UserRepository
         return $user->delete();
     }
 
-    public function paginate(int $perPage = 15): LengthAwarePaginator
+    public function paginate(int $perPage = 15, array $filters = []): LengthAwarePaginator
     {
-        return $this->model->withCount('proyectos')->latest()->paginate($perPage);
+        $query = $this->model->withCount('proyectos')->latest();
+        
+        if (isset($filters['estado'])) {
+            $query->where('estado', $filters['estado']);
+        }
+
+        return $query->paginate($perPage);
     }
 }

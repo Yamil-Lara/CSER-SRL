@@ -77,9 +77,9 @@ class UserService
         $user->delete();
     }
 
-    public function getAllUsers(int $perPage = 15)
+    public function getAllUsers(int $perPage = 15, array $filters = [])
     {
-        return $this->userRepository->paginate($perPage);
+        return $this->userRepository->paginate($perPage, $filters);
     }
 
     public function getUserById(int $id)

@@ -191,4 +191,25 @@ class AdminSystemController extends Controller
         // Devolvemos el array invertido (los más recientes primero)
         return response()->json(['success' => true, 'data' => array_reverse($logs)]);
     }
+
+    // ==========================================
+    // FUNCIONALIDAD DE DASHBOARD (HU-16 y HU-18)
+    // ==========================================
+
+    public function getDashboardStats()
+    {
+        $stats = [
+            'total_usuarios' => \App\Models\User::count(),
+            'total_proyectos' => \App\Models\Proyecto::count(),
+            'total_comentarios' => \App\Models\Comentario::count(),
+            'total_categorias' => \App\Models\Categoria::count(),
+            'pendientes_usuarios' => \App\Models\User::where('estado', 'pendiente')->count(),
+            'pendientes_proyectos' => \App\Models\Proyecto::where('estado', 'pendiente')->count(),
+            'pendientes_comentarios' => \App\Models\Comentario::where('aprobado', 0)->count(), // Usamos 0 para pendiente en comentarios según lógica típica
+            'ultimos_usuarios' => \App\Models\User::latest()->take(5)->get(['id', 'nombre', 'email', 'estado', 'activo']),
+            'ultimos_proyectos' => \App\Models\Proyecto::with('usuario:id,nombre')->latest()->take(5)->get(['id', 'titulo', 'estado', 'usuario_id']),
+        ];
+
+        return response()->json(['success' => true, 'data' => $stats]);
+    }
 }

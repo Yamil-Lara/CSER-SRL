@@ -23,7 +23,12 @@ class AdminUserController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $users = $this->userService->getAllUsers($request->get('per_page', 15));
+        $filters = [];
+        if ($request->has('estado') && $request->estado !== 'todos') {
+            $filters['estado'] = $request->estado;
+        }
+
+        $users = $this->userService->getAllUsers($request->get('per_page', 15), $filters);
         return $this->successResponse($users);
     }
 
@@ -48,6 +53,14 @@ class AdminUserController extends Controller
             'activo' => 'sometimes|boolean',
             'estado' => 'sometimes|in:pendiente,aprobado,rechazado',
         ]);
+
+        if (isset($validated['estado'])) {
+            if ($validated['estado'] === 'aprobado') {
+                $validated['activo'] = true;
+            } elseif ($validated['estado'] === 'rechazado') {
+                $validated['activo'] = false;
+            }
+        }
 
         $result = $this->userService->updateUser($id, $validated);
 

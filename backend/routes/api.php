@@ -90,6 +90,9 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
         Route::apiResource('usuarios', AdminUserController::class);
         Route::get('/comentarios/pendientes', [ComentarioController::class, 'adminIndexAll']);
         
+        // DASHBOARD STATS
+        Route::get('/dashboard/stats', [AdminSystemController::class, 'getDashboardStats']);
+        
         // AGREGAR ESTAS DOS RUTAS:
         Route::get('/proyectos', [\App\Http\Controllers\ProyectoController::class, 'adminIndex']);
         Route::put('/proyectos/{id}/estado', [\App\Http\Controllers\ProyectoController::class, 'actualizarEstado']);
