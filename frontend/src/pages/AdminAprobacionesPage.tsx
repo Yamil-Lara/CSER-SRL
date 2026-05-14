@@ -2,49 +2,101 @@ import React, { useEffect, useState } from 'react';
 import api, { buildUrl } from '../utils/api';
 import { 
     CheckCircle, XCircle, Clock, LayoutGrid, Code, ExternalLink, 
-    Search, Calendar, User, Tag, Briefcase, Wrench, Eye 
+    Search, Calendar, User, Tag, Briefcase, Wrench, Eye, FolderGit2
 } from 'lucide-react';
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminAprobacionesPage() {
+    const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState<'proyectos' | 'usuarios'>('proyectos');
     const [proyectos, setProyectos] = useState<any[]>([]);
-    const [stats, setStats] = useState({ total: 0, pendientes: 0, aprobados: 0, rechazados: 0 });
+    const [usuarios, setUsuarios] = useState<any[]>([]);
+    
+    // Stats del dashboard
+    const [dashboardStats, setDashboardStats] = useState<any>({
+        total_usuarios: 0,
+        total_proyectos: 0,
+        pendientes_usuarios: 0,
+        pendientes_proyectos: 0,
+        aprobados_proyectos: 0,
+        rechazados_proyectos: 0,
+    });
+
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('todos');
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         fetchData();
-    }, [filter]);
+    }, [filter, activeTab]);
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const res = await api.get(`/gestion/proyectos?estado=${filter}`);
-            const data = res.data?.data;
-            setProyectos(data?.proyectos || []);
-            setStats(data?.stats || { total: 0, pendientes: 0, aprobados: 0, rechazados: 0 });
+            // 1. Obtener stats globales
+            const statsRes = await api.get('/gestion/dashboard/stats');
+            const dStats = statsRes.data?.data || {};
+            
+            // 2. Obtener la lista según la pestaña activa
+            if (activeTab === 'proyectos') {
+                const res = await api.get(`/gestion/proyectos?estado=${filter}`);
+                const data = res.data?.data;
+                setProyectos(data?.proyectos || []);
+                
+                // Actualizamos las stats con los datos extra que vienen en proyectos (aprobados, rechazados)
+                setDashboardStats({
+                    ...dStats,
+                    total_proyectos: data?.stats?.total || dStats.total_proyectos,
+                    pendientes_proyectos: data?.stats?.pendientes || dStats.pendientes_proyectos,
+                    aprobados_proyectos: data?.stats?.aprobados || 0,
+                    rechazados_proyectos: data?.stats?.rechazados || 0
+                });
+            } else {
+                const res = await api.get(`/gestion/usuarios?estado=${filter}`);
+                // Soporta estructura paginada o directa
+                let fetchedUsers = [];
+                if (res.data?.data?.data && Array.isArray(res.data.data.data)) {
+                    fetchedUsers = res.data.data.data;
+                } else if (res.data?.data && Array.isArray(res.data.data)) {
+                    fetchedUsers = res.data.data;
+                } else if (Array.isArray(res.data)) {
+                    fetchedUsers = res.data;
+                }
+                setUsuarios(fetchedUsers);
+                
+                // Calculamos aprobados y rechazados de usuarios localmente basándonos en totales
+                // o lo dejamos en '-' si es muy complejo
+                setDashboardStats({
+                    ...dStats,
+                    total_usuarios: dStats.total_usuarios || 0,
+                    pendientes_usuarios: dStats.pendientes_usuarios || 0,
+                });
+            }
         } catch (err) {
-            console.error("Error cargando proyectos:", err);
+            console.error("Error cargando datos:", err);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleUpdateStatus = async (id: number, nuevoEstado: string) => {
+    const handleUpdateStatus = async (id: number, nuevoEstado: string, type: 'proyectos' | 'usuarios') => {
         try {
-            await api.put(`/gestion/proyectos/${id}/estado`, { estado: nuevoEstado });
-            fetchData(); // Recargamos la lista local de la página
-            
-            // NUEVO: Disparamos un evento global para avisarle al Sidebar
-            window.dispatchEvent(new Event('proyectoActualizado'));
-            
+            if (type === 'proyectos') {
+                await api.put(`/gestion/proyectos/${id}/estado`, { estado: nuevoEstado });
+                window.dispatchEvent(new Event('proyectoActualizado'));
+            } else {
+                await api.put(`/gestion/usuarios/${id}`, { estado: nuevoEstado });
+                window.dispatchEvent(new Event('usuarioActualizado'));
+            }
+            fetchData(); // Recargamos
         } catch (err) {
             alert("Error al actualizar el estado");
         }
     };
 
+    // Filtrado local (Buscador)
     const proyectosFiltrados = proyectos.filter(p => {
         const busqueda = searchTerm.toLowerCase();
         return (
@@ -56,41 +108,74 @@ export default function AdminAprobacionesPage() {
         );
     });
 
+    const usuariosFiltrados = usuarios.filter(u => {
+        const busqueda = searchTerm.toLowerCase();
+        return (
+            u.nombre.toLowerCase().includes(busqueda) ||
+            u.email.toLowerCase().includes(busqueda) ||
+            (u.profesion || '').toLowerCase().includes(busqueda) ||
+            (u.username || '').toLowerCase().includes(busqueda)
+        );
+    });
+
+    // Valores para las tarjetas superiores según la pestaña activa
+    const displayStats = {
+        total: activeTab === 'proyectos' ? dashboardStats.total_proyectos : dashboardStats.total_usuarios,
+        pendientes: activeTab === 'proyectos' ? dashboardStats.pendientes_proyectos : dashboardStats.pendientes_usuarios,
+        aprobados: activeTab === 'proyectos' ? dashboardStats.aprobados_proyectos : '-',
+        rechazados: activeTab === 'proyectos' ? dashboardStats.rechazados_proyectos : '-'
+    };
+
     return (
         <div className="p-6 max-w-7xl mx-auto space-y-2">
-            <header>
+            <header className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-sidebar flex items-center gap-3">
                         <CheckCircle className="w-8 h-8 text-primary" />
-                        Aprobación de Proyectos
+                        Aprobaciones del Sistema
                     </h1>
-                    <p className="text-sidebar/70 mt-2">Gestiona, revisa y analiza detalladamente los proyectos de la comunidad.</p>
+                    <p className="text-sidebar/70 mt-2">Gestiona, revisa y analiza detalladamente proyectos y usuarios.</p>
                 </div>
             </header>
 
+            {/* TABS DE SELECCIÓN */}
+            <div className="flex gap-4 border-b border-muted mb-6">
+                <button
+                    onClick={() => { setActiveTab('proyectos'); setFilter('todos'); setSearchTerm(''); }}
+                    className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'proyectos' ? 'border-primary text-primary' : 'border-transparent text-sidebar/60 hover:text-sidebar'}`}
+                >
+                    <FolderGit2 className="w-4 h-4" /> Proyectos
+                </button>
+                <button
+                    onClick={() => { setActiveTab('usuarios'); setFilter('todos'); setSearchTerm(''); }}
+                    className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'usuarios' ? 'border-primary text-primary' : 'border-transparent text-sidebar/60 hover:text-sidebar'}`}
+                >
+                    <User className="w-4 h-4" /> Usuarios
+                </button>
+            </div>
+
             {/* DASHBOARD DE ESTADÍSTICAS */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 <Card className="p-4 flex items-center gap-4 border-l-4 border-l-sidebar">
                     <div className="bg-sidebar/10 p-3 rounded-lg text-sidebar"><LayoutGrid /></div>
-                    <div><p className="text-xs text-sidebar/60">Total</p><p className="text-xl font-bold">{stats.total}</p></div>
+                    <div><p className="text-xs text-sidebar/60">Total {activeTab === 'proyectos' ? 'Proyectos' : 'Usuarios'}</p><p className="text-xl font-bold">{displayStats.total}</p></div>
                 </Card>
                 <Card className="p-4 flex items-center gap-4 border-l-4 border-l-yellow-500 shadow-sm">
                     <div className="bg-yellow-100 p-3 rounded-lg text-yellow-600"><Clock /></div>
-                    <div><p className="text-xs text-sidebar/60">Pendientes</p><p className="text-xl font-bold">{stats.pendientes}</p></div>
+                    <div><p className="text-xs text-sidebar/60">Pendientes</p><p className="text-xl font-bold">{displayStats.pendientes}</p></div>
                 </Card>
-                <Card className="p-4 flex items-center gap-4 border-l-4 border-l-green-500 shadow-sm">
+                <Card className="p-4 flex items-center gap-4 border-l-4 border-l-green-500 shadow-sm opacity-80">
                     <div className="bg-green-100 p-3 rounded-lg text-green-600"><CheckCircle /></div>
-                    <div><p className="text-xs text-sidebar/60">Aprobados</p><p className="text-xl font-bold">{stats.aprobados}</p></div>
+                    <div><p className="text-xs text-sidebar/60">Aprobados</p><p className="text-xl font-bold">{displayStats.aprobados}</p></div>
                 </Card>
-                <Card className="p-4 flex items-center gap-4 border-l-4 border-l-red-500 shadow-sm">
+                <Card className="p-4 flex items-center gap-4 border-l-4 border-l-red-500 shadow-sm opacity-80">
                     <div className="bg-red-100 p-3 rounded-lg text-red-600"><XCircle /></div>
-                    <div><p className="text-xs text-sidebar/60">Rechazados</p><p className="text-xl font-bold">{stats.rechazados}</p></div>
+                    <div><p className="text-xs text-sidebar/60">Rechazados</p><p className="text-xl font-bold">{displayStats.rechazados}</p></div>
                 </Card>
             </div>
 
-            {/* FILTROS */}
+            {/* FILTROS Y BUSCADOR */}
             <div className="space-y-4">
-                {/* Contenedor scrollable horizontal para móviles */}
                 <div className="flex gap-2 border-b border-muted pb-px overflow-x-auto scrollbar-hide whitespace-nowrap">
                     {['todos', 'pendiente', 'aprobado', 'rechazado'].map((opt) => (
                         <button
@@ -108,7 +193,7 @@ export default function AdminAprobacionesPage() {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-sidebar/40 w-5 h-5" />
                         <input 
                             type="text" 
-                            placeholder="Buscar por título, descripción, usuario, cliente o categoría..." 
+                            placeholder={activeTab === 'proyectos' ? "Buscar por título, descripción, usuario, cliente o categoría..." : "Buscar por nombre, email, profesión o username..."}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full pl-10 pr-4 py-3 bg-muted/30 border-none rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all text-sm"
@@ -117,99 +202,180 @@ export default function AdminAprobacionesPage() {
                 </div>
             </div>
 
-            {/* LISTADO DE PROYECTOS DETALLADO */}
+            {/* LISTADO DE ELEMENTOS */}
             {loading ? (
                 <div className="flex justify-center py-12"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
-            ) : proyectosFiltrados.length === 0 ? (
-                <div className="text-center py-12 text-sidebar/50 bg-muted/20 rounded-xl border border-dashed border-muted">No se encontraron proyectos.</div>
-            ) : (
-                <div className="grid gap-6">
-                    {proyectosFiltrados.map((p) => (
-                        <Card key={p.id} className="overflow-hidden border-muted shadow-md hover:shadow-lg transition-shadow">
-                            <div className="flex flex-col lg:flex-row">
-                                {/* Imagen del proyecto (si existe) */}
-                                {p.imagen && (
-                                    <div className="w-full lg:w-64 h-48 bg-muted flex-shrink-0">
-                                        <img src={buildUrl(p.imagen)} alt={p.titulo} className="w-full h-full object-cover" />
-                                    </div>
-                                )}
-                                
-                                <div className="p-4 md:p-6 flex-1 space-y-4 min-w-0">
-                                    {/* Encabezado */}
-                                    <div className="flex flex-wrap items-start justify-between gap-4">
-                                        <div>
-                                            <h3 className="text-2xl font-bold text-sidebar">{p.titulo}</h3>
-                                            <div className="flex flex-wrap gap-x-4 gap-y-2 mt-2 text-sm text-sidebar/60">
-                                                <span className="flex items-center gap-1"><User className="w-4 h-4"/> {p.usuario?.nombre}</span>
-                                                <span className="flex items-center gap-1"><Tag className="w-4 h-4"/> {p.categoria?.nombre}</span>
-                                                {p.cliente && <span className="flex items-center gap-1"><Briefcase className="w-4 h-4"/> Cliente: {p.cliente}</span>}
-                                                {p.fecha_proyecto && <span className="flex items-center gap-1"><Calendar className="w-4 h-4"/> {new Date(p.fecha_proyecto).toLocaleDateString()}</span>}
-                                            </div>
+            ) : activeTab === 'proyectos' ? (
+                // === VISTA DE PROYECTOS ===
+                proyectosFiltrados.length === 0 ? (
+                    <div className="text-center py-12 text-sidebar/50 bg-muted/20 rounded-xl border border-dashed border-muted">
+                        {filter === 'pendiente' ? 'Sin pendientes de revisión' : 'No se encontraron proyectos.'}
+                    </div>
+                ) : (
+                    <div className="grid gap-6">
+                        {proyectosFiltrados.map((p) => (
+                            <Card key={p.id} className="overflow-hidden border-muted shadow-md hover:shadow-lg transition-shadow">
+                                <div className="flex flex-col lg:flex-row">
+                                    {p.imagen && (
+                                        <div className="w-full lg:w-64 h-48 bg-muted flex-shrink-0">
+                                            <img src={buildUrl(p.imagen)} alt={p.titulo} className="w-full h-full object-cover" />
                                         </div>
-                                        <Badge variant={
-                                            p.estado === 'pendiente' ? 'warning' : 
-                                            p.estado === 'aprobado' ? 'success' : 'destructive'
-                                        }>
-                                            {p.estado.toUpperCase()}
-                                        </Badge>
-                                    </div>
-
-                                    {/* Descripción completa */}
-                                    <p className="text-sidebar/80 leading-relaxed text-sm">
-                                        {p.descripcion}
-                                    </p>
-
-                                    {/* Tecnologías y Herramientas */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                                        <div>
-                                            <p className="text-xs font-bold text-sidebar/40 uppercase mb-2 flex items-center gap-1"><Code className="w-3 h-3"/> Tecnologías</p>
-                                            <div className="flex flex-wrap gap-2">
-                                                {p.tecnologias.split(',').map((t: string, i: number) => (
-                                                    <Badge key={i} variant="default" className="bg-primary/5 text-primary border-primary/10 text-[10px]">{t.trim()}</Badge>
-                                                ))}
-                                            </div>
-                                        </div>
-                                        {p.herramientas && (
+                                    )}
+                                    <div className="p-4 md:p-6 flex-1 space-y-4 min-w-0">
+                                        <div className="flex flex-wrap items-start justify-between gap-4">
                                             <div>
-                                                <p className="text-xs font-bold text-sidebar/40 uppercase mb-2 flex items-center gap-1"><Wrench className="w-3 h-3"/> Herramientas</p>
+                                                <h3 className="text-2xl font-bold text-sidebar">{p.titulo}</h3>
+                                                <div className="flex flex-wrap gap-x-4 gap-y-2 mt-2 text-sm text-sidebar/60">
+                                                    <span className="flex items-center gap-1"><User className="w-4 h-4"/> {p.usuario?.nombre}</span>
+                                                    <span className="flex items-center gap-1"><Tag className="w-4 h-4"/> {p.categoria?.nombre}</span>
+                                                    {p.cliente && <span className="flex items-center gap-1"><Briefcase className="w-4 h-4"/> Cliente: {p.cliente}</span>}
+                                                    {p.fecha_proyecto && <span className="flex items-center gap-1"><Calendar className="w-4 h-4"/> {new Date(p.fecha_proyecto).toLocaleDateString()}</span>}
+                                                </div>
+                                            </div>
+                                            <Badge variant={
+                                                p.estado === 'pendiente' ? 'warning' : 
+                                                p.estado === 'aprobado' ? 'success' : 'destructive'
+                                            }>
+                                                {p.estado.toUpperCase()}
+                                            </Badge>
+                                        </div>
+
+                                        <p className="text-sidebar/80 leading-relaxed text-sm">
+                                            {p.descripcion}
+                                        </p>
+
+                                        {p.tecnologias && (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                                                <div>
+                                                    <p className="text-xs font-bold text-sidebar/40 uppercase mb-2 flex items-center gap-1"><Code className="w-3 h-3"/> Tecnologías</p>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {p.tecnologias.split(',').map((t: string, i: number) => (
+                                                            <Badge key={i} variant="default" className="bg-primary/5 text-primary border-primary/10 text-[10px]">{t.trim()}</Badge>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                {p.herramientas && (
+                                                    <div>
+                                                        <p className="text-xs font-bold text-sidebar/40 uppercase mb-2 flex items-center gap-1"><Wrench className="w-3 h-3"/> Herramientas</p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {p.herramientas.split(',').map((h: string, i: number) => (
+                                                                <Badge key={i} variant="default" className="bg-sidebar/5 text-sidebar border-sidebar/10 text-[10px]">{h.trim()}</Badge>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-4 border-t border-muted gap-4 mt-auto">
+                                            <div className="flex items-center gap-6 text-sm">
+                                                <button onClick={() => window.open(`/proyecto/${p.id}`, '_blank')} className="flex items-center gap-1 text-primary font-medium hover:underline">
+                                                    <Eye className="w-4 h-4"/> Previsualizar Proyecto
+                                                </button>
+                                                {p.github && <a href={p.github} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sidebar/60 hover:text-primary transition-colors"><Code className="w-4 h-4"/> GitHub</a>}
+                                                {p.demo && <a href={p.demo} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sidebar/60 hover:text-primary transition-colors"><ExternalLink className="w-4 h-4"/> Demo</a>}
+                                            </div>
+
+                                            <div className="flex gap-2 w-full sm:w-auto">
+                                                {p.estado !== 'aprobado' && (
+                                                    <button onClick={() => handleUpdateStatus(p.id, 'aprobado', 'proyectos')} className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all text-xs font-bold">
+                                                        <CheckCircle className="w-4 h-4" /> APROBAR
+                                                    </button>
+                                                )}
+                                                {p.estado !== 'rechazado' && (
+                                                    <button onClick={() => handleUpdateStatus(p.id, 'rechazado', 'proyectos')} className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all text-xs font-bold">
+                                                        <XCircle className="w-4 h-4" /> RECHAZAR
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Card>
+                        ))}
+                    </div>
+                )
+            ) : (
+                // === VISTA DE USUARIOS ===
+                usuariosFiltrados.length === 0 ? (
+                    <div className="text-center py-12 text-sidebar/50 bg-muted/20 rounded-xl border border-dashed border-muted">
+                        {filter === 'pendiente' ? 'Sin pendientes de revisión' : 'No se encontraron usuarios.'}
+                    </div>
+                ) : (
+                    <div className="grid gap-6">
+                        {usuariosFiltrados.map((u) => (
+                            <Card key={u.id} className="overflow-hidden border-muted shadow-md hover:shadow-lg transition-shadow">
+                                <div className="flex flex-col lg:flex-row">
+                                    {/* Avatar o Icono */}
+                                    <div className="w-full lg:w-48 h-48 bg-muted/30 flex items-center justify-center flex-shrink-0 border-r border-muted/50">
+                                        {u.foto ? (
+                                            <img src={buildUrl(u.foto)} alt={u.nombre} className="w-32 h-32 rounded-full object-cover shadow-sm border-4 border-white" />
+                                        ) : (
+                                            <div className="w-32 h-32 rounded-full bg-white flex items-center justify-center shadow-sm border-4 border-muted">
+                                                <User className="w-12 h-12 text-sidebar/30" />
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    <div className="p-4 md:p-6 flex-1 space-y-4 min-w-0 flex flex-col">
+                                        <div className="flex flex-wrap items-start justify-between gap-4">
+                                            <div>
+                                                <h3 className="text-2xl font-bold text-sidebar">{u.nombre}</h3>
+                                                <div className="flex flex-wrap gap-x-4 gap-y-2 mt-2 text-sm text-sidebar/60">
+                                                    <span className="flex items-center gap-1 font-medium text-primary">@{u.username}</span>
+                                                    <span className="flex items-center gap-1"><Briefcase className="w-4 h-4"/> {u.profesion || 'Sin profesión'}</span>
+                                                    <span className="flex items-center gap-1"><ExternalLink className="w-4 h-4"/> {u.email}</span>
+                                                </div>
+                                            </div>
+                                            <Badge variant={
+                                                u.estado === 'pendiente' ? 'warning' : 
+                                                u.estado === 'aprobado' ? 'success' : 'destructive'
+                                            }>
+                                                {u.estado ? u.estado.toUpperCase() : 'PENDIENTE'}
+                                            </Badge>
+                                        </div>
+
+                                        <p className="text-sidebar/80 leading-relaxed text-sm flex-grow">
+                                            {u.biografia || 'Sin biografía.'}
+                                        </p>
+
+                                        {u.especialidad && (
+                                            <div className="pt-2">
+                                                <p className="text-xs font-bold text-sidebar/40 uppercase mb-2 flex items-center gap-1"><Code className="w-3 h-3"/> Especialidad</p>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {p.herramientas.split(',').map((h: string, i: number) => (
-                                                        <Badge key={i} variant="default" className="bg-sidebar/5 text-sidebar border-sidebar/10 text-[10px]">{h.trim()}</Badge>
+                                                    {u.especialidad.split(',').map((esp: string, i: number) => (
+                                                        <Badge key={i} variant="default" className="bg-primary/5 text-primary border-primary/10 text-[10px]">{esp.trim()}</Badge>
                                                     ))}
                                                 </div>
                                             </div>
                                         )}
-                                    </div>
 
-                                    {/* Footer de la tarjeta: Vistas y Links */}
-                                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-4 border-t border-muted gap-4">
-                                        <div className="flex items-center gap-6 text-sm">
-                                            <span className="flex items-center gap-1.5 text-sidebar/60"><Eye className="w-4 h-4"/> {p.vistas || 0} vistas</span>
-                                            <div className="flex gap-4">
-                                                {p.github && <a href={p.github} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-primary font-medium hover:underline"><Code className="w-4 h-4"/> GitHub</a>}
-                                                {p.demo && <a href={p.demo} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-primary font-medium hover:underline"><ExternalLink className="w-4 h-4"/> Demo</a>}
+                                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-4 border-t border-muted gap-4 mt-auto">
+                                            <div className="flex items-center gap-6 text-sm">
+                                                <button onClick={() => window.open(`/portfolio/${u.username}`, '_blank')} className="flex items-center gap-1 text-primary font-medium hover:underline">
+                                                    <Eye className="w-4 h-4"/> Previsualizar Perfil Público
+                                                </button>
                                             </div>
-                                        </div>
 
-                                        {/* Botones de acción lateral */}
-                                        <div className="flex gap-2 w-full sm:w-auto">
-                                            {p.estado !== 'aprobado' && (
-                                                <button onClick={() => handleUpdateStatus(p.id, 'aprobado')} className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all text-xs font-bold">
-                                                    <CheckCircle className="w-4 h-4" /> APROBAR
-                                                </button>
-                                            )}
-                                            {p.estado !== 'rechazado' && (
-                                                <button onClick={() => handleUpdateStatus(p.id, 'rechazado')} className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all text-xs font-bold">
-                                                    <XCircle className="w-4 h-4" /> RECHAZAR
-                                                </button>
-                                            )}
+                                            <div className="flex gap-2 w-full sm:w-auto">
+                                                {u.estado !== 'aprobado' && (
+                                                    <button onClick={() => handleUpdateStatus(u.id, 'aprobado', 'usuarios')} className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all text-xs font-bold">
+                                                        <CheckCircle className="w-4 h-4" /> APROBAR
+                                                    </button>
+                                                )}
+                                                {u.estado !== 'rechazado' && (
+                                                    <button onClick={() => handleUpdateStatus(u.id, 'rechazado', 'usuarios')} className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all text-xs font-bold">
+                                                        <XCircle className="w-4 h-4" /> RECHAZAR
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </Card>
-                    ))}
-                </div>
+                            </Card>
+                        ))}
+                    </div>
+                )
             )}
         </div>
     );

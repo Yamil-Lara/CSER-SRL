@@ -43,46 +43,39 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
   const { logout, user, isAdmin, loading } = useAuth();
   
   // Estados para las notificaciones dinámicas
+  const [pendingUsers, setPendingUsers] = useState<number>(0);
   const [pendingProjects, setPendingProjects] = useState<number>(0);
   const [pendingComments, setPendingComments] = useState<number>(0);
 
-  // Funciones de consulta a la API
-  const fetchPendingProjects = () => {
+  // Función de consulta unificada a la API de Stats
+  const fetchDashboardStats = () => {
     if (isAdmin) {
-      api.get('/gestion/proyectos?estado=pendiente')
+      api.get('/gestion/dashboard/stats')
         .then(res => {
-          const pendientes = res.data?.data?.stats?.pendientes || 0;
-          setPendingProjects(pendientes);
+          const stats = res.data?.data;
+          if (stats) {
+            setPendingUsers(stats.pendientes_usuarios || 0);
+            setPendingProjects(stats.pendientes_proyectos || 0);
+            setPendingComments(stats.pendientes_comentarios || 0);
+          }
         })
-        .catch(err => console.error("Error al cargar notificaciones de proyectos:", err));
-    }
-  };
-
-  const fetchPendingComments = () => {
-    if (isAdmin) {
-      api.get('/gestion/comentarios/pendientes')
-        .then(res => {
-          // Filtramos localmente los que tienen estado 'aprobado === 0' (pendiente)
-          const allComments = res.data?.data || [];
-          const pendingCount = allComments.filter((c: any) => c.aprobado === 0).length;
-          setPendingComments(pendingCount);
-        })
-        .catch(err => console.error("Error al cargar notificaciones de comentarios:", err));
+        .catch(err => console.error("Error al cargar notificaciones del dashboard:", err));
     }
   };
 
   // Efecto para inicializar contadores y escuchar actualizaciones "en vivo"
   useEffect(() => {
-    fetchPendingProjects();
-    fetchPendingComments();
+    fetchDashboardStats();
 
     // Escuchamos los eventos que disparan las páginas de moderación al aprobar/rechazar
-    window.addEventListener('proyectoActualizado', fetchPendingProjects);
-    window.addEventListener('comentarioActualizado', fetchPendingComments);
+    window.addEventListener('proyectoActualizado', fetchDashboardStats);
+    window.addEventListener('usuarioActualizado', fetchDashboardStats);
+    window.addEventListener('comentarioActualizado', fetchDashboardStats);
 
     return () => {
-      window.removeEventListener('proyectoActualizado', fetchPendingProjects);
-      window.removeEventListener('comentarioActualizado', fetchPendingComments);
+      window.removeEventListener('proyectoActualizado', fetchDashboardStats);
+      window.removeEventListener('usuarioActualizado', fetchDashboardStats);
+      window.removeEventListener('comentarioActualizado', fetchDashboardStats);
     };
   }, [isAdmin, location.pathname]);
 
@@ -110,7 +103,7 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
         icon: CheckCircle, 
         label: 'Aprobaciones', 
         path: '/gestion/aprobaciones', 
-        badge: pendingProjects > 0 ? pendingProjects : undefined 
+        badge: (pendingProjects + pendingUsers) > 0 ? (pendingProjects + pendingUsers) : undefined 
     },
     { 
         icon: MessageSquare, 
