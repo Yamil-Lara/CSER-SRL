@@ -51,6 +51,16 @@ class UserRepository
         if (isset($filters['estado'])) {
             $query->where('estado', $filters['estado']);
         }
+        
+        // HU17: Búsqueda por nombre, email o profesión
+        if (isset($filters['search']) && !empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('nombre', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%")
+                  ->orWhere('profesion', 'LIKE', "%{$search}%");
+            });
+        }
 
         return $query->paginate($perPage);
     }

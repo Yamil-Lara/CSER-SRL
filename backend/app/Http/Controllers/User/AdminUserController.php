@@ -24,13 +24,23 @@ class AdminUserController extends Controller
     public function index(Request $request): JsonResponse
     {
         $filters = [];
+        
         if ($request->has('estado') && $request->estado !== 'todos') {
             $filters['estado'] = $request->estado;
+        }
+        
+        // HU17: Búsqueda por nombre, email o profesión
+        if ($request->has('search') && !empty($request->search)) {
+            $filters['search'] = $request->search;
         }
 
         $users = $this->userService->getAllUsers($request->get('per_page', 15), $filters);
         return $this->successResponse($users);
     }
+
+
+
+
 
     public function show($id): JsonResponse
     {
@@ -42,9 +52,18 @@ class AdminUserController extends Controller
 
         return $this->successResponse($user);
     }
+     
 
-    public function update(Request $request, $id): JsonResponse
+
+
+
+   public function update(Request $request, $id): JsonResponse
     {
+        // HU17: Protección de autocuenta
+        if ((int) auth()->id() === (int) $id) {
+            return $this->errorResponse('No puedes modificar tu propio usuario.', 403);
+        }
+
         $validated = $request->validate([
             'nombre' => 'sometimes|string|max:255',
             'username' => ['sometimes', 'string', 'max:255', Rule::unique('usuarios')->ignore($id)],
