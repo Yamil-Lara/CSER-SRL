@@ -171,7 +171,8 @@ class ProyectoController extends Controller
             $query->where('estado', $request->estado);
         }
 
-        $proyectos = $query->get();
+        // Paginamos de 15 en 15
+        $proyectos = $query->paginate($request->get('per_page', 15));
 
         return response()->json([
             'success' => true,

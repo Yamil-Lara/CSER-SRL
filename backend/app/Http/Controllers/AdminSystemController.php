@@ -204,6 +204,8 @@ class AdminSystemController extends Controller
             'total_comentarios' => \App\Models\Comentario::count(),
             'total_categorias' => \App\Models\Categoria::count(),
             'pendientes_usuarios' => \App\Models\User::where('estado', 'pendiente')->count(),
+            'aprobados_usuarios' => \App\Models\User::where('estado', 'aprobado')->count(),
+            'rechazados_usuarios' => \App\Models\User::where('estado', 'rechazado')->count(),
             'pendientes_proyectos' => \App\Models\Proyecto::where('estado', 'pendiente')->count(),
             'pendientes_comentarios' => \App\Models\Comentario::where('aprobado', 0)->count(), // Usamos 0 para pendiente en comentarios según lógica típica
             'ultimos_usuarios' => \App\Models\User::latest()->take(5)->get(['id', 'nombre', 'email', 'estado', 'activo']),

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import api, { buildUrl } from '../utils/api';
 import { 
     CheckCircle, XCircle, Clock, LayoutGrid, Code, ExternalLink, 
-    Search, Calendar, User, Tag, Briefcase, Wrench, Eye, FolderGit2
+    Search, Calendar, User, Tag, Briefcase, Wrench, Eye, FolderGit2,
+    ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
@@ -22,15 +23,28 @@ export default function AdminAprobacionesPage() {
         pendientes_proyectos: 0,
         aprobados_proyectos: 0,
         rechazados_proyectos: 0,
+        aprobados_usuarios: 0,
+        rechazados_usuarios: 0,
     });
 
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('todos');
     const [searchTerm, setSearchTerm] = useState('');
 
+    // Estados de paginación combinados
+    const [currentPage, setCurrentPage] = useState(1);
+    const [lastPage, setLastPage] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+
+    // Cuando cambian el filtro o la pestaña, reseteamos la página a 1
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filter, activeTab]);
+
+    // Ejecutamos la búsqueda cuando cambie la pestaña, filtro o página
     useEffect(() => {
         fetchData();
-    }, [filter, activeTab]);
+    }, [filter, activeTab, currentPage]);
 
     const fetchData = async () => {
         setLoading(true);
@@ -41,11 +55,23 @@ export default function AdminAprobacionesPage() {
             
             // 2. Obtener la lista según la pestaña activa
             if (activeTab === 'proyectos') {
-                const res = await api.get(`/gestion/proyectos?estado=${filter}`);
+                const res = await api.get(`/gestion/proyectos?estado=${filter}&page=${currentPage}`);
                 const data = res.data?.data;
-                setProyectos(data?.proyectos || []);
+                const paginationData = data?.proyectos;
                 
-                // Actualizamos las stats con los datos extra que vienen en proyectos (aprobados, rechazados)
+                let fetchedProjects = [];
+                if (paginationData?.data) { // Si viene paginado
+                    fetchedProjects = paginationData.data;
+                    setLastPage(paginationData.last_page || 1);
+                    setTotalItems(paginationData.total || fetchedProjects.length);
+                } else if (Array.isArray(paginationData)) { // Si viene como array simple
+                    fetchedProjects = paginationData;
+                    setLastPage(1);
+                    setTotalItems(fetchedProjects.length);
+                }
+                setProyectos(fetchedProjects);
+                
+                // Actualizamos las stats
                 setDashboardStats({
                     ...dStats,
                     total_proyectos: data?.stats?.total || dStats.total_proyectos,
@@ -54,24 +80,31 @@ export default function AdminAprobacionesPage() {
                     rechazados_proyectos: data?.stats?.rechazados || 0
                 });
             } else {
-                const res = await api.get(`/gestion/usuarios?estado=${filter}`);
+                const res = await api.get(`/gestion/usuarios?estado=${filter}&page=${currentPage}`);
                 // Soporta estructura paginada o directa
                 let fetchedUsers = [];
                 if (res.data?.data?.data && Array.isArray(res.data.data.data)) {
                     fetchedUsers = res.data.data.data;
+                    setLastPage(res.data.data.last_page || 1);
+                    setTotalItems(res.data.data.total || fetchedUsers.length);
                 } else if (res.data?.data && Array.isArray(res.data.data)) {
                     fetchedUsers = res.data.data;
+                    setLastPage(1);
+                    setTotalItems(fetchedUsers.length);
                 } else if (Array.isArray(res.data)) {
                     fetchedUsers = res.data;
+                    setLastPage(1);
+                    setTotalItems(fetchedUsers.length);
                 }
                 setUsuarios(fetchedUsers);
                 
-                // Calculamos aprobados y rechazados de usuarios localmente basándonos en totales
-                // o lo dejamos en '-' si es muy complejo
+                // Actualizamos las stats usando los nuevos datos expuestos en el backend
                 setDashboardStats({
                     ...dStats,
                     total_usuarios: dStats.total_usuarios || 0,
                     pendientes_usuarios: dStats.pendientes_usuarios || 0,
+                    aprobados_usuarios: dStats.aprobados_usuarios || 0,
+                    rechazados_usuarios: dStats.rechazados_usuarios || 0,
                 });
             }
         } catch (err) {
@@ -96,7 +129,7 @@ export default function AdminAprobacionesPage() {
         }
     };
 
-    // Filtrado local (Buscador)
+    // Filtrado local (Buscador rápido dentro de la página cargada)
     const proyectosFiltrados = proyectos.filter(p => {
         const busqueda = searchTerm.toLowerCase();
         return (
@@ -122,12 +155,12 @@ export default function AdminAprobacionesPage() {
     const displayStats = {
         total: activeTab === 'proyectos' ? dashboardStats.total_proyectos : dashboardStats.total_usuarios,
         pendientes: activeTab === 'proyectos' ? dashboardStats.pendientes_proyectos : dashboardStats.pendientes_usuarios,
-        aprobados: activeTab === 'proyectos' ? dashboardStats.aprobados_proyectos : '-',
-        rechazados: activeTab === 'proyectos' ? dashboardStats.rechazados_proyectos : '-'
+        aprobados: activeTab === 'proyectos' ? dashboardStats.aprobados_proyectos : dashboardStats.aprobados_usuarios,
+        rechazados: activeTab === 'proyectos' ? dashboardStats.rechazados_proyectos : dashboardStats.rechazados_usuarios
     };
 
     return (
-        <div className="p-6 max-w-7xl mx-auto space-y-2">
+        <div className="p-6 max-w-7xl mx-auto space-y-2 relative pb-24">
             <header className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-sidebar flex items-center gap-3">
@@ -376,6 +409,35 @@ export default function AdminAprobacionesPage() {
                         ))}
                     </div>
                 )
+            )}
+
+            {/* Controles de Paginación */}
+            {!loading && totalItems > 0 && (
+                <div className="mt-8 flex flex-col md:flex-row justify-between items-center text-sm text-sidebar/70 bg-card p-4 rounded-xl border border-muted shadow-sm gap-4">
+                    <span>Total de registros: <strong className="text-sidebar">{totalItems}</strong></span>
+                    
+                    {lastPage > 1 && (
+                        <div className="flex items-center gap-4">
+                            <button 
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                                className="p-2 rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                                <ChevronLeft className="w-5 h-5" />
+                            </button>
+                            <span className="font-medium text-sidebar">
+                                Página {currentPage} de {lastPage}
+                            </span>
+                            <button 
+                                onClick={() => setCurrentPage(p => Math.min(lastPage, p + 1))}
+                                disabled={currentPage === lastPage}
+                                className="p-2 rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                                <ChevronRight className="w-5 h-5" />
+                            </button>
+                        </div>
+                    )}
+                </div>
             )}
         </div>
     );
