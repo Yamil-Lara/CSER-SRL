@@ -351,13 +351,13 @@ export default function AdminAprobacionesPage() {
                                     </div>
                                     
                                     <div className="p-4 md:p-6 flex-1 space-y-4 min-w-0 flex flex-col">
-                                        <div className="flex flex-wrap items-start justify-between gap-4">
+                                        <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4">
                                             <div>
                                                 <h3 className="text-2xl font-bold text-sidebar">{u.nombre}</h3>
                                                 <div className="flex flex-wrap gap-x-4 gap-y-2 mt-2 text-sm text-sidebar/60">
-                                                    <span className="flex items-center gap-1 font-medium text-primary">@{u.username}</span>
-                                                    <span className="flex items-center gap-1"><Briefcase className="w-4 h-4"/> {u.profesion || 'Sin profesión'}</span>
-                                                    <span className="flex items-center gap-1"><ExternalLink className="w-4 h-4"/> {u.email}</span>
+                                                    <span className="flex items-center gap-1 font-medium text-primary break-all">@{u.username}</span>
+                                                    <span className="flex items-center gap-1"><Briefcase className="w-4 h-4 flex-shrink-0"/> <span className="truncate">{u.profesion || 'Sin profesión'}</span></span>
+                                                    <span className="flex items-center gap-1 break-all"><ExternalLink className="w-4 h-4 flex-shrink-0"/> {u.email}</span>
                                                 </div>
                                             </div>
                                             <Badge variant={

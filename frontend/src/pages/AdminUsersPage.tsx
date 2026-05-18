@@ -133,11 +133,11 @@ export default function AdminUsersPage() {
 
             {/* Tabla de Usuarios */}
             {loading && users.length === 0 ? (
-                <div className="flex justify-center items-center h-64 bg-card border border-muted rounded-xl shadow-sm">
+                <div className="flex justify-center items-center h-64 bg-card border border-muted rounded-xl shadow-sm w-full">
                     <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
                 </div>
             ) : (
-                <div className="bg-card border border-muted rounded-xl shadow-sm overflow-x-auto relative">
+                <div className="bg-card border border-muted rounded-xl shadow-sm overflow-x-auto relative w-full">
                     {/* Overlay de carga al cambiar de página */}
                     {loading && users.length > 0 && (
                         <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] flex items-center justify-center z-10">

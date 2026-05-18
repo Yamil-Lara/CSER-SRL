@@ -158,7 +158,7 @@ export default function AdminCommentModeration() {
                               
                               <div className="flex-1 space-y-4">
                                   {/* Encabezado: Autor y Estado */}
-                                  <div className="flex justify-between items-start">
+                                  <div className="flex flex-col sm:flex-row sm:justify-between items-start gap-2">
                                       <div className="flex items-center gap-3">
                                           {c.autor?.foto ? (
                                               <img src={buildUrl(c.autor.foto)} alt="Avatar" className="w-10 h-10 rounded-full object-cover border border-muted" />
