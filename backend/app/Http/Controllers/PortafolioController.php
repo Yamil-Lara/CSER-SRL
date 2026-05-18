@@ -19,9 +19,14 @@ class PortafolioController extends Controller
      */
     public function show($username)
     {
-        $user = User::where('username', $username)
-            ->where('activo', true)
-            ->first();
+        $query = User::where('username', $username);
+        
+        $authUser = auth('sanctum')->user();
+        if (!$authUser || $authUser->rol !== 'admin') {
+            $query->where('activo', true);
+        }
+        
+        $user = $query->first();
 
         if (!$user) {
             return $this->errorResponse('Portafolio no encontrado', 404);
@@ -90,9 +95,12 @@ class PortafolioController extends Controller
 
     public function proyectos($username)
     {
-        $user = User::where('username', $username)
-            ->where('activo', true)
-            ->first();
+        $query = User::where('username', $username);
+        $authUser = auth('sanctum')->user();
+        if (!$authUser || $authUser->rol !== 'admin') {
+            $query->where('activo', true);
+        }
+        $user = $query->first();
 
         if (!$user) {
             return $this->errorResponse('Usuario no encontrado', 404);
@@ -106,11 +114,11 @@ class PortafolioController extends Controller
             return $this->successResponse([], 'Proyectos ocultos por el usuario');
         }
 
-        $proyectos = Proyecto::with(['categoria'])
-            ->where('usuario_id', $user->id)
-            ->where('estado', 'aprobado')
-            ->latest()
-            ->get();
+        $proyectosQuery = Proyecto::with(['categoria'])->where('usuario_id', $user->id);
+        if (!$authUser || $authUser->rol !== 'admin') {
+            $proyectosQuery->where('estado', 'aprobado');
+        }
+        $proyectos = $proyectosQuery->latest()->get();
 
         return $this->successResponse($proyectos);
     }
@@ -120,9 +128,12 @@ class PortafolioController extends Controller
      */
     public function experiencias($username)
     {
-        $user = User::where('username', $username)
-            ->where('activo', true)
-            ->first();
+        $query = User::where('username', $username);
+        $authUser = auth('sanctum')->user();
+        if (!$authUser || $authUser->rol !== 'admin') {
+            $query->where('activo', true);
+        }
+        $user = $query->first();
 
         if (!$user) {
             return $this->errorResponse('Usuario no encontrado', 404);
@@ -146,9 +157,12 @@ class PortafolioController extends Controller
 
     public function habilidades($username)
     {
-        $user = User::where('username', $username)
-            ->where('activo', true)
-            ->first();
+        $query = User::where('username', $username);
+        $authUser = auth('sanctum')->user();
+        if (!$authUser || $authUser->rol !== 'admin') {
+            $query->where('activo', true);
+        }
+        $user = $query->first();
  
         if (!$user) {
             return $this->errorResponse('Usuario no encontrado', 404);

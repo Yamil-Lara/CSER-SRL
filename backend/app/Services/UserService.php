@@ -95,6 +95,13 @@ class UserService
         }
 
         $this->userRepository->update($id, $data);
+        
+        // Revoke access immediately if rejected or deactivated
+        if ((isset($data['estado']) && $data['estado'] === 'rechazado') || 
+            (isset($data['activo']) && $data['activo'] == false)) {
+            $user->tokens()->delete();
+        }
+
         return ['success' => true, 'data' => $user->fresh()];
     }
 

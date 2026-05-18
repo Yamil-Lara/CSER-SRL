@@ -24,7 +24,8 @@ class AuthService
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'rol' => 'usuario',
-            'estado' => 'aprobado',
+            'estado' => 'pendiente',
+            'activo' => false,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -45,6 +46,10 @@ class AuthService
 
         if (!$user || !Hash::check($password, $user->password)) {
             return ['success' => false, 'message' => 'Credenciales inválidas', 'code' => 401];
+        }
+
+        if ($user->estado === 'pendiente') {
+            return ['success' => false, 'message' => 'Cuenta pendiente de aprobación', 'code' => 403];
         }
 
         if (!$user->activo) {
