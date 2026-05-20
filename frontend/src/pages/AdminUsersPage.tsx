@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search, Users, Trash2, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Badge } from '../components/ui/Badge';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 interface AdminUser {
   id: number;
@@ -14,6 +15,14 @@ interface AdminUser {
   rol: string;
   activo: number | boolean;
   created_at: string;
+}
+
+// ─── Tipo del modal de confirmación ──────────────────────────────────────────
+interface PendingAction {
+  type: 'toggle' | 'delete';
+  userId: number;
+  currentStatus?: number | boolean; // solo para toggle
+  userName: string;
 }
 
 export default function AdminUsersPage() {
@@ -28,6 +37,9 @@ export default function AdminUsersPage() {
 
     const { user: authUser } = useAuth();
     const navigate = useNavigate();
+
+    // Estado del modal de confirmación
+    const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
 
     // Efecto para debounce de búsqueda
     useEffect(() => {
@@ -78,36 +90,74 @@ export default function AdminUsersPage() {
         }
     };
 
-    const handleToggleStatus = async (userId: number, currentStatus: number | boolean) => {
+    // ── Acción real: cambiar estado ───────────────────────────────────────────
+    const executeToggle = async (userId: number, currentStatus: number | boolean) => {
         if (authUser?.id === userId) return; // Protección adicional
-
         const newStatus = !currentStatus;
         try {
             await api.put(`/gestion/usuarios/${userId}`, { activo: newStatus });
-            setUsers(users.map(user => user.id === userId ? { ...user, activo: newStatus } : user));
+            setUsers(users.map(u => u.id === userId ? { ...u, activo: newStatus } : u));
         } catch (err) {
-            console.error("Error al actualizar el estado:", err);
+            console.error('Error al actualizar el estado:', err);
         }
     };
 
-    const handleDeleteUser = async (userId: number) => {
+    // ── Acción real: eliminar ─────────────────────────────────────────────────
+    const executeDelete = async (userId: number) => {
         if (authUser?.id === userId) return; // Protección adicional
-
-        if (!window.confirm("¿Estás seguro de que deseas eliminar permanentemente a este usuario? Esta acción no se puede deshacer.")) {
-            return;
-        }
         try {
             await api.delete(`/gestion/usuarios/${userId}`);
             // Si eliminamos, lo quitamos de la lista actual. Lo ideal sería recargar la página actual para traer el siguiente.
             fetchUsers(currentPage, searchTerm);
         } catch (err) {
-            console.error("Error al eliminar el usuario:", err);
-            alert("No se pudo eliminar al usuario. Es posible que tenga proyectos asociados.");
+            console.error('Error al eliminar el usuario:', err);
+            alert('No se pudo eliminar al usuario. Es posible que tenga proyectos asociados.');
         }
     };
 
+    // ── Confirmar la acción pendiente ─────────────────────────────────────────
+    const handleConfirm = () => {
+        if (!pendingAction) return;
+        if (pendingAction.type === 'toggle') {
+            executeToggle(pendingAction.userId, pendingAction.currentStatus!);
+        } else {
+            executeDelete(pendingAction.userId);
+        }
+        setPendingAction(null);
+    };
+
+    // ── Textos del modal según la acción ─────────────────────────────────────
+    const dialogConfig = pendingAction
+        ? pendingAction.type === 'toggle'
+        ? {
+            title: pendingAction.currentStatus
+                ? `¿Desactivar a ${pendingAction.userName}?`
+                : `¿Activar a ${pendingAction.userName}?`,
+            description: pendingAction.currentStatus
+                ? `El usuario "${pendingAction.userName}" perderá acceso a la plataforma de inmediato. Podrás reactivarlo en cualquier momento.`
+                : `El usuario "${pendingAction.userName}" recuperará acceso a la plataforma de inmediato.`,
+            confirmLabel: pendingAction.currentStatus ? 'Sí, desactivar' : 'Sí, activar',
+            variant: (pendingAction.currentStatus ? 'warning' : 'warning') as 'warning' | 'danger',
+            }
+        : {
+            title: `¿Eliminar a ${pendingAction.userName}?`,
+            description: `Esta acción eliminará permanentemente al usuario "${pendingAction.userName}" y todos sus datos asociados. Esta operación no se puede deshacer.`,
+            confirmLabel: 'Sí, eliminar',
+            variant: 'danger' as const,
+            }
+        : null;
+
     return (
-        <div className="p-6 max-w-7xl mx-auto">
+        <div className="p-6 max-w-7xl mx-auto relative pb-24">
+            {/* ── Botón volver ──────────────────────────────────────────────────── */}
+            <Link
+                to="/gestion/dashboard"
+                className="inline-flex items-center gap-1 text-sm text-primary hover:underline mb-6"
+            >
+                <ChevronLeft className="w-4 h-4" />
+                Volver al Panel de Administración
+            </Link>
+
             {/* Títulos estáticos */}
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-sidebar flex items-center gap-3">
@@ -180,7 +230,15 @@ export default function AdminUsersPage() {
                                     </td>
                                     <td className="py-4 px-6 text-sm flex justify-center items-center h-[72px]">
                                         <div 
-                                            onClick={() => authUser?.id !== user.id && handleToggleStatus(user.id, user.activo)}
+                                            onClick={() => {
+                                                if (authUser?.id === user.id) return;
+                                                setPendingAction({
+                                                    type: 'toggle',
+                                                    userId: user.id,
+                                                    currentStatus: user.activo,
+                                                    userName: user.nombre,
+                                                });
+                                            }}
                                             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${authUser?.id === user.id ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${user.activo ? 'bg-green-500' : 'bg-gray-300'}`}
                                             title={authUser?.id === user.id ? "No puedes bloquearte a ti mismo" : (user.activo ? "Bloquear Usuario" : "Desbloquear Usuario")}
                                         >
@@ -200,7 +258,14 @@ export default function AdminUsersPage() {
                                                 <Eye className="w-5 h-5" />
                                             </button>
                                             <button 
-                                                onClick={() => handleDeleteUser(user.id)}
+                                                onClick={() => {
+                                                    if (authUser?.id === user.id) return;
+                                                    setPendingAction({
+                                                        type: 'delete',
+                                                        userId: user.id,
+                                                        userName: user.nombre,
+                                                    });
+                                                }}
                                                 className={`p-2 rounded-full transition-colors ${authUser?.id === user.id ? 'text-gray-300 cursor-not-allowed' : 'text-red-500 hover:bg-red-50'}`}
                                                 title={authUser?.id === user.id ? "No puedes eliminar tu propia cuenta" : "Eliminar permanentemente"}
                                                 disabled={authUser?.id === user.id}
@@ -246,6 +311,19 @@ export default function AdminUsersPage() {
                         )}
                     </div>
                 </div>
+            )}
+            
+            {/* ── Modal de confirmación ─────────────────────────────────────────── */}
+            {dialogConfig && (
+                <ConfirmDialog
+                    isOpen={!!pendingAction}
+                    onClose={() => setPendingAction(null)}
+                    onConfirm={handleConfirm}
+                    title={dialogConfig.title}
+                    description={dialogConfig.description}
+                    confirmLabel={dialogConfig.confirmLabel}
+                    variant={dialogConfig.variant}
+                />
             )}
         </div>
     );

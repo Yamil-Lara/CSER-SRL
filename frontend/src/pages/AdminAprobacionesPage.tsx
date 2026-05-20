@@ -5,6 +5,7 @@ import {
     Search, Calendar, User, Tag, Briefcase, Wrench, Eye, FolderGit2,
     ChevronLeft, ChevronRight
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
 import { useNavigate } from 'react-router-dom';
@@ -161,6 +162,15 @@ export default function AdminAprobacionesPage() {
 
     return (
         <div className="p-6 max-w-7xl mx-auto space-y-2 relative pb-24">
+            {/* ── Botón volver ─────────────────────────────────────────────── */}
+            <Link
+                to="/gestion/dashboard"
+                className="inline-flex items-center gap-1 text-sm text-primary hover:underline mb-2"
+            >
+                <ChevronLeft className="w-4 h-4" />
+                Volver al Panel de Administración
+            </Link>
+
             <header className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-sidebar flex items-center gap-3">
