@@ -206,10 +206,11 @@ class AdminSystemController extends Controller
             'pendientes_usuarios' => \App\Models\User::where('estado', 'pendiente')->count(),
             'aprobados_usuarios' => \App\Models\User::where('estado', 'aprobado')->count(),
             'rechazados_usuarios' => \App\Models\User::where('estado', 'rechazado')->count(),
+            'usuarios_activos' => \App\Models\User::where('activo', 1)->count(),
             'pendientes_proyectos' => \App\Models\Proyecto::where('estado', 'pendiente')->count(),
             'pendientes_comentarios' => \App\Models\Comentario::where('aprobado', 0)->count(), // Usamos 0 para pendiente en comentarios según lógica típica
-            'ultimos_usuarios' => \App\Models\User::latest()->take(5)->get(['id', 'nombre', 'email', 'estado', 'activo']),
-            'ultimos_proyectos' => \App\Models\Proyecto::with('usuario:id,nombre')->latest()->take(5)->get(['id', 'titulo', 'estado', 'usuario_id']),
+            'ultimos_usuarios' => \App\Models\User::latest()->take(5)->get(['id', 'nombre', 'email', 'estado', 'activo', 'profesion', 'rol', 'username', 'created_at']),
+            'ultimos_proyectos' => \App\Models\Proyecto::with('usuario:id,nombre')->latest()->take(5)->get(['id', 'titulo', 'estado', 'usuario_id', 'created_at']),
         ];
 
         return response()->json(['success' => true, 'data' => $stats]);

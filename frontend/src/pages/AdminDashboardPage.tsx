@@ -129,57 +129,23 @@ export default function AdminDashboardPage() {
     setLoading(true);
     setError(null);
     try {
-      const [usersRes, projectsRes, commentsRes, categoriesRes] = await Promise.all([
-        api.get('/gestion/usuarios'),
-        api.get('/gestion/proyectos'),
-        api.get('/gestion/comentarios/pendientes'),
-        api.get('/categorias'),
-      ]);
-
-      // Usuarios
-      const rawUsers: RecentUser[] =
-        usersRes.data?.data?.data ?? usersRes.data?.data ?? [];
-
-      // Proyectos
-      const projectPayload = projectsRes.data?.data ?? {};
-      const rawProjects: RecentProject[] =
-        projectPayload.proyectos ?? projectPayload.data ??
-        (Array.isArray(projectPayload) ? projectPayload : []);
-      const projectStats = projectPayload.stats ?? {};
-
-      // Comentarios (el endpoint devuelve todos; filtramos pendientes)
-      const allComments: any[] = commentsRes.data?.data ?? [];
-      const pendingComments = allComments.filter(c => c.aprobado === 0).length;
-
-      // Categorías
-      const rawCategories: any[] =
-        categoriesRes.data?.data ?? (Array.isArray(categoriesRes.data) ? categoriesRes.data : []);
-
-      // Cálculos CA2
-      const usuariosActivos    = rawUsers.filter(u => u.activo).length;
-      const usuariosPendientes = rawUsers.filter(u => u.estado === 'pendiente').length;
-      const pendingProjects: number =
-        projectStats.pendientes ?? rawProjects.filter(p => p.estado === 'pendiente').length;
-
-      // Últimas 5 altas de proyectos (CA5): ordenadas por fecha descendente
-      const sortedProjects = [...rawProjects].sort((a, b) =>
-        new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
-      );
+      const statsRes = await api.get('/gestion/dashboard/stats');
+      const stats = statsRes.data?.data || {};
 
       setData({
         kpis: {
-          usuariosActivos,
-          totalProyectos:   rawProjects.length,
-          totalComentarios: allComments.length,
-          totalCategorias:  rawCategories.length,
+          usuariosActivos:  stats.usuarios_activos || 0,
+          totalProyectos:   stats.total_proyectos || 0,
+          totalComentarios: stats.total_comentarios || 0,
+          totalCategorias:  stats.total_categorias || 0,
         },
         alertas: {
-          proyectosPendientes:   pendingProjects,
-          comentariosPendientes: pendingComments,
-          usuariosPendientes,
+          proyectosPendientes:   stats.pendientes_proyectos || 0,
+          comentariosPendientes: stats.pendientes_comentarios || 0,
+          usuariosPendientes:    stats.pendientes_usuarios || 0,
         },
-        recentUsers:    rawUsers.slice(0, 5),
-        recentProjects: sortedProjects.slice(0, 5),
+        recentUsers:    stats.ultimos_usuarios || [],
+        recentProjects: stats.ultimos_proyectos || [],
       });
       setLastUpdated(new Date());
     } catch (err: any) {
