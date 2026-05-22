@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft, ExternalLink, MessageSquare, Send, Moon, Sun } from "lucide-react";
+import { ChevronLeft, ExternalLink } from "lucide-react";
 import { FiGithub as FiGithubIcon } from "react-icons/fi";
+import { PublicHeader } from "../components/layout/PublicHeader";
 import ProjectComments from "../components/ProjectComments";
 import api, { buildUrl } from "../utils/api";
 
@@ -38,22 +39,7 @@ const ProjectDetailPage: React.FC = () => {
     const [proyecto, setProyecto] = useState<Proyecto | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
 
-    const toggleTheme = () => {
-        const html = document.documentElement;
-        if (html.classList.contains('dark')) {
-            html.classList.remove('dark');
-            html.removeAttribute('data-theme');
-            localStorage.setItem('devfolio-theme', 'light');
-            setIsDark(false);
-        } else {
-            html.classList.add('dark');
-            html.setAttribute('data-theme', 'dark');
-            localStorage.setItem('devfolio-theme', 'dark');
-            setIsDark(true);
-        }
-    };
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -106,24 +92,9 @@ const ProjectDetailPage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-[#F1F5F9] font-sans">
-            <nav className="flex justify-between items-center px-8 py-4 bg-white shadow-sm border-b border-slate-200 z-10 relative">
-                <div className="text-2xl font-extrabold text-[#3B82F6] cursor-pointer" onClick={() => navigate('/')}>DevFolio</div>
-                <div className="hidden md:flex gap-8 items-center text-sm font-medium text-slate-500">
-                    <a href="#" className="hover:text-[#3B82F6]">Características</a>
-                    <a href="#" className="text-[#3B82F6] font-semibold" onClick={() => navigate('/explore')}>Explorar</a>
-                    <a href="#" className="hover:text-[#3B82F6]">Cómo Funciona</a>
-                    <a href="#" className="hover:text-[#3B82F6]">Nosotros</a>
-                </div>
-                <div className="flex gap-4 items-center">
-                    <button className="text-sm font-medium text-slate-700" onClick={() => navigate('/login')}>Iniciar Sesión</button>
-                    <button className="bg-[#3B82F6] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-600 transition-colors">Regístrate Gratis</button>
-                    <button onClick={toggleTheme} className="p-2 rounded-full bg-slate-100 text-slate-600">
-                        {isDark ? <Sun size={18} /> : <Moon size={18} />}
-                    </button>
-                </div>
-            </nav>
+            <PublicHeader />
 
-            <main className="max-w-5xl mx-auto py-12 px-6">
+            <main className="max-w-5xl mx-auto py-12 px-6 pt-28">
                 <button
                     onClick={() => navigate('/explorar')}
                     className="flex items-center gap-2 text-slate-500 hover:text-[#3B82F6] font-medium transition-colors mb-6"
