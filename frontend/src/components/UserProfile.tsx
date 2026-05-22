@@ -9,6 +9,7 @@ import { Textarea } from './ui/Textarea';
 import { User, FileText, GraduationCap, Eye, EyeOff, Save } from 'lucide-react';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
+import { useAuth } from '../context/AuthContext';
 
 
 const defaultProfile: ProfileData = {
@@ -27,6 +28,7 @@ const defaultProfile: ProfileData = {
 };
 
 const UserProfile: React.FC = () => {
+  const { updateUser } = useAuth();
   const [profile, setProfile] = useState<ProfileData>(defaultProfile);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -238,6 +240,9 @@ const response = await api.post(`/profile`, formData, {
       });
 
       const updatedProfile = normalizeUserData(response.data);
+      if (updatedProfile) {
+        updateUser(updatedProfile);
+      }
       setProfile((current) => ({
         ...current,
         password: '',
