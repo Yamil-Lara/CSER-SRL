@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from './ui/Card';
 import { 
-  Code2, MapPin, Mail, Code, Briefcase, FolderGit2, Image as ImageIcon
+  Code2, MapPin, Mail, Code, Briefcase, FolderGit2, Image as ImageIcon, GraduationCap 
 } from 'lucide-react';
 import { PublicHeader } from './layout/PublicHeader';
 import { FaLinkedin, FaGithub, FaGlobe, FaFacebook, FaInstagram, FaXTwitter, FaTiktok, FaThreads } from 'react-icons/fa6';
@@ -23,6 +23,8 @@ export interface PortfolioData {
   profession: string;
   technologies: string;
   bio: string;
+  university?: string;
+  career?: string;
   location: string;
   email: string;
   socials: {
@@ -115,6 +117,13 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
                 <p className="text-sm sm:text-base mb-6 leading-relaxed" style={{ color: 'var(--text-main)' }}>
                   {data.bio}
                 </p>
+
+                {(data.university || data.career) && (
+                  <p className="text-sm sm:text-base mb-6 leading-relaxed" style={{ color: 'var(--text-main)' }}>
+                    {data.university && <div className="text-sm text-gray-600">{data.university}</div>}
+                    {data.career && <div className="text-sm font-semibold text-gray-800">{data.career}</div>}
+                  </p>
+                )}
 
                 <div className="flex flex-wrap gap-4 text-sm text-muted mb-6">
                   <div className="flex items-center gap-2">

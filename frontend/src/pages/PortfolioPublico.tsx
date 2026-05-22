@@ -29,10 +29,12 @@ export default function PortfolioPublico() {
         const mappedData: PortfolioData = {
           name: user.nombre,
           photo: buildUrl(user.foto),
-          profession: user.profesion || 'Desarrollador Full Stack',
-          technologies: user.especialidad || 'React & Node.js',
-          bio: user.biografia || 'Apasionada por crear experiencias web increíbles',
-          location: user.ubicacion || 'La Paz, Bolivia',
+          profession: user.profesion,
+          technologies: user.especialidad,
+          bio: user.biografia,
+          university: user.universidad,
+          career: user.carrera,
+          location: user.ubicacion,
           email: user.email,
           socials: {
             linkedin: redes.linkedin,
