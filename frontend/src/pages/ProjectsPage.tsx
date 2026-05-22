@@ -3,7 +3,7 @@ import { Plus, X } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 import ProjectModal from '../components/ProjectModal';
 import ProjectCard from '../components/ProjectCard';
-import ProjectCommentsManager from '../components/ProjectCommentsManager'; // IMPORTACIÓN NUEVA
+import ProjectCommentsManager from '../components/ProjectCommentsManager';
 import api from '../utils/api'; 
 
 export interface Project {
@@ -19,17 +19,14 @@ export interface Project {
   githubUrl?: string;
   demoUrl?: string;
   status: string;
+  image?: string | null;
 }
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
-  // Estado para saber qué proyecto estamos editando
   const [editingProject, setEditingProject] = useState<Project | null>(null);
-  
-  // NUEVO ESTADO: Saber de qué proyecto estamos viendo los comentarios
   const [commentsProject, setCommentsProject] = useState<Project | null>(null);
 
   useEffect(() => {
@@ -56,7 +53,8 @@ export default function ProjectsPage() {
         client: item.cliente,
         githubUrl: item.github,
         demoUrl: item.demo,
-        status: item.estado
+        status: item.estado,
+        image: item.imagen || null
       }));
 
       setProjects(formattedProjects);
@@ -67,10 +65,11 @@ export default function ProjectsPage() {
     }
   };
 
-  const handleSaveProject = async (projectData: any) => {
+  const handleSaveProject = async (projectData: FormData) => {
     try {
       if (editingProject) {
-        await api.put(`/proyectos/${editingProject.id}`, projectData);
+        // Para edición, usar POST con _method PUT
+        await api.post(`/proyectos/${editingProject.id}`, projectData);
       } else {
         await api.post('/proyectos', projectData);
       }
@@ -79,14 +78,14 @@ export default function ProjectsPage() {
     } catch (error: any) {
       console.error('Error completo:', error);
       let errorMsg = "Ocurrió un error desconocido.";
-      if (error.response && error.response.data) {
-        if (error.response.data.errors) {
-          const firstError = Object.values(error.response.data.errors)[0];
-          errorMsg = Array.isArray(firstError) ? firstError[0] : "Revisa los campos del formulario";
-        } else if (error.response.data.message) {
-          errorMsg = error.response.data.message;
-        }
+      
+      if (error.response?.data?.errors) {
+        const firstError = Object.values(error.response.data.errors)[0];
+        errorMsg = Array.isArray(firstError) ? firstError[0] : "Revisa los campos del formulario";
+      } else if (error.response?.data?.message) {
+        errorMsg = error.response.data.message;
       }
+      
       alert("Error al guardar: " + errorMsg);
     }
   };
@@ -112,7 +111,6 @@ export default function ProjectsPage() {
     setIsModalOpen(false);
   };
 
-  // NUEVO: Función para abrir el modal de comentarios
   const openCommentsManager = (project: Project) => {
     setCommentsProject(project);
   };
@@ -147,13 +145,13 @@ export default function ProjectsPage() {
                project={project} 
                onDelete={handleDeleteProject}
                onEdit={openEditModal} 
-               onManageComments={openCommentsManager} // Le pasamos la función al card
+               onManageComments={openCommentsManager}
              />
           ))}
         </div>
       )}
 
-      {/* Modal para Crear/Editar Proyecto original */}
+      {/* Modal para Crear/Editar Proyecto */}
       {isModalOpen && (
         <ProjectModal 
           onClose={closeModal} 
@@ -162,7 +160,7 @@ export default function ProjectsPage() {
         />
       )}
 
-      {/* NUEVO: Modal Flotante para el Gestor de Comentarios */}
+      {/* Modal para el Gestor de Comentarios */}
       {commentsProject && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <div className="bg-white rounded-[24px] w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
@@ -180,7 +178,7 @@ export default function ProjectsPage() {
               </button>
             </div>
             
-            {/* Cuerpo del Modal (Donde se inyecta el Gestor) */}
+            {/* Cuerpo del Modal */}
             <div className="overflow-y-auto p-6 bg-slate-50 flex-1">
               <ProjectCommentsManager proyectoId={commentsProject.id} />
             </div>

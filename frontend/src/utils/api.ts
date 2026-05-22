@@ -30,12 +30,19 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  
+  // IMPORTANTE: Si estamos enviando FormData, NO establecer Content-Type
+  // Deja que el navegador lo configure automáticamente con el boundary
+  if (config.data instanceof FormData) {
+    delete config.headers['Content-Type'];
+  }
+  
   return config;
 }, (error) => {
   return Promise.reject(error);
 });
 
-// NUEVO: Interceptor de Respuestas: Maneja la expiración de sesión (401 Unauthorized)
+// Interceptor de Respuestas: Maneja la expiración de sesión (401 Unauthorized)
 api.interceptors.response.use(
   (response) => {
     // Si la respuesta es exitosa, la dejamos pasar tal cual
