@@ -106,10 +106,23 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
         // Logs
         Route::get('/logs', [AdminSystemController::class, 'getLogs']);
 
-        // PDF Reportes
+        // Reportes - Datos JSON para previsualización en pantalla
+        Route::get('/reportes/datos/usuarios', [\App\Http\Controllers\ReporteController::class, 'datosUsuarios']);
+        Route::get('/reportes/datos/proyectos', [\App\Http\Controllers\ReporteController::class, 'datosProyectos']);
+        Route::get('/reportes/datos/comentarios', [\App\Http\Controllers\ReporteController::class, 'datosComentarios']);
+        Route::get('/reportes/datos/general', [\App\Http\Controllers\ReporteController::class, 'datosGeneral']);
+
+        // Reportes - PDF
         Route::get('/reportes/usuarios', [\App\Http\Controllers\ReporteController::class, 'usuariosPDF']);
         Route::get('/reportes/proyectos', [\App\Http\Controllers\ReporteController::class, 'proyectosPDF']);
         Route::get('/reportes/comentarios', [\App\Http\Controllers\ReporteController::class, 'comentariosPDF']);
+        Route::get('/reportes/general', [\App\Http\Controllers\ReporteController::class, 'generalPDF']);
+
+        // Reportes - Excel
+        Route::get('/reportes/excel/usuarios', [\App\Http\Controllers\ReporteController::class, 'usuariosExcel']);
+        Route::get('/reportes/excel/proyectos', [\App\Http\Controllers\ReporteController::class, 'proyectosExcel']);
+        Route::get('/reportes/excel/comentarios', [\App\Http\Controllers\ReporteController::class, 'comentariosExcel']);
+        Route::get('/reportes/excel/general', [\App\Http\Controllers\ReporteController::class, 'generalExcel']);
     });
 
     // En la sección de RUTAS PÚBLICAS (fuera del middleware auth:sanctum)
