@@ -346,9 +346,9 @@ export default function AdminReportesPage() {
           id="btn-exportar-pdf"
           onClick={handleExportPDF}
           disabled={exportingPdf || !reportData}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-red-200 text-red-600
-            font-semibold hover:bg-red-50 dark:hover:bg-red-500/10 transition-all
-            disabled:opacity-30 disabled:cursor-not-allowed dark:border-red-500/30 dark:text-red-400"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-red-600 text-red-600
+            font-semibold hover:bg-red-600 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-all
+            disabled:opacity-30 disabled:cursor-not-allowed dark:border-red-500 dark:text-red-400"
         >
           <Download className={`w-4 h-4 ${exportingPdf ? 'animate-bounce' : ''}`} />
           {exportingPdf ? 'Exportando...' : 'Exportar PDF'}
@@ -358,9 +358,9 @@ export default function AdminReportesPage() {
           id="btn-exportar-excel"
           onClick={handleExportExcel}
           disabled={exportingExcel || !reportData}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-emerald-200 text-emerald-600
-            font-semibold hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-all
-            disabled:opacity-30 disabled:cursor-not-allowed dark:border-emerald-500/30 dark:text-emerald-400"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-emerald-600 text-emerald-600
+            font-semibold hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-500 dark:hover:text-white transition-all
+            disabled:opacity-30 disabled:cursor-not-allowed dark:border-emerald-500 dark:text-emerald-400"
         >
           <FileSpreadsheet className={`w-4 h-4 ${exportingExcel ? 'animate-bounce' : ''}`} />
           {exportingExcel ? 'Exportando...' : 'Exportar Excel'}
