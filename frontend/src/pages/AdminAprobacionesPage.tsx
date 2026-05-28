@@ -3,12 +3,13 @@ import api, { buildUrl } from '../utils/api';
 import { 
     CheckCircle, XCircle, Clock, LayoutGrid, Code, ExternalLink, 
     Search, Calendar, User, Tag, Briefcase, Wrench, Eye, FolderGit2,
-    ChevronLeft, ChevronRight
+    ChevronLeft, ChevronRight, Trash2
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
 import { useNavigate } from 'react-router-dom';
+import ConfirmModal from '../components/ConfirmModal';
 
 export default function AdminAprobacionesPage() {
     const navigate = useNavigate();
@@ -36,6 +37,13 @@ export default function AdminAprobacionesPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [lastPage, setLastPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
+
+    // Estado para confirmación de eliminación de proyecto
+    const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; id: number | null; titulo: string }>({
+        open: false,
+        id: null,
+        titulo: '',
+    });
 
     // Cuando cambian el filtro o la pestaña, reseteamos la página a 1
     useEffect(() => {
@@ -130,6 +138,17 @@ export default function AdminAprobacionesPage() {
         }
     };
 
+    const handleEliminarProyecto = async () => {
+        if (!deleteConfirm.id) return;
+        try {
+            await api.delete(`/proyectos/${deleteConfirm.id}`);
+            setDeleteConfirm({ open: false, id: null, titulo: '' });
+            fetchData(); // Recargar datos
+        } catch (err) {
+            alert("Error al eliminar el proyecto");
+        }
+    };
+
     // Filtrado local (Buscador rápido dentro de la página cargada)
     const proyectosFiltrados = proyectos.filter(p => {
         const busqueda = searchTerm.toLowerCase();
@@ -138,7 +157,8 @@ export default function AdminAprobacionesPage() {
             p.descripcion.toLowerCase().includes(busqueda) ||
             (p.usuario?.nombre || '').toLowerCase().includes(busqueda) ||
             (p.cliente || '').toLowerCase().includes(busqueda) ||
-            (p.categoria?.nombre || '').toLowerCase().includes(busqueda)
+            (p.categoria?.nombre || '').toLowerCase().includes(busqueda) ||
+            (p.tecnologias || '').toLowerCase().includes(busqueda)
         );
     });
 
@@ -330,6 +350,13 @@ export default function AdminAprobacionesPage() {
                                                         <XCircle className="w-4 h-4" /> RECHAZAR
                                                     </button>
                                                 )}
+                                                <button 
+                                                    onClick={() => setDeleteConfirm({ open: true, id: p.id, titulo: p.titulo })} 
+                                                    className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-all text-xs font-bold"
+                                                    title="Eliminar permanentemente"
+                                                >
+                                                    <Trash2 className="w-4 h-4" /> ELIMINAR
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -423,32 +450,41 @@ export default function AdminAprobacionesPage() {
 
             {/* Controles de Paginación */}
             {!loading && totalItems > 0 && (
-                <div className="mt-8 flex flex-col md:flex-row justify-between items-center text-sm text-sidebar/70 bg-card p-4 rounded-xl border border-muted shadow-sm gap-4">
-                    <span>Total de registros: <strong className="text-sidebar">{totalItems}</strong></span>
-                    
-                    {lastPage > 1 && (
-                        <div className="flex items-center gap-4">
-                            <button 
-                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                disabled={currentPage === 1}
-                                className="p-2 rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                            >
-                                <ChevronLeft className="w-5 h-5" />
-                            </button>
-                            <span className="font-medium text-sidebar">
-                                Página {currentPage} de {lastPage}
-                            </span>
-                            <button 
-                                onClick={() => setCurrentPage(p => Math.min(lastPage, p + 1))}
-                                disabled={currentPage === lastPage}
-                                className="p-2 rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                            >
-                                <ChevronRight className="w-5 h-5" />
-                            </button>
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
-    );
-}
+                                                <div className="mt-8 flex flex-col md:flex-row justify-between items-center text-sm text-sidebar/70 bg-card p-4 rounded-xl border border-muted shadow-sm gap-4">
+                                                    <span>Total de registros: <strong className="text-sidebar">{totalItems}</strong></span>
+                                                    
+                                                    {lastPage > 1 && (
+                                                        <div className="flex items-center gap-4">
+                                                            <button 
+                                                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                                                disabled={currentPage === 1}
+                                                                className="p-2 rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                            >
+                                                                <ChevronLeft className="w-5 h-5" />
+                                                            </button>
+                                                            <span className="font-medium text-sidebar">
+                                                                Página {currentPage} de {lastPage}
+                                                            </span>
+                                                            <button 
+                                                                onClick={() => setCurrentPage(p => Math.min(lastPage, p + 1))}
+                                                                disabled={currentPage === lastPage}
+                                                                className="p-2 rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                            >
+                                                                <ChevronRight className="w-5 h-5" />
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+
+                                            {/* Confirm Modal Eliminar Proyecto */}
+                                            <ConfirmModal
+                                                show={deleteConfirm.open}
+                                                onClose={() => setDeleteConfirm({ open: false, id: null, titulo: '' })}
+                                                onConfirm={handleEliminarProyecto}
+                                                title="Eliminar Proyecto"
+                                                message={`¿Estás seguro de que deseas eliminar permanentemente el proyecto "${deleteConfirm.titulo}"? Esta acción no se puede deshacer y también eliminará todos los comentarios asociados.`}
+                                            />
+                                        </div>
+                                    );
+                                }
