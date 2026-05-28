@@ -30,6 +30,7 @@ import ProjectDetailPage from "./pages/ProjectDetailPage";
 import AdminCommentPage from "./pages/AdminCommentPage";
 import LoginPage from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
+import { DashboardPage } from "./pages/DashboardPage";
 
 // Componentes temporales para las rutas de admin que faltan
 const AdminDashboard = () => (
@@ -132,6 +133,7 @@ function App(): JSX.Element {
                   <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
                   <main className="main-content">
                     <Routes>
+                      <Route index element={<DashboardPage />} />
                       <Route path="perfil" element={<UserProfile />} />
                       <Route path="proyectos" element={<ProjectsPage />} />
                       <Route path="habilidades" element={<SkillsPage />} />                  

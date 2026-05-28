@@ -27,7 +27,7 @@ const ConfirmModal: React.FC<Props> = ({
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>Cancelar</Button>
-          <Button onClick={onConfirm} className="bg-destructive text-white hover:bg-destructive/90">
+          <Button variant="primary" onClick={onConfirm} className="!bg-destructive !text-white hover:!bg-destructive/90 border-none">
             Eliminar
           </Button>
         </>

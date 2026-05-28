@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Plus, X } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 import ProjectModal from '../components/ProjectModal';
@@ -29,9 +30,31 @@ export default function ProjectsPage() {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [commentsProject, setCommentsProject] = useState<Project | null>(null);
 
+  const location = useLocation();
+  const editModalHandled = useRef(false);
+
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  useEffect(() => {
+    if (location.state?.openCreateModal) {
+      setEditingProject(null);
+      setIsModalOpen(true);
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    if (editModalHandled.current) return;
+    if (location.state?.openEditModal && location.state?.editProjectId && projects.length > 0) {
+      const project = projects.find(p => p.id === String(location.state.editProjectId));
+      if (project) {
+        editModalHandled.current = true;
+        setEditingProject(project);
+        setIsModalOpen(true);
+      }
+    }
+  }, [projects]);
 
   const fetchProjects = async () => {
     try {
