@@ -7,9 +7,10 @@ type Props = {
   show: boolean;
   onConfirm: () => void;
   onClose: () => void;
+  message?: string;
 };
 
-const ConfirmModal: React.FC<Props> = ({ show, onConfirm, onClose }) => {
+const ConfirmModal: React.FC<Props> = ({ show, onConfirm, onClose, message }) => {
   return (
     <Modal 
       isOpen={show} 
@@ -24,7 +25,7 @@ const ConfirmModal: React.FC<Props> = ({ show, onConfirm, onClose }) => {
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>Cancelar</Button>
-          <Button variant="danger" onClick={onConfirm} className="bg-destructive text-white hover:bg-destructive/90">
+          <Button variant="primary" onClick={onConfirm} className="!bg-destructive !text-white hover:!bg-destructive/90 border-none">
             Eliminar
           </Button>
         </>
@@ -35,7 +36,7 @@ const ConfirmModal: React.FC<Props> = ({ show, onConfirm, onClose }) => {
           <Info className="w-6 h-6" />
         </div>
         <p className="text-sidebar/80 m-0">
-          ¿Estás seguro de que deseas eliminar esta habilidad? Esta acción no se puede deshacer.
+          {message ?? '¿Estás seguro de que deseas eliminar esta habilidad? Esta acción no se puede deshacer.'}
         </p>
       </div>
     </Modal>

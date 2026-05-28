@@ -89,6 +89,7 @@ export default function PortfolioPublico() {
     };
 
     fetchData();
+    api.post(`/portafolio/${username}/visita`).catch(() => {});
   }, [username]);
 
   if (loading) {

@@ -61,6 +61,8 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
         Route::get('/', [ProfileController::class, 'show']);
         Route::put('/', [ProfileController::class, 'update']);
         Route::delete('/', [ProfileController::class, 'destroy']);
+        Route::get('/visitas', [ProfileController::class, 'getVisitas']);
+        Route::get('/comentarios-recientes', [ProfileController::class, 'getComentariosRecientes']);
     });
 
     // HU-08: Control de visibilidad

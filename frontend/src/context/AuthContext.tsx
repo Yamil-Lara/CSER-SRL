@@ -18,6 +18,11 @@ interface User {
   biografia?: string;
   ubicacion?: string;
   telefono?: string;
+  linkedin?: string | null;
+  github_perfil?: string | null;
+  sitio_web?: string | null;
+  universidad?: string | null;
+  carrera?: string | null;
 }
 
 interface AuthContextType {
