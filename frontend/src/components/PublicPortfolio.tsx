@@ -112,14 +112,18 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
               <div className="flex flex-col w-full">
                 <h1 className="text-2xl sm:text-3xl font-bold mb-1">{data.name}</h1>
                 <div className="text-primary text-base sm:text-lg font-medium mb-1">{data.profession}</div>
-                <p className="text-muted text-sm mb-4">{data.technologies}</p>
+                <p className="text-muted text-sm mb-2">{data.technologies}</p>
                 
-                <p className="text-sm sm:text-base mb-6 leading-relaxed" style={{ color: 'var(--text-main)' }}>
+                <p className="text-sm sm:text-base mb-2 leading-relaxed" style={{ color: 'var(--text-main)' }}>
                   {data.bio}
+                </p>
+                
+                <p className="text-primary">
+                  Información Academica
                 </p>
 
                 {(data.university || data.career) && (
-                  <p className="text-sm sm:text-base mb-6 leading-relaxed" style={{ color: 'var(--text-main)' }}>
+                  <p className="text-sm sm:text-base mb-3 leading-relaxed" style={{ color: 'var(--text-main)' }}>
                     {data.university && <div className="text-sm text-gray-600">{data.university}</div>}
                     {data.career && <div className="text-sm font-semibold text-gray-800">{data.career}</div>}
                   </p>
