@@ -55,6 +55,15 @@ const ExplorePage: React.FC = () => {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+
+  // Resetear la página a 1 cuando cambien los filtros principales
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, searchQuery, selectedCategoria, userFilter]);
+
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
@@ -75,38 +84,29 @@ const ExplorePage: React.FC = () => {
       try {
         if (activeTab === "proyectos") {
           const categoryId = categorias.find(c => c.nombre === selectedCategoria)?.id;
-          const params: any = { search: searchQuery };
+          const params: any = { search: searchQuery, page: currentPage };
           if (selectedCategoria !== "Todas las categorías" && categoryId) {
             params.categoria_id = categoryId;
           }
           if (userFilter !== "todos") {
-            params.tipo_perfil = userFilter;
+            params.filter = userFilter; // Usar 'filter' que lee el backend en lugar de 'tipo_perfil'
           }
           const response = await api.get('/explore/projects', { params });
           if (response.data.success) {
-            let fetchedProjects = response.data.data.data;
-            if (userFilter !== "todos") {
-              fetchedProjects = fetchedProjects.filter((p: any) => 
-                p.autor && p.autor.tipo_perfil && p.autor.tipo_perfil.toLowerCase() === userFilter
-              );
-            }
-            setProyectos(fetchedProjects);
+            setProyectos(response.data.data.data);
+            setTotalItems(response.data.data.total);
+            setTotalPages(response.data.data.last_page);
           }
         } else {
-          const params: any = { search: searchQuery };
+          const params: any = { search: searchQuery, page: currentPage };
           if (userFilter !== "todos") {
-            params.tipo_perfil = userFilter;
+            params.filter = userFilter;
           }
           const response = await api.get('/explore/users', { params });
           if (response.data.success) {
-            let fetchedUsers = response.data.data.data;
-            // Filtrado en el frontend por si el backend no soporta el parámetro
-            if (userFilter !== "todos") {
-              fetchedUsers = fetchedUsers.filter((u: Usuario) => 
-                u.tipo_perfil && u.tipo_perfil.toLowerCase() === userFilter
-              );
-            }
-            setUsuarios(fetchedUsers);
+            setUsuarios(response.data.data.data);
+            setTotalItems(response.data.data.total);
+            setTotalPages(response.data.data.last_page);
           }
         }
       } catch (error) {
@@ -118,7 +118,27 @@ const ExplorePage: React.FC = () => {
     
     const timeoutId = setTimeout(() => fetchData(), 300);
     return () => clearTimeout(timeoutId);
-  }, [activeTab, searchQuery, selectedCategoria, categorias, userFilter]);
+  }, [activeTab, searchQuery, selectedCategoria, categorias, userFilter, currentPage]);
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const getCounterText = () => {
+    let suffix = activeTab === "proyectos" ? "Proyectos" : "Portafolios";
+    
+    if (userFilter === "profesional") suffix += " de Profesionales";
+    if (userFilter === "estudiante") suffix += " de Estudiantes";
+    
+    if (activeTab === "proyectos" && selectedCategoria !== "Todas las categorías") {
+      suffix += ` en ${selectedCategoria}`;
+    }
+    
+    return `${totalItems} ${suffix}`;
+  };
 
 
   return (
@@ -205,6 +225,14 @@ const ExplorePage: React.FC = () => {
                 )}
               </div>
 
+              {!loading && (
+                <div className="w-full max-w-6xl mb-6 flex justify-between items-end">
+                  <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+                    {getCounterText()}
+                  </h2>
+                </div>
+              )}
+
               {loading ? (
                 <div className="text-center py-10 text-slate-500 dark:text-slate-400">Cargando...</div>
               ) : proyectos.length > 0 ? (
@@ -221,12 +249,14 @@ const ExplorePage: React.FC = () => {
                         ) : (
                           <>
                             <FolderGit2 size={48} className="opacity-20 mb-2 group-hover:scale-110 transition-transform" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">{proy.categoria?.nombre || "Sin categoría"}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                              {proy.categoria?.nombre === 'Otro' && proy.categoria_personalizada ? proy.categoria_personalizada : (proy.categoria?.nombre || "Sin categoría")}
+                            </span>
                           </>
                         )}
                         {proy.categoria && proy.imagen && (
                           <span className="absolute top-4 right-4 bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-slate-700 dark:text-slate-200 shadow-sm">
-                            {proy.categoria.nombre}
+                            {proy.categoria.nombre === 'Otro' && proy.categoria_personalizada ? proy.categoria_personalizada : proy.categoria.nombre}
                           </span>
                         )}
                       </div>
@@ -263,10 +293,40 @@ const ExplorePage: React.FC = () => {
               ) : (
                 <div className="text-center py-10 text-slate-500 dark:text-slate-400">No se encontraron proyectos.</div>
               )}
+              
+              {!loading && totalPages > 1 && (
+                <div className="mt-12 flex items-center justify-center gap-4">
+                  <button 
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Anterior
+                  </button>
+                  <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">
+                    Página {currentPage} de {totalPages}
+                  </span>
+                  <button 
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              )}
             </div>
           )}
           {activeTab === "portafolios" && (
             <div className="flex flex-col items-center">
+              {!loading && (
+                <div className="w-full max-w-6xl mb-6 mt-4 flex justify-between items-end">
+                  <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+                    {getCounterText()}
+                  </h2>
+                </div>
+              )}
+
               {loading ? (
                 <div className="text-center py-10 text-slate-500 dark:text-slate-400">Cargando...</div>
               ) : usuarios.length > 0 ? (
@@ -316,6 +376,28 @@ const ExplorePage: React.FC = () => {
                 </div>
               ) : (
                 <div className="text-center py-10 text-slate-500 dark:text-slate-400">No se encontraron portafolios.</div>
+              )}
+
+              {!loading && totalPages > 1 && (
+                <div className="mt-12 flex items-center justify-center gap-4">
+                  <button 
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Anterior
+                  </button>
+                  <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">
+                    Página {currentPage} de {totalPages}
+                  </span>
+                  <button 
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Siguiente
+                  </button>
+                </div>
               )}
             </div>
           )}

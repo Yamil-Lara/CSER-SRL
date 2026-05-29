@@ -53,6 +53,7 @@ export interface PortfolioData {
     title: string;
     description: string;
     tags: string[];
+    tools?: string[];
     image?: string;
   }[];
   visibilidad: {
@@ -209,12 +210,31 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
                       </div>
                       <h3 className="text-sm font-bold mb-2">{proj.title}</h3>
                       <p className="text-muted text-xs mb-4 line-clamp-3 leading-relaxed">{proj.description}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {proj.tags.map((tag, tIdx) => (
-                          <span key={tIdx} className="px-2 py-1 bg-primary/20 text-primary font-medium text-[10px] rounded whitespace-nowrap">
-                            {tag}
-                          </span>
-                        ))}
+                      <div className="flex flex-col gap-2 mt-auto">
+                        {proj.tags && proj.tags.length > 0 && (
+                          <div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block">Tecnologías</span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {proj.tags.map((tag, tIdx) => (
+                                <span key={`tech-${tIdx}`} className="px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 font-medium text-[10px] rounded-sm whitespace-nowrap">
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {proj.tools && proj.tools.length > 0 && (
+                          <div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block">Herramientas</span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {proj.tools.map((tool, tIdx) => (
+                                <span key={`tool-${tIdx}`} className="px-2 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-200 font-medium text-[10px] rounded-sm whitespace-nowrap">
+                                  {tool}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}

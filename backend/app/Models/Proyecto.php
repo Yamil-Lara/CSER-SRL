@@ -16,6 +16,7 @@ class Proyecto extends Model
     protected $fillable = [
         'usuario_id',
         'categoria_id',
+        'categoria_personalizada',
         'titulo',
         'descripcion',
         'tecnologias',

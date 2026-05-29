@@ -13,6 +13,7 @@ export interface Project {
   description: string;
   category: string;
   categoryId?: string;
+  categoria_personalizada?: string | null;
   date: string;
   technologies: string[];
   tools?: string;
@@ -68,6 +69,7 @@ export default function ProjectsPage() {
         description: item.descripcion,
         category: item.categoria?.nombre || 'Sin categoría',
         categoryId: item.categoria_id?.toString(),
+        categoria_personalizada: item.categoria_personalizada || null,
         date: item.fecha_proyecto || item.created_at,
         technologies: typeof item.tecnologias === 'string' 
             ? item.tecnologias.split(',').map((t: string) => t.trim()) 
