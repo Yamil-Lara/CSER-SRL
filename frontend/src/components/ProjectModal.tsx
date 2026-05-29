@@ -41,7 +41,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
 
     const fetchCategorias = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/categorias');
+        const response = await api.get('/categorias');
         const data = response.data.data || response.data;
         
         if (isMounted) {
