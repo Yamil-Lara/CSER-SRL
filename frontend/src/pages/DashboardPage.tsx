@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useProjects } from '../hooks/useProjects';
 import { useVisitas } from '../hooks/useVisitas';
 import { useComentariosRecientes } from '../hooks/useComentariosRecientes';
+import { useExperience } from '../hooks/useExperience';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
@@ -15,16 +16,19 @@ export function DashboardPage() {
   const { projects, loading, error, deleteProject } = useProjects();
   const { visitasEsteMes, visitantesRecientes, loading: loadingVisitas } = useVisitas();
   const { comentarios, loading: loadingComentarios } = useComentariosRecientes();
+  const { experiences } = useExperience();
 
   const completitudItems = [
-    { label: 'Foto de perfil',  done: !!user?.foto },
-    { label: 'Profesión',       done: !!user?.profesion },
-    { label: 'Especialidad',    done: !!user?.especialidad },
-    { label: 'Biografía',       done: !!user?.biografia },
-    { label: 'Ubicación',       done: !!user?.ubicacion },
-    { label: 'Teléfono',        done: !!user?.telefono },
-    { label: 'Red social',      done: !!(user?.linkedin || user?.github_perfil || user?.sitio_web) },
-    { label: 'Proyecto publicado', done: projects.some((p) => p.estado === 'aprobado') },
+    { label: 'Foto de perfil',       done: !!user?.foto },
+    { label: 'Profesión',            done: !!user?.profesion },
+    { label: 'Especialidad',         done: !!user?.especialidad },
+    { label: 'Biografía',            done: !!user?.biografia },
+    { label: 'Ubicación',            done: !!user?.ubicacion },
+    { label: 'Teléfono',             done: !!user?.telefono },
+    { label: 'Red social',           done: !!(user?.linkedin || user?.github_perfil || user?.sitio_web) },
+    { label: 'Proyecto publicado',   done: projects.some((p) => p.estado === 'aprobado') },
+    { label: 'Experiencia laboral',  done: experiences.some((e) => e.tipo === 'laboral') },
+    { label: 'Formación académica',  done: experiences.some((e) => e.tipo === 'academica') },
   ];
   const completitudPct = Math.round(
     (completitudItems.filter((i) => i.done).length / completitudItems.length) * 100

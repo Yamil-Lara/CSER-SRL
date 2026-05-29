@@ -6,6 +6,7 @@ import {
   FolderGit2,
   Code,
   Briefcase,
+  GraduationCap,
   Link as LinkIcon,
   EyeOff,
   LogOut,
@@ -91,7 +92,8 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
     { icon: User, label: 'Editar Perfil', path: '/dashboard/perfil' },
     { icon: FolderGit2, label: 'Mis Proyectos', path: '/dashboard/proyectos' },
     { icon: Code, label: 'Mis Habilidades', path: '/dashboard/habilidades' },
-    { icon: Briefcase, label: 'Experiencia', path: '/dashboard/experiencia' },
+    { icon: Briefcase, label: 'Experiencia', path: '/dashboard/experiencia-laboral' },
+    { icon: GraduationCap, label: 'Formación', path: '/dashboard/formacion-academica' },
     { icon: LinkIcon, label: 'Enlaces', path: '/dashboard/enlaces' },
     { icon: EyeOff, label: 'Visibilidad', path: '/dashboard/visibilidad' }
   ];

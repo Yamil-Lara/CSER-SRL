@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ExperiencePage } from "./pages/ExperiencePage";
+import { ExperienceLaboralPage } from "./pages/ExperienceLaboralPage";
+import { FormacionAcademicaPage } from "./pages/FormacionAcademicaPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import AdminAprobacionesPage from "./pages/AdminAprobacionesPage";
@@ -137,7 +139,9 @@ function App(): JSX.Element {
                       <Route path="perfil" element={<UserProfile />} />
                       <Route path="proyectos" element={<ProjectsPage />} />
                       <Route path="habilidades" element={<SkillsPage />} />                  
-                      <Route path="experiencia" element={<ExperiencePage />} />
+                      <Route path="experiencia" element={<Navigate to="/dashboard/experiencia-laboral" replace />} />
+                      <Route path="experiencia-laboral" element={<ExperienceLaboralPage />} />
+                      <Route path="formacion-academica" element={<FormacionAcademicaPage />} />
                       <Route path="enlaces" element={<LinksPage />} />
                       <Route path="visibilidad" element={<VisibilitySettingsPage />} />
                       <Route path="moderacion" element={<AdminCommentPage />} />
