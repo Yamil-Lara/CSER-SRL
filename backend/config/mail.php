@@ -73,6 +73,10 @@ return [
             'channel' => env('MAIL_LOG_CHANNEL'),
         ],
 
+        'resend' => [
+            'transport' => 'resend',
+        ],
+
         'array' => [
             'transport' => 'array',
         ],

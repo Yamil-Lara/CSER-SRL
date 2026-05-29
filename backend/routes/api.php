@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\ExperienceController;
@@ -26,6 +28,12 @@ Route::get('/status', function () {
 
 Route::post('/register', RegisterController::class);
 Route::post('/login', LoginController::class);
+
+// Recuperación de contraseñas (públicas, con rate limiting)
+Route::middleware('throttle:6,1')->group(function () {
+    Route::post('/forgot-password', ForgotPasswordController::class);
+    Route::post('/reset-password', ResetPasswordController::class);
+});
 
 Route::get('/proyectos', [ProyectoController::class, 'index']);
 Route::get('/proyectos/{id}', [ProyectoController::class, 'show']);
