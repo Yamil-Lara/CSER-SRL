@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Code, FolderGit2, Globe, Layout, ShieldCheck, Sparkles, Terminal, Users } from 'lucide-react';
 import '../index.css';
 import { PublicHeader } from '../components/layout/PublicHeader'; // <-- Importar componente
-import { startLandingTour } from '../utils/tour';
+import { startLandingTour, destroyActiveTour } from '../utils/tour';
 
 export const LandingPage = () => {
   const navigate = useNavigate();
@@ -16,7 +16,18 @@ export const LandingPage = () => {
   useEffect(() => {
     // Iniciar el tour interactivo al cargar la página si no se ha visto antes
     startLandingTour();
+
+    // Limpiar el tour si el componente se desmonta (navegación a otra página)
+    return () => {
+      destroyActiveTour();
+    };
   }, []);
+
+  // Función de navegación segura: destruye el tour antes de navegar
+  const safeNavigate = (path: string) => {
+    destroyActiveTour();
+    navigate(path);
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -27,25 +38,28 @@ export const LandingPage = () => {
       <main style={{ flexGrow: 1 }}>
         {/* HERO SECTION */}
         <section className="hero-section" id="tour-hero">
-          <div className="badge">
-            <Sparkles size={16} />
-            <span>La nueva forma de mostrar tu código</span>
-          </div>
+          {/* Contenedor enfocado para el tour (solo título + subtítulo + botones) */}
+          <div id="tour-hero-content">
+            <div className="badge">
+              <Sparkles size={16} />
+              <span>La nueva forma de mostrar tu código</span>
+            </div>
 
-          <h1 className="hero-title">
-            Construye tu marca personal como <br />
-            <span className="text-gradient">desarrollador</span>
-          </h1>
+            <h1 className="hero-title">
+              Construye tu marca personal como <br />
+              <span className="text-gradient">desarrollador</span>
+            </h1>
 
-          <p className="hero-subtitle">
-            Crea, gestiona y comparte tu portafolio profesional en minutos.
-            Destaca tus proyectos, habilidades técnicas y experiencia para
-            conseguir tu próximo gran empleo.
-          </p>
+            <p className="hero-subtitle">
+              Crea, gestiona y comparte tu portafolio profesional en minutos.
+              Destaca tus proyectos, habilidades técnicas y experiencia para
+              conseguir tu próximo gran empleo.
+            </p>
 
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', alignItems: 'center' }}>
-            <button className="btn-primary" onClick={() => navigate('/register')} style={{ padding: '1rem 2rem'}}>Comenzar ahora<ArrowRight size={18} /></button>
-            <button className="btn-ghost" onClick={() => startLandingTour(true)} style={{ padding: '1rem 2rem'}}>Repetir Tour</button>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', alignItems: 'center' }}>
+              <button className="btn-primary" onClick={() => safeNavigate('/register')} style={{ padding: '1rem 2rem'}}>Comenzar ahora<ArrowRight size={18} /></button>
+              <button className="btn-ghost" onClick={() => startLandingTour(true)} style={{ padding: '1rem 2rem'}}>Repetir Tour</button>
+            </div>
           </div>
 
           {/* MOCKUP DE TERMINAL */}
@@ -66,8 +80,8 @@ export const LandingPage = () => {
 
         {/* FEATURES SECTION */}
         <section id="tour-features" style={{ backgroundColor: 'var(--card)' }} className="section">
-          {/* ... Todo el contenido original se mantiene intacto ... */}
-          <div className="text-center">
+          {/* Encabezado enfocado para el tour */}
+          <div className="text-center" id="tour-features-header">
             <h2 className="section-title">Todo lo que necesitas para destacar</h2>
             <p className="section-subtitle">
               Herramientas diseñadas específicamente para las necesidades de
@@ -141,12 +155,14 @@ export const LandingPage = () => {
 
         {/* SOBRE NOSOTROS */}
         <section id="About-Us" className="cta-section">
-          {/* ... Todo el contenido original se mantiene intacto ... */}
-          <h2 className="cta-title">¿Listo para destacar en la industria tech?</h2>
-          <p className="cta-text">Únete a cientos de desarrolladores que ya están utilizando DevFolio para impulsar sus carreras profesionales.</p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-            <button id="tour-cta" className="btn-primary" onClick={() => navigate('/register')} style={{ padding: '1rem 2rem'}}>Crear mi portafolio gratis</button>
-            <button className="btn-ghost" onClick={() => navigate('/explorar')}>Explorar ejemplos</button>
+          {/* Contenedor enfocado para el tour CTA */}
+          <div id="tour-cta-section">
+            <h2 className="cta-title">¿Listo para destacar en la industria tech?</h2>
+            <p className="cta-text">Únete a cientos de desarrolladores que ya están utilizando DevFolio para impulsar sus carreras profesionales.</p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button id="tour-cta" className="btn-primary" onClick={() => safeNavigate('/register')} style={{ padding: '1rem 2rem'}}>Crear mi portafolio gratis</button>
+              <button className="btn-ghost" onClick={() => safeNavigate('/explorar')}>Explorar ejemplos</button>
+            </div>
           </div>
         </section>
 

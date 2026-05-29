@@ -998,6 +998,24 @@ html.dark .table-striped>tbody>tr:nth-of-type(odd)>* {
   color: var(--text-main) !important;
 }
 
+/* Áreas de enfoque del tour — padding para que el highlight no quede pegado */
+#tour-hero-content {
+  text-align: center;
+  padding: 1rem;
+  border-radius: 16px;
+}
+
+#tour-features-header {
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+#tour-cta-section {
+  padding: 1.5rem;
+  border-radius: 16px;
+  text-align: center;
+}
+
 /* Flecha del popover */
 .driver-popover.tour-popover-custom .driver-popover-arrow {
   border-color: var(--card) !important;
