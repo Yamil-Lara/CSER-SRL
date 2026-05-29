@@ -287,7 +287,7 @@ export function DashboardPage() {
                         </span>
                       </td>
                       <td className="px-5 py-4 text-right">
-                        <Link to={`/portafolio/${visitor.username}`}>
+                        <Link to={`/portfolio/${visitor.username}`}>
                           <Button variant="ghost" size="sm" className="h-8 text-sm font-bold text-primary hover:bg-primary/5 hover:text-primary-hover px-3 rounded-lg">
                             Ver perfil
                           </Button>
@@ -346,14 +346,14 @@ export function DashboardPage() {
                     <tr key={c.id} className="hover:bg-muted/10 transition-colors">
                       <td className="px-5 py-4">
                         {c.autor ? (
-                          <div className="flex items-center gap-2">
+                          <Link to={`/portfolio/${c.autor.username}`} className="flex items-center gap-2 group/author">
                             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs flex-shrink-0">
                               {c.autor.avatarLetter}
                             </div>
-                            <span className="text-sm font-semibold text-sidebar line-clamp-1">
+                            <span className="text-sm font-semibold text-sidebar group-hover/author:text-primary line-clamp-1 transition-colors">
                               {c.autor.nombre}
                             </span>
-                          </div>
+                          </Link>
                         ) : (
                           <span className="text-sm text-sidebar/40 italic">Anónimo</span>
                         )}
