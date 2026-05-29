@@ -41,7 +41,7 @@ export const startLandingTour = (force = false) => {
     {
       // Paso 0: BIENVENIDA — sin element, centrado en pantalla
       popover: {
-        title: '¡Bienvenido a DevFolio! 🚀',
+        title: 'Bienvenido a DevFolio',
         description: 'La plataforma definitiva para mostrar tu talento y código al mundo. Te guiaremos por las secciones principales.',
         align: 'center',
         side: 'over',
@@ -81,7 +81,7 @@ export const startLandingTour = (force = false) => {
       // Paso 4: Enfocar la sección CTA completa (título + botones juntos)
       element: '#tour-cta-section',
       popover: {
-        title: '¡Crea tu cuenta gratis!',
+        title: 'Crea tu cuenta gratis',
         description: 'Regístrate ahora y empieza a construir tu marca personal como desarrollador. ¡Es completamente gratis!',
         side: 'top',
         align: 'center'
@@ -100,7 +100,7 @@ export const startLandingTour = (force = false) => {
     popoverClass: 'tour-popover-custom',
     nextBtnText: 'Siguiente',
     prevBtnText: 'Atrás',
-    doneBtnText: '¡Entendido!',
+    doneBtnText: 'Entendido',
     disableActiveInteraction: true,  // Impide que clicks en el elemento activo naveguen
     steps,
     onPopoverRender: (popover, { state }) => {
