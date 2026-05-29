@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useProjects } from '../hooks/useProjects';
 import { useVisitas } from '../hooks/useVisitas';
 import { useComentariosRecientes } from '../hooks/useComentariosRecientes';
+import { useExperience } from '../hooks/useExperience';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
@@ -15,16 +16,19 @@ export function DashboardPage() {
   const { projects, loading, error, deleteProject } = useProjects();
   const { visitasEsteMes, visitantesRecientes, loading: loadingVisitas } = useVisitas();
   const { comentarios, loading: loadingComentarios } = useComentariosRecientes();
+  const { experiences } = useExperience();
 
   const completitudItems = [
-    { label: 'Foto de perfil',  done: !!user?.foto },
-    { label: 'Profesión',       done: !!user?.profesion },
-    { label: 'Especialidad',    done: !!user?.especialidad },
-    { label: 'Biografía',       done: !!user?.biografia },
-    { label: 'Ubicación',       done: !!user?.ubicacion },
-    { label: 'Teléfono',        done: !!user?.telefono },
-    { label: 'Red social',      done: !!(user?.linkedin || user?.github_perfil || user?.sitio_web) },
-    { label: 'Proyecto publicado', done: projects.some((p) => p.estado === 'aprobado') },
+    { label: 'Foto de perfil',       done: !!user?.foto },
+    { label: 'Profesión',            done: !!user?.profesion },
+    { label: 'Especialidad',         done: !!user?.especialidad },
+    { label: 'Biografía',            done: !!user?.biografia },
+    { label: 'Ubicación',            done: !!user?.ubicacion },
+    { label: 'Teléfono',             done: !!user?.telefono },
+    { label: 'Red social',           done: !!(user?.linkedin || user?.github_perfil || user?.sitio_web) },
+    { label: 'Proyecto publicado',   done: projects.some((p) => p.estado === 'aprobado') },
+    { label: 'Experiencia laboral',  done: experiences.some((e) => e.tipo === 'laboral') },
+    { label: 'Formación académica',  done: experiences.some((e) => e.tipo === 'academica') },
   ];
   const completitudPct = Math.round(
     (completitudItems.filter((i) => i.done).length / completitudItems.length) * 100
@@ -283,7 +287,7 @@ export function DashboardPage() {
                         </span>
                       </td>
                       <td className="px-5 py-4 text-right">
-                        <Link to={`/portafolio/${visitor.username}`}>
+                        <Link to={`/portfolio/${visitor.username}`}>
                           <Button variant="ghost" size="sm" className="h-8 text-sm font-bold text-primary hover:bg-primary/5 hover:text-primary-hover px-3 rounded-lg">
                             Ver perfil
                           </Button>
@@ -342,14 +346,14 @@ export function DashboardPage() {
                     <tr key={c.id} className="hover:bg-muted/10 transition-colors">
                       <td className="px-5 py-4">
                         {c.autor ? (
-                          <div className="flex items-center gap-2">
+                          <Link to={`/portfolio/${c.autor.username}`} className="flex items-center gap-2 group/author">
                             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs flex-shrink-0">
                               {c.autor.avatarLetter}
                             </div>
-                            <span className="text-sm font-semibold text-sidebar line-clamp-1">
+                            <span className="text-sm font-semibold text-sidebar group-hover/author:text-primary line-clamp-1 transition-colors">
                               {c.autor.nombre}
                             </span>
-                          </div>
+                          </Link>
                         ) : (
                           <span className="text-sm text-sidebar/40 italic">Anónimo</span>
                         )}

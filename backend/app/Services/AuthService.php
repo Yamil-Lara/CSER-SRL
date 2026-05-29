@@ -76,12 +76,30 @@ class AuthService
     private function formatUser(User $user): array
     {
         return [
-            'id' => $user->id,
-            'nombre' => $user->nombre,
-            'username' => $user->username,
-            'email' => $user->email,
-            'rol' => $user->rol,
-            'foto' => $user->foto ? asset('storage/' . $user->foto) : null,
+            'id'              => $user->id,
+            'nombre'          => $user->nombre,
+            'username'        => $user->username,
+            'email'           => $user->email,
+            'rol'             => $user->rol,
+            'activo'          => $user->activo,
+            'estado'          => $user->estado,
+            'foto'            => $user->foto ? asset('storage/' . $user->foto) : null,
+            'profesion'       => $user->profesion,
+            'especialidad'    => $user->especialidad,
+            'biografia'       => $user->biografia,
+            'ubicacion'       => $user->ubicacion,
+            'telefono'        => $user->telefono,
+            'linkedin'        => $user->linkedin,
+            'github_perfil'   => $user->github_perfil,
+            'sitio_web'       => $user->sitio_web,
+            'facebook'        => $user->facebook,
+            'instagram'       => $user->instagram,
+            'twitter'         => $user->twitter,
+            'tiktok'          => $user->tiktok,
+            'threads'         => $user->threads,
+            'universidad'     => $user->universidad,
+            'carrera'         => $user->carrera,
+            'nivel_estudios'  => $user->nivel_estudios,
         ];
     }
 }
