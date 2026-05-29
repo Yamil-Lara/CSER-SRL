@@ -1,9 +1,10 @@
 // src/pages/LandingPage.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Code, FolderGit2, Globe, Layout, ShieldCheck, Sparkles, Terminal, Users } from 'lucide-react';
 import '../index.css';
 import { PublicHeader } from '../components/layout/PublicHeader'; // <-- Importar componente
+import { startLandingTour } from '../utils/tour';
 
 export const LandingPage = () => {
   const navigate = useNavigate();
@@ -11,6 +12,11 @@ export const LandingPage = () => {
   // El estado isMenuOpen se mantiene si vas a usarlo posteriormente en un menú móvil en esta vista
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  useEffect(() => {
+    // Iniciar el tour interactivo al cargar la página si no se ha visto antes
+    startLandingTour();
+  }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -20,7 +26,7 @@ export const LandingPage = () => {
 
       <main style={{ flexGrow: 1 }}>
         {/* HERO SECTION */}
-        <section className="hero-section" id="top">
+        <section className="hero-section" id="tour-hero">
           <div className="badge">
             <Sparkles size={16} />
             <span>La nueva forma de mostrar tu código</span>
@@ -39,7 +45,7 @@ export const LandingPage = () => {
 
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', alignItems: 'center' }}>
             <button className="btn-primary" onClick={() => navigate('/register')} style={{ padding: '1rem 2rem'}}>Comenzar ahora<ArrowRight size={18} /></button>
-            <button className="btn-ghost" onClick={() => navigate('/explorar')} style={{ padding: '1rem 2rem'}}>Ver demostración</button>
+            <button className="btn-ghost" onClick={() => startLandingTour(true)} style={{ padding: '1rem 2rem'}}>Repetir Tour</button>
           </div>
 
           {/* MOCKUP DE TERMINAL */}
@@ -59,7 +65,7 @@ export const LandingPage = () => {
         </section>
 
         {/* FEATURES SECTION */}
-        <section id="features" style={{ backgroundColor: 'var(--card)' }} className="section">
+        <section id="tour-features" style={{ backgroundColor: 'var(--card)' }} className="section">
           {/* ... Todo el contenido original se mantiene intacto ... */}
           <div className="text-center">
             <h2 className="section-title">Todo lo que necesitas para destacar</h2>
@@ -105,7 +111,7 @@ export const LandingPage = () => {
         </section>
 
         {/* CÓMO FUNCIONA */}
-        <section id="how-it-works" className="section">
+        <section id="tour-how-it-works" className="section">
           {/* ... Todo el contenido original se mantiene intacto ... */}
           <div className="text-center mb-6">
             <h2 className="section-title">Cómo funciona</h2>
@@ -139,7 +145,7 @@ export const LandingPage = () => {
           <h2 className="cta-title">¿Listo para destacar en la industria tech?</h2>
           <p className="cta-text">Únete a cientos de desarrolladores que ya están utilizando DevFolio para impulsar sus carreras profesionales.</p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-            <button className="btn-primary" onClick={() => navigate('/register')} style={{ padding: '1rem 2rem'}}>Crear mi portafolio gratis</button>
+            <button id="tour-cta" className="btn-primary" onClick={() => navigate('/register')} style={{ padding: '1rem 2rem'}}>Crear mi portafolio gratis</button>
             <button className="btn-ghost" onClick={() => navigate('/explorar')}>Explorar ejemplos</button>
           </div>
         </section>
