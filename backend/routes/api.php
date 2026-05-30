@@ -30,11 +30,11 @@ Route::post('/login', LoginController::class);
 Route::get('/proyectos', [ProyectoController::class, 'index']);
 Route::get('/proyectos/{id}', [ProyectoController::class, 'show']);
 Route::get('/categorias', [CategoriaController::class, 'index']);
-Route::get('/usuarios/{id}', [AdminUserController::class, 'show']);
+
 
 // HU-06: Portafolio público
 Route::get('/portafolio/{username}', [PortafolioController::class, 'show']);
-Route::post('/portafolio/{username}/visita', [PortafolioController::class, 'registrarVisita']);
+Route::middleware('throttle:10,1')->post('/portafolio/{username}/visita', [PortafolioController::class, 'registrarVisita']);
 Route::get('/portafolio/{username}/proyectos', [PortafolioController::class, 'proyectos']);
 Route::get('/portafolio/{username}/experiencias', [PortafolioController::class, 'experiencias']);
 Route::get('/portafolio/{username}/habilidades', [PortafolioController::class, 'habilidades']);
@@ -126,11 +126,5 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
         Route::get('/reportes/excel/comentarios', [\App\Http\Controllers\ReporteController::class, 'comentariosExcel']);
         Route::get('/reportes/excel/general', [\App\Http\Controllers\ReporteController::class, 'generalExcel']);
     });
-
-    // En la sección de RUTAS PÚBLICAS (fuera del middleware auth:sanctum)
-    Route::get('/proyectos/{proyectoId}/comentarios', [\App\Http\Controllers\ComentarioController::class, 'index']);
-
-    // En la sección de RUTAS PROTEGIDAS (dentro del middleware auth:sanctum)
-    Route::post('/proyectos/{proyectoId}/comentarios', [\App\Http\Controllers\ComentarioController::class, 'store']);
 
 });

@@ -170,6 +170,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     // Limpiar el estado del usuario
     setUser(null);
+
+    // Forzar recarga completa para evitar que el botón "Atrás" muestre páginas protegidas
+    // window.location.replace reemplaza la entrada actual del historial
+    window.location.replace('/login');
   }
 };
 
