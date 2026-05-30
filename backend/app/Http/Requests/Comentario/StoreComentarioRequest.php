@@ -31,7 +31,7 @@ class StoreComentarioRequest extends FormRequest
     {
         if ($this->has('contenido') && $this->contenido !== null) {
             $this->merge([
-                'contenido' => trim($this->contenido),
+                'contenido' => strip_tags(trim($this->contenido)),
             ]);
         }
     }

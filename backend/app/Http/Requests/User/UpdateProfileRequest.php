@@ -96,6 +96,20 @@ class UpdateProfileRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        // Sanitizar campos de texto libre contra XSS
+        $textFields = [
+            'nombre', 'profesion', 'especialidad', 'universidad',
+            'carrera', 'nivel_estudios', 'biografia', 'ubicacion'
+        ];
+
+        foreach ($textFields as $field) {
+            if ($this->has($field) && $this->$field !== null) {
+                $this->merge([
+                    $field => strip_tags(trim($this->$field)),
+                ]);
+            }
+        }
+
         // Sanitizar URLs
         $urlFields = [
             'linkedin', 'github_perfil', 'sitio_web', 

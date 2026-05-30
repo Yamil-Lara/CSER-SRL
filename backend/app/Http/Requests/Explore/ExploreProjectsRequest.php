@@ -16,6 +16,7 @@ class ExploreProjectsRequest extends FormRequest
         return [
             'search' => 'nullable|string|max:255',
             'categoria_id' => 'nullable|integer|exists:categorias,id',
+            'filter' => 'nullable|in:profesionales,estudiantes',
             'page' => 'nullable|integer|min:1',
             'per_page' => 'nullable|integer|min:1|max:12',
         ];
@@ -26,6 +27,7 @@ class ExploreProjectsRequest extends FormRequest
         return [
             'categoria_id.integer' => 'El ID de categoría debe ser un número entero',
             'categoria_id.exists' => 'La categoría seleccionada no existe',
+            'filter.in' => 'El filtro de usuarios no es válido',
             'page.integer' => 'El número de página debe ser un entero',
             'page.min' => 'El número de página mínimo es 1',
             'per_page.integer' => 'El tamaño de página debe ser un número entero',

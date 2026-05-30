@@ -65,11 +65,18 @@ export default function PortfolioPublico() {
                        parsedTags = [];
                    }
                 }
+                
+                let parsedTools: string[] = [];
+                if (p.herramientas) {
+                   parsedTools = p.herramientas.split(',');
+                }
+
                 return {
                     id: p.id,
                     title: p.titulo,
                     description: p.descripcion,
-                    tags: parsedTags,
+                    tags: parsedTags.map((t: string) => t.trim()).filter(Boolean),
+                    tools: parsedTools.map((t: string) => t.trim()).filter(Boolean),
                     image: buildUrl(p.imagen)
                 };
           }),
@@ -89,6 +96,9 @@ export default function PortfolioPublico() {
     };
 
     fetchData();
+    api.post(`/portafolio/${username}/visita`).catch((err) => {
+      console.warn('[visita]', err?.response?.data?.message ?? err?.message);
+    });
   }, [username]);
 
   if (loading) {
