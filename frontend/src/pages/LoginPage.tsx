@@ -34,7 +34,7 @@ export default function LoginPage() {
         if (result.user?.rol === 'admin') {
           navigate('/gestion/dashboard');
         } else {
-          navigate('/dashboard/perfil');
+          navigate('/dashboard');
         }
       } else {
         setError(result.message);
