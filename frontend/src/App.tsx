@@ -33,6 +33,8 @@ import AdminCommentPage from "./pages/AdminCommentPage";
 import LoginPage from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 // Componentes temporales para las rutas de admin que faltan
 const AdminDashboard = () => (
@@ -97,6 +99,8 @@ function App(): JSX.Element {
           <Route path="/proyecto/:id" element={<ProjectDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/portfolio/:username" element={<PortfolioPublico />} />
 
           {/* ============================================================ */}
