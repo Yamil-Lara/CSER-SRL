@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from './ui/Card';
 import { 
@@ -47,6 +47,7 @@ export interface PortfolioData {
     date: string;
     description: string;
     isAcademic?: boolean;
+    rawDate?: string;
   }[];
   projects: {
     id: number;
@@ -74,8 +75,35 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
   // Helper para sacar la inicial
   const getInitial = (name: string) => name ? name.charAt(0).toUpperCase() : 'U';
 
-  const vis = data.visibilidad;
+  const vis = data.visibilidad || {};
   const anyVisible = vis.proyectos_visible || vis.habilidades_visible || vis.experiencia_visible;
+
+  // LÓGICA DE FILTRADO CORREGIDA
+  const academicExperiences = data.experience?.filter(exp => exp.isAcademic) || [];
+  
+  // Función para extraer la fecha final y darle valor máximo a "Presente"
+  const getEndDateForSorting = (dateString: string = '') => {
+    // Separamos el string por " - " para obtener la fecha de inicio y fin
+    const parts = dateString.split(' - ');
+    const endPart = parts.length > 1 ? parts[1].trim() : dateString.trim();
+    
+    // Si la fecha de fin es "Presente", devolvemos una fecha muy futura para que siempre quede primero
+    if (endPart.toLowerCase().includes('presente')) {
+      return '9999-12-31';
+    }
+    
+    return endPart;
+  };
+
+  // Ordenamos usando la fecha de fin
+  const latestAcademicExperience = academicExperiences.sort((a, b) => {
+    const endA = getEndDateForSorting(a.date);
+    const endB = getEndDateForSorting(b.date);
+    return endB.localeCompare(endA);
+  })[0];
+
+  // Filtramos las experiencias laborales para la sección inferior
+  const workExperiences = data.experience?.filter(exp => !exp.isAcademic) || [];
 
   return (
     <div className="min-h-screen font-sans" style={{ backgroundColor: 'var(--bg-color)' }}>
@@ -84,9 +112,6 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
       <PublicHeader />
 
       <main className="max-w-6xl mx-auto px-4 pt-32 pb-8">
-        
-
-
         {!anyVisible ? (
           <div className="card flex flex-col items-center justify-center p-12 rounded-2xl shadow-sm mt-8 text-center">
             <div className="p-4 rounded-full mb-4" style={{ backgroundColor: 'var(--muted)', color: 'var(--text-muted)' }}>
@@ -112,21 +137,27 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
               
               <div className="flex flex-col w-full">
                 <h1 className="text-2xl sm:text-3xl font-bold mb-1">{data.name}</h1>
-                <div className="text-primary text-base sm:text-lg font-medium mb-1">{data.profession}</div>
-                <p className="text-muted text-sm mb-4">{data.technologies}</p>
+                <div className="text-primary text-base sm:text-lg font-medium">{data.profession}</div>
+                <p className="text-sm sm:text-base text-gray-500">{data.technologies}</p>
                 
-                <p className="text-sm sm:text-base mb-6 leading-relaxed" style={{ color: 'var(--text-main)' }}>
+                <p className="text-sm sm:text-base leading-relaxed mb-1" style={{ color: 'var(--text-main)' }}>
                   {data.bio}
                 </p>
-
-                {(data.university || data.career) && (
-                  <p className="text-sm sm:text-base mb-6 leading-relaxed" style={{ color: 'var(--text-main)' }}>
-                    {data.university && <div className="text-sm text-gray-600">{data.university}</div>}
-                    {data.career && <div className="text-sm font-semibold text-gray-800">{data.career}</div>}
-                  </p>
+                
+                {latestAcademicExperience && (
+                  <div className="mb-3">
+                    <p className="text-primary text-base sm:text-lg font-medium">
+                      Formación Académica
+                    </p>
+                    
+                    <div>
+                      <div className="font-bold sm:text-base text-gray-800 text-sm" style={{ color: 'var(--text-main)' }}>{latestAcademicExperience.title}</div>
+                      <div className="text-sm sm:text-base text-gray-500">{latestAcademicExperience.company}</div>
+                    </div>
+                  </div>
                 )}
 
-                <div className="flex flex-wrap gap-4 text-sm text-muted mb-6">
+                <div className="flex flex-wrap gap-7 text-sm text-muted mb-6">
                   <div className="flex items-center gap-2">
                     <MapPin size={16} />
                     <span>{data.location}</span>
@@ -300,26 +331,26 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
             {vis.experiencia_visible && data.experience && data.experience.length > 0 && (
               <Card className="card shadow-sm">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="bg-blue-50 text-primary p-2 rounded-lg">
+                  <div className="bg-primary/20 text-primary p-2 rounded-lg">
                     <Briefcase size={20} />
                   </div>
                   <h2 className="text-xl font-bold text-gray-900">Experiencia</h2>
                 </div>
 
-                <div className="space-y-8 relative before:absolute before:inset-0 before:ml-[6px] before:w-[2px] before:-translate-x-px before:bg-gray-200">
+                <div className="space-y-8 relative before:absolute before:inset-0 before:ml-[6px] before:w-[2px] before:-translate-x-px before:bg-gray-500">
                   {data.experience.map((exp, index) => (
                     <div key={index} className="relative pl-6">
-                      <div className="absolute left-[3px] w-2 h-2 rounded-sm bg-primary top-1.5 ring-4 ring-white shadow-sm -translate-x-[2px]"></div>
+                      <div className="absolute left-[3px] w-2 h-2 rounded-sm bg-primary top-1.5 ring-4 bg-primary/20 text-primary shadow-sm -translate-x-[2px]"></div>
                       
-                      <h3 className="text-sm font-bold text-gray-900">{exp.title}</h3>
-                      <p className="text-xs text-gray-600 mt-0.5 mb-2">{exp.company}</p>
+                      <h3 className="font-bold sm:text-base text-gray-800 text-sm" style={{ color: 'var(--text-main)' }}>{exp.title}</h3>
+                      <p className="text-sm sm:text-base text-gray-500 mb-2">{exp.company}</p>
                       
-                      <div className="inline-flex items-center gap-1.5 mb-3 px-1.5 py-0.5 bg-gray-50 text-gray-500 text-[10px] font-medium rounded border border-gray-100 truncate">
+                      <div className="inline-flex items-center gap-1.5 mb-3 px-1.5 py-0.5 bg-gray-200 text-gray-500 text-[10px] font-medium rounded border border-gray-100 truncate">
                         <Briefcase size={10} />
                         <span>{exp.date}</span>
                       </div>
                       
-                      <p className="text-xs text-gray-500 leading-relaxed whitespace-pre-line text-justify pr-2">
+                      <p className="text-xs text-gray-500 leading-relaxed whitespace-pre-line text-justify pr-2 text-[12px]">
                         {exp.description}
                       </p>
                     </div>

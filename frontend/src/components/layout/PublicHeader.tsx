@@ -143,7 +143,7 @@ export const PublicHeader = () => {
           {isAuthenticated ? (
             <>
               {isAdmin ? (
-                <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/admin/dashboard')}>
+                <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/dashboard')}>
                   Vista Global
                 </button>
               ) : (

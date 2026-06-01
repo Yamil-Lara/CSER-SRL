@@ -451,34 +451,6 @@ const response = await api.post(`/profile`, formData, {
           </div>
         </Card>
 
-        {/* === SECCIÓN FORMACIÓN ACADÉMICA === */}
-        <Card>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-lg bg-accent/10">
-              <GraduationCap className="w-5 h-5 text-accent" />
-            </div>
-            <h2 className="text-xl font-bold text-sidebar m-0">Formación Académica</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Input 
-              label="Universidad" 
-              name="universidad" 
-              placeholder="Ej. Universidad Mayor de San Simón" 
-              value={profile.universidad || ''} 
-              onChange={handleChange} 
-              error={errors.universidad}
-            />
-            <Input 
-              label="Carrera" 
-              name="carrera" 
-              placeholder="Ej. Ingeniería de Sistemas" 
-              value={profile.carrera || ''} 
-              onChange={handleChange} 
-              error={errors.carrera} 
-            />
-          </div>
-        </Card>
-
         <div className="flex justify-end gap-3 mt-8">
           <Button variant="ghost" type="button" onClick={() => window.location.reload()}>
             Cancelar
