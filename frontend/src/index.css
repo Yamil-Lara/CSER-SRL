@@ -39,6 +39,9 @@ html.dark,
   --text-muted: #94A3B8;
   --border-color: #1E293B;
   --sidebar-bg: #080C17;
+
+  /* Fuerza al browser a renderizar controles nativos en modo oscuro */
+  color-scheme: dark;
 }
 
 * {
@@ -934,6 +937,43 @@ html.dark .form-select:focus {
   color: var(--text-main) !important;
   border-color: var(--primary) !important;
   box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
+}
+
+/* ── Inputs / Textareas / Selects nativos (componentes UI propios) ── */
+html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html.dark textarea,
+html.dark select {
+  background-color: var(--card) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Opciones de <select> (no heredan CSS vars en Firefox/Safari) */
+html.dark select option {
+  background-color: var(--card);
+  color: var(--text-main);
+}
+
+/* Autofill de Chrome: sobreescribe el fondo amarillo */
+html.dark input:-webkit-autofill,
+html.dark input:-webkit-autofill:hover,
+html.dark input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px var(--card) inset !important;
+  -webkit-text-fill-color: var(--text-main) !important;
+  caret-color: var(--text-main) !important;
+}
+
+/* Ícono del date-picker (invertido para que sea visible en fondo oscuro) */
+html.dark input[type="date"]::-webkit-calendar-picker-indicator,
+html.dark input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+}
+
+/* Placeholder en modo oscuro */
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 1;
 }
 
 /* Tablas de la sección de Experiencia o Proyectos */
