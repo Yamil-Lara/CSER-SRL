@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
@@ -6,7 +6,18 @@ import { Eye, EyeOff, LogIn } from 'lucide-react';
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, loading: authLoading } = useAuth();
+  const { login, loading: authLoading, isAuthenticated, isAdmin } = useAuth();
+
+  // Si el usuario ya está autenticado, redirigir al dashboard correspondiente
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      if (isAdmin) {
+        navigate('/gestion/dashboard', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
+    }
+  }, [authLoading, isAuthenticated, isAdmin, navigate]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
