@@ -190,7 +190,7 @@ export default function AdminUsersPage() {
                 <div className="bg-card border border-muted rounded-xl shadow-sm overflow-x-auto relative w-full">
                     {/* Overlay de carga al cambiar de página */}
                     {loading && users.length > 0 && (
-                        <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] flex items-center justify-center z-10">
+                        <div className="absolute inset-0 bg-card/50 backdrop-blur-[1px] flex items-center justify-center z-10">
                              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
                         </div>
                     )}
@@ -224,7 +224,7 @@ export default function AdminUsersPage() {
                                                 {user.rol}
                                             </Badge>
                                             {authUser?.id === user.id && (
-                                                <span className="text-[10px] bg-sidebar text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm">Tú</span>
+                                                <span className="text-[10px] bg-sidebar-bg text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm">Tú</span>
                                             )}
                                         </div>
                                     </td>

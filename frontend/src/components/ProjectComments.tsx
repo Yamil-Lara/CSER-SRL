@@ -127,9 +127,9 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
     };
 
     return (
-        <section className="bg-white rounded-[32px] p-8 border border-slate-200 shadow-sm">
-            <h3 className="text-xl font-bold text-slate-800 mb-8 flex items-center gap-2">
-                Comentarios <span className="bg-slate-100 text-slate-400 text-sm px-2 py-0.5 rounded-md">{comentarios.length}</span>
+        <section className="bg-[var(--card)] rounded-[32px] p-8 border border-[var(--border-color)] shadow-sm">
+            <h3 className="text-xl font-bold text-[var(--text-main)] mb-8 flex items-center gap-2">
+                Comentarios <span className="bg-[var(--muted)] text-[var(--text-muted)] text-sm px-2 py-0.5 rounded-md">{comentarios.length}</span>
             </h3>
 
             {/* Muestra la caja de comentarios si el usuario inició sesión */}
@@ -147,7 +147,7 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
                                     setErrorMensaje("");
                                 }}
                                 placeholder="Escribe un comentario o pregunta sobre el proyecto..."
-                                className={`w-full border ${errorMensaje ? 'border-red-500' : 'border-slate-200'} rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50 resize-y`}
+                                className={`w-full border ${errorMensaje ? 'border-red-500' : 'border-[var(--border-color)]'} rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-[var(--muted)] text-[var(--text-main)] resize-y placeholder:text-[var(--text-muted)]`}
                                 rows={3}
                                 disabled={submitting}
                             />
@@ -155,20 +155,20 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
                             <button 
                                 onClick={handleEnviarComentario}
                                 disabled={submitting}
-                                className="mt-3 bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 ml-auto hover:bg-slate-800 transition-colors disabled:opacity-50"
+                                className="mt-3 bg-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 ml-auto hover:bg-primary-hover transition-colors disabled:opacity-50"
                             >
                                 <Send size={16} /> {submitting ? 'Publicando...' : 'Publicar'}
                             </button>
                         </div>
                     </div>
                 ) : (
-                    <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 text-center mb-10 flex flex-col items-center justify-center">
-                        <p className="text-slate-600 font-medium">Como administrador, no puedes comentar en los proyectos.</p>
+                    <div className="bg-[var(--muted)] border border-[var(--border-color)] rounded-2xl p-6 text-center mb-10 flex flex-col items-center justify-center">
+                        <p className="text-[var(--text-muted)] font-medium">Como administrador, no puedes comentar en los proyectos.</p>
                     </div>
                 )
             ) : (
-                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 text-center mb-10 flex flex-col items-center justify-center">
-                    <p className="text-slate-600 mb-4 font-medium">Inicia sesión para dejar tu opinión o realizar preguntas sobre este trabajo.</p>
+                <div className="bg-[var(--muted)] border border-[var(--border-color)] rounded-2xl p-6 text-center mb-10 flex flex-col items-center justify-center">
+                    <p className="text-[var(--text-muted)] mb-4 font-medium">Inicia sesión para dejar tu opinión o realizar preguntas sobre este trabajo.</p>
                     <button 
                         onClick={() => navigate('/login')}
                         className="bg-[#3B82F6] text-white px-6 py-2 rounded-xl text-sm font-bold hover:bg-blue-600 shadow-md transition-colors"
@@ -181,38 +181,38 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
             {/* Listado de comentarios aprobados */}
             <div className="mt-6 space-y-6">
                 {loadingComentarios ? (
-                    <p className="text-center text-slate-400 font-medium">Cargando comentarios...</p>
+                    <p className="text-center text-sidebar/60 font-medium">Cargando comentarios...</p>
                 ) : comentarios.length === 0 ? (
                     <div className="text-center py-10">
-                        <MessageSquare size={48} className="mx-auto text-slate-200 mb-3" />
-                        <p className="text-slate-400 font-medium">Aún no hay comentarios. Sé el primero.</p>
+                        <MessageSquare size={48} className="mx-auto text-[var(--border-color)] mb-3" />
+                        <p className="text-sidebar/60 font-medium">Aún no hay comentarios. Sé el primero.</p>
                     </div>
                 ) : (
                     comentarios.map((c) => (
-                        <div key={c.id} className="flex gap-4 border-b border-slate-100 pb-6 last:border-0 last:pb-0 relative group">
-                            <div className="w-10 h-10 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center font-bold flex-shrink-0">
+                        <div key={c.id} className="flex gap-4 border-b border-[var(--border-color)] pb-6 last:border-0 last:pb-0 relative group">
+                            <div className="w-10 h-10 bg-muted text-sidebar/60 rounded-full flex items-center justify-center font-bold flex-shrink-0">
                                 {c.autor?.nombre ? c.autor.nombre.substring(0, 2).toUpperCase() : 'U'}
                             </div>
                             <div className="flex-grow">
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-                                        <span className="font-bold text-slate-800">{c.autor?.nombre || 'Usuario Desconocido'}</span>
-                                        <span className="text-xs text-slate-400 font-medium hidden sm:inline">•</span>
-                                        <span className="text-xs text-slate-400 font-medium">{c.fecha}</span>
+                                        <span className="font-bold text-sidebar">{c.autor?.nombre || 'Usuario Desconocido'}</span>
+                                        <span className="text-xs text-sidebar/60 font-medium hidden sm:inline">•</span>
+                                        <span className="text-xs text-sidebar/60 font-medium">{c.fecha}</span>
                                     </div>
                                     
                                     {/* Botón de basurero: Solo se renderiza si el ID del autor coincide con el ID del usuario en sesión */}
                                     {c.autor?.id === currentUserId && (
                                         <button 
                                             onClick={() => handleEliminarComentario(c.id)}
-                                            className="text-slate-400 hover:text-red-500 transition-colors p-1 rounded-md opacity-0 group-hover:opacity-100 focus:opacity-100"
+                                            className="text-sidebar/60 hover:text-red-500 transition-colors p-1 rounded-md opacity-0 group-hover:opacity-100 focus:opacity-100"
                                             title="Eliminar mi comentario"
                                         >
                                             <Trash2 size={16} />
                                         </button>
                                     )}
                                 </div>
-                                <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">{c.contenido}</p>
+                                <p className="text-[var(--text-muted)] text-sm leading-relaxed whitespace-pre-wrap">{c.contenido}</p>
                             </div>
                         </div>
                     ))

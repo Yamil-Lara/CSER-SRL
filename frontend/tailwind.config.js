@@ -10,28 +10,29 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "hsl(210, 40%, 98%)", // #F2F6F9
+        background: "var(--bg-color)",
         primary: {
-          DEFAULT: "hsl(217, 91%, 60%)", // #3B82F6
+          DEFAULT: "var(--primary)",
           hover: "hsl(217, 91%, 50%)",
         },
         accent: {
-          DEFAULT: "hsl(160, 84%, 39%)", // #10BD83
+          DEFAULT: "var(--accent)",
           hover: "hsl(160, 84%, 29%)",
         },
         muted: {
-          DEFAULT: "hsl(210, 20%, 95%)", // #F0F4F8
-          foreground: "hsl(215, 16%, 47%)",
+          DEFAULT: "var(--muted)",
+          foreground: "var(--text-muted)",
         },
         card: {
-          DEFAULT: "hsl(0, 0%, 100%)", // #FFFFFF
-          foreground: "hsl(222, 47%, 11%)",
+          DEFAULT: "var(--card)",
+          foreground: "var(--text-main)",
         },
         destructive: {
-          DEFAULT: "hsl(0, 84%, 60%)", // #F63B3B
+          DEFAULT: "var(--destructive)",
           hover: "hsl(0, 84%, 50%)",
         },
-        sidebar: "hsl(222, 47%, 11%)", // #0F172A
+        sidebar: "var(--text-main)",
+        "sidebar-bg": "var(--sidebar-bg)",
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
@@ -43,3 +44,4 @@ export default {
   },
   plugins: [],
 }
+

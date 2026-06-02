@@ -123,10 +123,10 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <aside className={`fixed left-0 top-0 h-screen bg-sidebar border-r border-sidebar/10 transition-all duration-300 z-40 flex flex-col ${isCollapsed ? 'w-20' : 'w-64'}`}>
+    <aside className={`fixed left-0 top-0 h-screen bg-sidebar-bg border-r border-black/20 transition-all duration-300 z-40 flex flex-col ${isCollapsed ? 'w-20' : 'w-64'}`}>
       
       {/* Logo de la aplicación */}
-      <div className="h-16 flex items-center px-6 border-b border-sidebar/10">
+      <div className="h-16 flex items-center px-6 border-b border-black/20">
         <Link to={isAdmin ? '/gestion/dashboard' : '/dashboard'} className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/20">
             <span className="text-white font-bold text-sm">&lt;/&gt;</span>
@@ -137,7 +137,7 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
 
       {/* Identificador de Administrador */}
       {isAdmin && !isCollapsed && (
-        <div className="px-3 py-3 border-b border-sidebar/10">
+        <div className="px-3 py-3 border-b border-black/20">
           <div className="flex items-center gap-2 px-3 py-2 bg-primary/10 rounded-lg">
             <Shield className="w-4 h-4 text-primary flex-shrink-0" />
             <span className="text-[10px] font-bold text-primary uppercase tracking-wider">Acceso Administrativo</span>
@@ -171,7 +171,7 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
                 )}
                 {/* Badge flotante para modo colapsado */}
                 {isCollapsed && item.badge !== undefined && (
-                  <div className="absolute top-1 right-2 w-4 h-4 bg-destructive rounded-full flex items-center justify-center border-2 border-sidebar">
+                  <div className="absolute top-1 right-2 w-4 h-4 bg-destructive rounded-full flex items-center justify-center border-2 border-sidebar-bg">
                     <span className="text-[8px] text-white font-bold">{item.badge}</span>
                   </div>
                 )}
@@ -182,7 +182,7 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
       </nav>
 
       {/* Acciones de Cuenta y Sistema */}
-      <div className="border-t border-sidebar/10 p-3 space-y-1">
+      <div className="border-t border-black/20 p-3 space-y-1">
         {!isAdmin && (
           <Link id="tour-user-portfolio" to={`/portfolio/${user?.username}`} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/5 hover:text-white transition-all" title={isCollapsed ? 'Ver Portafolio' : undefined}>
             <Eye className="w-5 h-5 flex-shrink-0" />
