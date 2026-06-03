@@ -43,6 +43,7 @@ class UpdateExperienceRequest extends FormRequest
                 },
             ],
             'eliminar_imagen' => 'sometimes|boolean',
+            'enlace_certificado' => 'nullable|url|max:255',
         ];
     }
 
@@ -61,6 +62,8 @@ class UpdateExperienceRequest extends FormRequest
             'fecha_fin.date' => 'La fecha de fin debe ser una fecha válida',
             'fecha_fin.after' => 'La fecha de fin debe ser posterior a la fecha de inicio',
             'actual.boolean' => 'El campo actual debe ser verdadero o falso',
+            'enlace_certificado.url' => 'El enlace del certificado debe ser una URL válida',
+            'enlace_certificado.max' => 'El enlace no puede superar los 255 caracteres',
         ];
     }
     /**
@@ -84,6 +87,10 @@ class UpdateExperienceRequest extends FormRequest
             $this->merge([
                 'actual' => filter_var($this->actual, FILTER_VALIDATE_BOOLEAN)
             ]);
+        }
+        // Limpiar el enlace
+        if ($this->has('enlace_certificado') && ($this->enlace_certificado === '' || $this->enlace_certificado === 'null')) {
+            $this->merge(['enlace_certificado' => null]);
         }
     }
 }

@@ -22,6 +22,7 @@ class Experience extends Model
         'fecha_fin',
         'actual',
         'imagen',
+        'enlace_certificado',
     ];
 
     protected $casts = [

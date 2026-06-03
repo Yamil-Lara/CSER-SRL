@@ -43,6 +43,7 @@ class StoreExperienceRequest extends FormRequest
                     }
                 },
             ],
+            'enlace_certificado' => 'nullable|url|max:255',
         ];
     }
 
@@ -67,6 +68,8 @@ class StoreExperienceRequest extends FormRequest
             'actual.required' => 'El campo actual es requerido',
             'actual.boolean' => 'El campo actual debe ser verdadero o falso',
             'imagen.max' => 'La imagen no puede superar los 10MB',
+            'enlace_certificado.url' => 'El enlace del certificado debe ser una URL válida',
+            'enlace_certificado.max' => 'El enlace no puede superar los 255 caracteres',
         ];
     }
     /**

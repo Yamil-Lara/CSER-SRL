@@ -30,6 +30,7 @@ export function FormacionAcademicaPage() {
     fecha_inicio: '',
     fecha_fin: '',
     actual: 0,
+    enlace_certificado: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -43,7 +44,7 @@ export function FormacionAcademicaPage() {
   const academicExperiences = experiences.filter((e) => e.tipo === 'academica');
 
   const resetForm = () => {
-    setFormData({ tipo: 'academica', cargo_titulo: '', institucion_empresa: '', descripcion: '', fecha_inicio: '', fecha_fin: '', actual: 0 });
+    setFormData({ tipo: 'academica', cargo_titulo: '', institucion_empresa: '', descripcion: '', fecha_inicio: '', fecha_fin: '', actual: 0, enlace_certificado: '' });    
     setErrors({});
     setEditingExp(null);
     // Limpiar imagen
@@ -66,6 +67,7 @@ export function FormacionAcademicaPage() {
           fecha_inicio: exp.fecha_inicio.split('T')[0],
           fecha_fin: exp.fecha_fin ? exp.fecha_fin.split('T')[0] : '',
           actual: exp.actual ? 1 : 0,
+          enlace_certificado: exp.enlace_certificado || '', // <--- Añadir aquí
         });
         setEditingExp(expId);
         
@@ -178,8 +180,9 @@ export function FormacionAcademicaPage() {
     submitData.append('institucion_empresa', formData.institucion_empresa);
     submitData.append('descripcion', formData.descripcion || ''); // Garantizar que exista
     submitData.append('fecha_inicio', formData.fecha_inicio);
-    submitData.append('fecha_fin', formData.fecha_fin || '');     // Garantizar que exista
+    submitData.append('fecha_fin', formData.fecha_fin || '');
     submitData.append('actual', formData.actual.toString());
+    submitData.append('enlace_certificado', formData.enlace_certificado || ''); // <--- NUEVO
     
     // Adjuntar archivo si el usuario seleccionó uno
     if (imageFile) {
@@ -303,7 +306,20 @@ export function FormacionAcademicaPage() {
                 </div>
                 {exp.descripcion && <p className="text-sm text-sidebar/70">{exp.descripcion}</p>}
 
-                {/* NUEVO BLOQUE: VISUALIZACIÓN DE LA IMAGEN SUBIDA */}
+                {/* BOTÓN DEL ENLACE AL CERTIFICADO */}
+                {exp.enlace_certificado && (
+                  <a 
+                    href={exp.enlace_certificado} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full transition-colors w-fit"
+                  >
+                    <Eye size={14} />
+                    Ver Certificado Digital
+                  </a>
+                )}
+
+                {/* VISUALIZACIÓN DE LA IMAGEN SUBIDA (El que ya tienes) */}
                 {exp.imagen && (
                   <div className="mt-3 group relative max-w-xs overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1 transition-all hover:border-accent/40 hover:shadow-sm">
                     <div className="relative h-24 w-full overflow-hidden rounded-lg bg-slate-100 flex items-center justify-center">
@@ -403,6 +419,20 @@ export function FormacionAcademicaPage() {
               Actualmente estudio aquí
             </label>
           </div>
+
+          {/* NUEVO CAMPO: ENLACE DEL CERTIFICADO */}
+          <div className="mt-4">
+            <Input
+              label="Enlace del Certificado Digital (Opcional)"
+              name="enlace_certificado"
+              type="url"
+              placeholder="Ej: https://www.google.com/certificados/mi-certificado"
+              value={formData.enlace_certificado}
+              onChange={(e) => setFormData({ ...formData, enlace_certificado: e.target.value })}
+              error={errors.enlace_certificado}
+            />
+          </div>
+
           {/* CAMPO DE IMAGEN CON DRAG & DROP */}
           <div className="space-y-2 mt-4">
             <label className="text-sm font-medium text-sidebar">

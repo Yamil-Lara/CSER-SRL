@@ -13,6 +13,7 @@ export interface Experiencia {
   fecha_fin?: string;
   actual: number;
   imagen?: string | null;
+  enlace_certificado?: string | null; // <--- NUEVO CAMPO
 }
 
 export function useExperience() {
