@@ -126,9 +126,10 @@ export const PublicHeader = () => {
 
       {/* MENÚ COLAPSABLE (Links y Acciones) */}
       <div 
+        ref={menuRef}
         className={`w-full md:w-auto md:flex-1 md:flex md:items-center md:justify-between transition-all duration-300 ease-in-out origin-top ${
           isMobileMenuOpen 
-            ? 'flex flex-col mt-2 bg-white backdrop-blur-md rounded-2xl shadow-xl p-6 absolute top-full left-0 right-0 mx-4 md:static md:mx-0 md:bg-transparent md:dark:bg-transparent md:p-0 md:shadow-none md:mt-0' 
+            ? 'flex flex-col mt-2 bg-white dark:bg-slate-900 backdrop-blur-md rounded-2xl shadow-xl p-6 absolute top-full left-0 right-0 mx-4 md:static md:mx-0 md:bg-transparent md:dark:bg-transparent md:p-0 md:shadow-none md:mt-0' 
             : 'hidden md:flex md:mt-0 bg-transparent'
         }`}
       >
@@ -143,11 +144,17 @@ export const PublicHeader = () => {
           {isAuthenticated ? (
             <>
               {isAdmin ? (
-                <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/dashboard')}>
+                <button 
+                  className="px-5 py-2 font-semibold text-slate-700 dark:text-slate-200 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl transition-all duration-200 flex justify-center items-center" 
+                  onClick={() => handleNavigation('/dashboard')}
+                >
                   Vista Global
                 </button>
               ) : (
-                <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/dashboard')}>
+                <button 
+                  className="px-5 py-2 font-semibold text-slate-700 dark:text-slate-200 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl transition-all duration-200 flex justify-center items-center" 
+                  onClick={() => handleNavigation('/dashboard')}
+                >
                   Dashboard
                 </button>
               )}
@@ -157,7 +164,10 @@ export const PublicHeader = () => {
             </>
           ) : (
             <>
-              <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/login')}>
+              <button 
+                className="px-5 py-2 font-semibold text-slate-700 dark:text-slate-200 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl transition-all duration-200 flex justify-center items-center" 
+                onClick={() => handleNavigation('/login')}
+              >
                 Iniciar Sesión
               </button>
               <button className="btn-primary-small flex justify-center items-center" onClick={() => handleNavigation('/register')}>
@@ -176,7 +186,6 @@ export const PublicHeader = () => {
               )}
             </button>
           </div>
-
         </div>
       </div>
     </header>
