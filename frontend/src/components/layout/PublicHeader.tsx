@@ -87,10 +87,10 @@ export const PublicHeader = () => {
 
   return (
     <header
-      className={`navbar fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${
+      className={`flex fixed top-0 left-0 py-0.5 px-2 w-full z-50 justify-between items-center shadow-md dark:shadow-slate-800 transition-all duration-300 ease-in-out ${
         isScrolled
-          ? 'py-3 dark:bg-white/0 backdrop-blur-md shadow-lg' 
-          : 'py-6 bg-transparent'
+          ? 'py-0 dark:bg-white/0 backdrop-blur-md shadow-lg dark:shadow-primary/20' 
+          : 'py-1.5 bg-transparent dark:shadow-none'
       }`}
     >
       {/* BARRA SUPERIOR PRINCIPAL */}

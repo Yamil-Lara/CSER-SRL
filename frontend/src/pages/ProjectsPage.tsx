@@ -187,24 +187,30 @@ export default function ProjectsPage() {
 
       {/* Modal para el Gestor de Comentarios */}
       {commentsProject && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-          <div className="bg-white rounded-[24px] w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+          onClick={() => setCommentsProject(null)} // Cierra al hacer clic en el fondo oscuro
+        >
+          <div 
+            className="bg-white dark:bg-slate-800 rounded-[24px] w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()} // Evita que se cierre al hacer clic dentro del modal
+          >
             {/* Header del Modal */}
-            <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-white">
+            <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800">
               <div>
-                <h2 className="text-xl font-bold text-slate-900">Comentarios del Proyecto</h2>
-                <p className="text-sm text-slate-500 font-medium">{commentsProject.title}</p>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Comentarios del Proyecto</h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{commentsProject.title}</p>
               </div>
               <button 
                 onClick={() => setCommentsProject(null)} 
-                className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-full transition-colors"
+                className="p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-white rounded-full transition-colors"
               >
                 <X size={24} />
               </button>
             </div>
             
             {/* Cuerpo del Modal */}
-            <div className="overflow-y-auto p-6 bg-slate-50 flex-1">
+            <div className="overflow-y-auto p-6 bg-slate-50 dark:bg-slate-900 flex-1">
               <ProjectCommentsManager proyectoId={commentsProject.id} />
             </div>
           </div>

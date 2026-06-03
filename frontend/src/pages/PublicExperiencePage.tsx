@@ -167,7 +167,7 @@ export default function PublicExperiencePage() {
     <div className="min-h-screen font-sans bg-gray-50 dark:bg-gray-900" style={{ backgroundColor: 'var(--bg-color)' }}>
       <PublicHeader />
 
-      <main className="max-w-6xl mx-auto px-4 pt-32 pb-12">
+      <main className="max-w-6xl mx-auto px-4 pt-28 pb-12">
         <button 
           onClick={() => navigate(`/portfolio/${username}`)}
           className="flex items-center gap-2 text-gray-500 hover:text-primary mb-6 transition-colors font-medium"

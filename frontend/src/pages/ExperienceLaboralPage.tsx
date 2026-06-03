@@ -272,7 +272,7 @@ export function ExperienceLaboralPage() {
           <div className="space-y-6">
             {laboralExperiences.map((exp) => (
               <div key={exp.id} className="relative pl-8 pb-6 border-l-2 border-primary/20 last:border-l-0 last:pb-0">
-                <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-primary border-4 border-background" />
+                <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-primary border-4 border-white dark:border-gray-800" />
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold text-sidebar">{exp.cargo_titulo}</h3>
@@ -314,8 +314,8 @@ export function ExperienceLaboralPage() {
 
                 {/* VISUALIZACIÓN DE LA IMAGEN SUBIDA */}
                 {exp.imagen && (
-                  <div className="mt-3 group relative max-w-xs overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1 transition-all hover:border-primary/40 hover:shadow-sm">
-                    <div className="relative h-24 w-full overflow-hidden rounded-lg bg-slate-100 flex items-center justify-center">
+                  <div className="mt-3 group relative max-w-xs overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-1 transition-all hover:border-primary/40 hover:shadow-sm">
+                    <div className="relative h-24 w-full overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center">
                       <img 
                         src={buildUrl(exp.imagen)} 
                         alt="Comprobante" 
@@ -325,7 +325,7 @@ export function ExperienceLaboralPage() {
                         href={buildUrl(exp.imagen)} 
                         target="_blank" 
                         rel="noreferrer"
-                        className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity text-xs font-semibold gap-1.5 backdrop-blur-[1px]"
+                        className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity text-xs font-semibold gap-1.5 backdrop-blur-[1px]"
                       >
                         <Eye size={14} /> Ver Comprobante
                       </a>
@@ -436,34 +436,34 @@ export function ExperienceLaboralPage() {
               onDragLeave={handleDragLeave}
               onDragOver={handleDragOver}
               onDrop={handleDrop}
-              className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-muted-foreground/30 rounded-lg transition-colors overflow-hidden relative bg-card hover:bg-muted/50 cursor-pointer"
+              className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-muted-foreground/30 dark:border-slate-600 rounded-lg transition-colors overflow-hidden relative bg-card dark:bg-slate-800/50 hover:bg-muted/50 dark:hover:bg-slate-700/50 cursor-pointer"
               onClick={() => fileInputRef.current?.click()}
             >
               {imagePreview ? (
                 <div className="relative w-full h-full">
-                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                  <button 
-                    type="button" 
-                    onClick={(e) => { 
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setImageFile(null); 
-                      setImagePreview(null);
-                      setImagenEliminada(true); 
-                      if(fileInputRef.current) fileInputRef.current.value = '';
-                    }} 
-                    className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1.5 hover:bg-destructive/90 transition-colors z-10 shadow-sm"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-              ) : (
+                    <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                    <button 
+                      type="button" 
+                      onClick={(e) => { 
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setImageFile(null); 
+                        setImagePreview(null);
+                        setImagenEliminada(true); 
+                        if(fileInputRef.current) fileInputRef.current.value = '';
+                      }} 
+                      className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1.5 hover:bg-destructive/90 transition-colors z-10 shadow-sm"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ) : (
                 <div className="flex flex-col items-center justify-center text-center p-4">
-                  <Upload className="w-8 h-8 text-muted-foreground mb-3" />
-                  <p className="text-sm font-medium text-sidebar">
+                  <Upload className="w-8 h-8 text-muted-foreground dark:text-slate-500 mb-3" />
+                  <p className="text-sm font-medium text-sidebar dark:text-slate-300">
                     Haz clic o arrastra un archivo aquí
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">PNG, JPG, WEBP (MAX. 10MB)</p>
+                  <p className="text-xs text-muted-foreground dark:text-slate-500 mt-1">PNG, JPG, WEBP (MAX. 10MB)</p>
                 </div>
               )}
             </div>

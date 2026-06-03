@@ -112,7 +112,7 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
       {/* Header Recreado para Vista Pública */}
       <PublicHeader />
 
-      <main className="max-w-6xl mx-auto px-4 pt-32 pb-8">
+      <main className="max-w-6xl mx-auto px-4 pt-28 pb-8">
         {!anyVisible ? (
           <div className="card flex flex-col items-center justify-center p-12 rounded-2xl shadow-sm mt-8 text-center">
             <div className="p-4 rounded-full mb-4" style={{ backgroundColor: 'var(--muted)', color: 'var(--text-muted)' }}>
