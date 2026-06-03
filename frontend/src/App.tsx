@@ -12,6 +12,7 @@ import AdminBackupsPage from "./pages/AdminBackupsPage";
 import AdminLogsPage from "./pages/AdminLogsPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminReportesPage from "./pages/AdminReportesPage";
+import PublicExperiencePage from './pages/PublicExperiencePage';
 //import Sidebar from "./components/Sidebar";
 
 
@@ -97,7 +98,12 @@ function App(): JSX.Element {
           <Route path="/proyecto/:id" element={<ProjectDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          
+          {/* RUTAS DEL PORTAFOLIO PÚBLICO */}
           <Route path="/portfolio/:username" element={<PortfolioPublico />} />
+          <Route path="/portfolio/:username/proyecto/:projectId" element={<PublicProjectDetail />} />
+          {/* NUEVA RUTA AQUÍ */}
+          <Route path="/portfolio/:username/experiencia" element={<PublicExperiencePage />} />
 
           {/* ============================================================ */}
           {/* RUTAS DE ADMINISTRADOR */}
