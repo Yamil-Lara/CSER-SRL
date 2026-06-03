@@ -42,6 +42,7 @@ class UpdateExperienceRequest extends FormRequest
                     }
                 },
             ],
+            'eliminar_imagen' => 'sometimes|boolean',
         ];
     }
 

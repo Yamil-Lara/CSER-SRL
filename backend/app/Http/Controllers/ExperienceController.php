@@ -58,16 +58,26 @@ class ExperienceController extends Controller
     {
         try {
             $data = $request->validated();
+            // Necesitas el ExperienceRepository (asegúrate de que esté inyectado en el constructor, si no, usa el modelo Experience::findOrFail)
             $experienceOld = $this->experienceRepository->findOrFail($id);
             
-            // ACTUALIZAR IMAGEN SI SE ENVÍA UNA NUEVA
+            // 1. SI SE ENVÍA UNA IMAGEN NUEVA
             if ($request->hasFile('imagen')) {
-                // Eliminar imagen anterior si existe
                 if ($experienceOld->imagen && Storage::disk('public')->exists($experienceOld->imagen)) {
                     Storage::disk('public')->delete($experienceOld->imagen);
                 }
                 $data['imagen'] = $request->file('imagen')->store('formacion', 'public');
+            } 
+            // 2. NUEVO: SI EL USUARIO HIZO CLIC EN LA 'X'
+            elseif (isset($data['eliminar_imagen']) && $data['eliminar_imagen']) {
+                if ($experienceOld->imagen && Storage::disk('public')->exists($experienceOld->imagen)) {
+                    Storage::disk('public')->delete($experienceOld->imagen);
+                }
+                $data['imagen'] = null; // Le indicamos a la base de datos que borre el registro
             }
+
+            // Limpiamos la bandera del array de datos para que no intente guardarse en una columna de la base de datos
+            unset($data['eliminar_imagen']);
 
             $experience = $this->experienceService->updateExperience(Auth::user(), $id, $data);
             return $this->successResponse($experience, 'Experiencia actualizada exitosamente');

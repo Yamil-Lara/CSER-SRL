@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Plus, GraduationCap, Edit, Trash2, Calendar, Building, Eye, Image } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Plus, GraduationCap, Edit, Trash2, Calendar, Building, Upload, X, Eye } from 'lucide-react';
 import { useExperience } from '../hooks/useExperience';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
@@ -10,7 +10,7 @@ import { Alert } from '../components/ui/Alert';
 import { Badge } from '../components/ui/Badge';
 import ConfirmModal from '../components/ConfirmModal';
 // IMPORTAR buildUrl DESDE TU UTILERÍA DE API
-import { buildUrl } from '../utils/api';
+import { buildUrl } from '../utils/api'; // Necesario para cargar la imagen previa del servidor
 
 export function FormacionAcademicaPage() {
   const { experiences, createExperience, updateExperience, deleteExperience, loading } = useExperience();
@@ -33,17 +33,29 @@ export function FormacionAcademicaPage() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // NUEVOS ESTADOS PARA LA IMAGEN (Drag & Drop)
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagenEliminada, setImagenEliminada] = useState(false); // <--- NUEVO ESTADO
+  const dragCounter = useRef(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const academicExperiences = experiences.filter((e) => e.tipo === 'academica');
 
   const resetForm = () => {
     setFormData({ tipo: 'academica', cargo_titulo: '', institucion_empresa: '', descripcion: '', fecha_inicio: '', fecha_fin: '', actual: 0 });
-    setImagen(null); // Resetear imagen
     setErrors({});
     setEditingExp(null);
+    // Limpiar imagen
+    setImageFile(null);
+    setImagePreview(null);
+    setImagenEliminada(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleOpenModal = (expId?: number) => {
     if (expId) {
+      setImagenEliminada(false);
       const exp = academicExperiences.find((e) => e.id === expId);
       if (exp) {
         setFormData({
@@ -56,17 +68,89 @@ export function FormacionAcademicaPage() {
           actual: exp.actual,
         });
         setEditingExp(expId);
+        
+        // Cargar vista previa si existe imagen en el servidor
+        if (exp.imagen) {
+          const imageUrl = buildUrl(exp.imagen);
+          if (imageUrl) {
+            setImagePreview(imageUrl);
+            setImageFile(null); // No hay archivo nuevo, solo vista previa
+          }
+        } else {
+          setImagePreview(null);
+          setImageFile(null);
+        }
       }
     } else {
       resetForm();
     }
-    setImagen(null); // Asegurarse de limpiar el file input al abrir el modal
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     resetForm();
+  };
+
+  // --- MANEJADORES DE IMAGEN (Drag & Drop) ---
+  const processFile = (file: File) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      setErrorMessage('Solo se permiten imágenes JPG, PNG o WEBP');
+      setTimeout(() => setErrorMessage(''), 3000);
+      return false;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setErrorMessage('La imagen no puede superar los 10MB');
+      setTimeout(() => setErrorMessage(''), 3000);
+      return false;
+    }
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+    return true;
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processFile(file);
+    }
+  };
+
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current++;
+    if (dragCounter.current === 1) {
+      e.currentTarget.classList.add('border-primary', 'bg-primary/5'); // Adaptado a tus colores de tema
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current--;
+    if (dragCounter.current === 0) {
+      e.currentTarget.classList.remove('border-primary', 'bg-primary/5');
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current = 0;
+    e.currentTarget.classList.remove('border-primary', 'bg-primary/5');
+    
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      processFile(files[0]);
+    }
   };
 
   const validateForm = () => {
@@ -98,8 +182,13 @@ export function FormacionAcademicaPage() {
     submitData.append('actual', formData.actual.toString());
     
     // Adjuntar archivo si el usuario seleccionó uno
-    if (imagen) {
-      submitData.append('imagen', imagen);
+    if (imageFile) {
+      submitData.append('imagen', imageFile);
+    }
+    
+    // NUEVO: Enviar la bandera si el usuario borró la imagen
+    if (imagenEliminada) {
+      submitData.append('eliminar_imagen', '1');
     }
 
     try {
@@ -274,43 +363,6 @@ export function FormacionAcademicaPage() {
             error={errors.institucion_empresa}
             required
           />
-
-          {/* MUESTRA LA IMAGEN ACTUAL SI ESTAMOS EDITANDO Y YA TIENE UNA */}
-          {editingExp && academicExperiences.find(e => e.id === editingExp)?.imagen && (
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-sidebar flex items-center gap-1.5">
-                <Image size={16} className="text-accent" /> Documento adjunto actual:
-              </label>
-              <div className="relative w-32 h-20 rounded-lg overflow-hidden border bg-muted group">
-                <img 
-                  src={buildUrl(academicExperiences.find(e => e.id === editingExp)?.imagen || '')} 
-                  alt="Vista previa actual" 
-                  className="w-full h-full object-cover"
-                />
-                <a 
-                  href={buildUrl(academicExperiences.find(e => e.id === editingExp)?.imagen || '')} 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs transition-opacity"
-                >
-                  <Eye size={12} className="mr-1" /> Ver grande
-                </a>
-              </div>
-              <p className="text-xs text-sidebar/50">Si seleccionas un archivo nuevo abajo, se reemplazará el actual.</p>
-            </div>
-          )}
-
-          <Input
-            label="Certificado o Imagen de respaldo (Opcional)"
-            name="imagen"
-            type="file"
-            accept="image/jpeg, image/png, image/jpg, image/webp"
-            onChange={(e) => {
-              if (e.target.files && e.target.files[0]) {
-                setImagen(e.target.files[0]);
-              }
-            }}
-          />
           <Textarea
             label="Descripción"
             name="descripcion"
@@ -350,6 +402,60 @@ export function FormacionAcademicaPage() {
             <label htmlFor="actual_academica" className="text-sm text-sidebar">
               Actualmente estudio aquí
             </label>
+          </div>
+          {/* CAMPO DE IMAGEN CON DRAG & DROP */}
+          <div className="space-y-2 mt-4">
+            <label className="text-sm font-medium text-sidebar">
+              Certificado o Imagen de respaldo {!imagePreview && '(Opcional)'}
+            </label>
+            <div
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-muted-foreground/30 rounded-lg transition-colors overflow-hidden relative bg-card hover:bg-muted/50 cursor-pointer"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {imagePreview ? (
+                <div className="relative w-full h-full">
+                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                  <button 
+                    type="button" 
+                    onClick={(e) => { 
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setImageFile(null); 
+                      setImagePreview(null); 
+                      setImagenEliminada(true);
+                      if(fileInputRef.current) fileInputRef.current.value = '';
+                    }} 
+                    className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1.5 hover:bg-destructive/90 transition-colors z-10 shadow-sm"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center text-center p-4">
+                  <Upload className="w-8 h-8 text-muted-foreground mb-3" />
+                  <p className="text-sm font-medium text-sidebar">
+                    Haz clic o arrastra un archivo aquí
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">PNG, JPG, WEBP (MAX. 10MB)</p>
+                </div>
+              )}
+            </div>
+            <input 
+              ref={fileInputRef}
+              type="file" 
+              className="hidden" 
+              accept="image/jpeg,image/png,image/jpg,image/webp" 
+              onChange={handleImageChange} 
+            />
+            {imagePreview && (
+              <p className="text-xs text-primary mt-1">
+                ✓ Archivo listo. Haz clic en la X para cambiarlo.
+              </p>
+            )}
           </div>
         </form>
       </Modal>
