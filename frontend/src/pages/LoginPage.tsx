@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { Eye, EyeOff, LogIn, ArrowLeft } from 'lucide-react';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -58,6 +58,16 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-card p-8 rounded-xl shadow-lg border border-muted">
+        <div className="-mt-2 mb-2">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary-hover transition-colors"
+          >
+            <ArrowLeft size={16} />
+            Volver atrás
+          </Link>
+        </div>
+
         {/* Logo */}
         <div className="text-center">
           <div className="mx-auto h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center">
