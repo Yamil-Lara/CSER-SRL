@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, GraduationCap, Edit, Trash2, Calendar, Building } from 'lucide-react';
+import { Plus, GraduationCap, Edit, Trash2, Calendar, Building, Eye, Image } from 'lucide-react';
 import { useExperience } from '../hooks/useExperience';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
@@ -9,6 +9,8 @@ import { Textarea } from '../components/ui/Textarea';
 import { Alert } from '../components/ui/Alert';
 import { Badge } from '../components/ui/Badge';
 import ConfirmModal from '../components/ConfirmModal';
+// IMPORTAR buildUrl DESDE TU UTILERÍA DE API
+import { buildUrl } from '../utils/api';
 
 export function FormacionAcademicaPage() {
   const { experiences, createExperience, updateExperience, deleteExperience, loading } = useExperience();
@@ -18,6 +20,7 @@ export function FormacionAcademicaPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+  const [imagen, setImagen] = useState<File | null>(null);
 
   const [formData, setFormData] = useState({
     tipo: 'academica' as const,
@@ -34,6 +37,7 @@ export function FormacionAcademicaPage() {
 
   const resetForm = () => {
     setFormData({ tipo: 'academica', cargo_titulo: '', institucion_empresa: '', descripcion: '', fecha_inicio: '', fecha_fin: '', actual: 0 });
+    setImagen(null); // Resetear imagen
     setErrors({});
     setEditingExp(null);
   };
@@ -56,6 +60,7 @@ export function FormacionAcademicaPage() {
     } else {
       resetForm();
     }
+    setImagen(null); // Asegurarse de limpiar el file input al abrir el modal
     setIsModalOpen(true);
   };
 
@@ -81,18 +86,46 @@ export function FormacionAcademicaPage() {
     if (!validateForm()) return;
     setIsSubmitting(true);
     setErrorMessage('');
+
+    // CREAR EL FORM DATA
+    const submitData = new FormData();
+    submitData.append('tipo', formData.tipo);
+    submitData.append('cargo_titulo', formData.cargo_titulo);
+    submitData.append('institucion_empresa', formData.institucion_empresa);
+    submitData.append('descripcion', formData.descripcion || ''); // Garantizar que exista
+    submitData.append('fecha_inicio', formData.fecha_inicio);
+    submitData.append('fecha_fin', formData.fecha_fin || '');     // Garantizar que exista
+    submitData.append('actual', formData.actual.toString());
+    
+    // Adjuntar archivo si el usuario seleccionó uno
+    if (imagen) {
+      submitData.append('imagen', imagen);
+    }
+
     try {
       if (editingExp) {
-        await updateExperience(editingExp, formData);
+        await updateExperience(editingExp, submitData); // Enviar submitData en lugar de formData
         setSuccessMessage('Formación actualizada correctamente');
       } else {
-        await createExperience(formData);
+        await createExperience(submitData); // Enviar submitData en lugar de formData
         setSuccessMessage('Formación creada correctamente');
       }
       handleCloseModal();
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error: any) {
-      setErrorMessage(error.response?.data?.message || 'Hubo un error al guardar la formación.');
+      console.error('Error completo:', error);
+      let errorMsg = "Ocurrió un error al guardar la formación.";
+      
+      // Extraemos los errores específicos de los campos desde Laravel
+      if (error.response?.data?.errors) {
+        const firstError = Object.values(error.response.data.errors)[0];
+        // En Laravel, los errores vienen en arreglos por campo
+        errorMsg = Array.isArray(firstError) ? firstError[0] as string : "Revisa los campos del formulario";
+      } else if (error.response?.data?.message) {
+        errorMsg = error.response.data.message;
+      }
+      
+      setErrorMessage(errorMsg);
     } finally {
       setIsSubmitting(false);
     }
@@ -180,6 +213,28 @@ export function FormacionAcademicaPage() {
                   <span>{formatDate(exp.fecha_inicio)} - {exp.actual ? 'Presente' : formatDate(exp.fecha_fin!)}</span>
                 </div>
                 {exp.descripcion && <p className="text-sm text-sidebar/70">{exp.descripcion}</p>}
+
+                {/* NUEVO BLOQUE: VISUALIZACIÓN DE LA IMAGEN SUBIDA */}
+                {exp.imagen && (
+                  <div className="mt-3 group relative max-w-xs overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1 transition-all hover:border-accent/40 hover:shadow-sm">
+                    <div className="relative h-24 w-full overflow-hidden rounded-lg bg-slate-100 flex items-center justify-center">
+                      <img 
+                        src={buildUrl(exp.imagen)} 
+                        alt="Certificado o comprobante" 
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      {/* Capa interactiva para ampliar al hacer clic */}
+                      <a 
+                        href={buildUrl(exp.imagen)} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity text-xs font-semibold gap-1.5 backdrop-blur-[1px]"
+                      >
+                        <Eye size={14} /> Ver Certificado
+                      </a>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -218,6 +273,43 @@ export function FormacionAcademicaPage() {
             onChange={(e) => setFormData({ ...formData, institucion_empresa: e.target.value })}
             error={errors.institucion_empresa}
             required
+          />
+
+          {/* MUESTRA LA IMAGEN ACTUAL SI ESTAMOS EDITANDO Y YA TIENE UNA */}
+          {editingExp && academicExperiences.find(e => e.id === editingExp)?.imagen && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-sidebar flex items-center gap-1.5">
+                <Image size={16} className="text-accent" /> Documento adjunto actual:
+              </label>
+              <div className="relative w-32 h-20 rounded-lg overflow-hidden border bg-muted group">
+                <img 
+                  src={buildUrl(academicExperiences.find(e => e.id === editingExp)?.imagen || '')} 
+                  alt="Vista previa actual" 
+                  className="w-full h-full object-cover"
+                />
+                <a 
+                  href={buildUrl(academicExperiences.find(e => e.id === editingExp)?.imagen || '')} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs transition-opacity"
+                >
+                  <Eye size={12} className="mr-1" /> Ver grande
+                </a>
+              </div>
+              <p className="text-xs text-sidebar/50">Si seleccionas un archivo nuevo abajo, se reemplazará el actual.</p>
+            </div>
+          )}
+
+          <Input
+            label="Certificado o Imagen de respaldo (Opcional)"
+            name="imagen"
+            type="file"
+            accept="image/jpeg, image/png, image/jpg, image/webp"
+            onChange={(e) => {
+              if (e.target.files && e.target.files[0]) {
+                setImagen(e.target.files[0]);
+              }
+            }}
           />
           <Textarea
             label="Descripción"
