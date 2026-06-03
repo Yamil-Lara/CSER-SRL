@@ -65,7 +65,7 @@ export function FormacionAcademicaPage() {
           descripcion: exp.descripcion || '',
           fecha_inicio: exp.fecha_inicio.split('T')[0],
           fecha_fin: exp.fecha_fin ? exp.fecha_fin.split('T')[0] : '',
-          actual: exp.actual,
+          actual: exp.actual ? 1 : 0,
         });
         setEditingExp(expId);
         
@@ -288,7 +288,7 @@ export function FormacionAcademicaPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {exp.actual === 1 && <Badge variant="success" size="sm">En curso</Badge>}
+                    {exp.actual ? <Badge variant="success" size="sm">En curso</Badge> : null}
                     <Button variant="ghost" size="sm" onClick={() => handleOpenModal(exp.id)}>
                       <Edit className="w-4 h-4" />
                     </Button>
