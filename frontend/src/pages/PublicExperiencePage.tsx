@@ -101,26 +101,27 @@ export default function PublicExperiencePage() {
       <div className={`absolute left-[-9px] top-0 w-4 h-4 rounded-full border-4 border-gray-200 dark:border-gray-700 ${colorClass.replace('border-', 'bg-').split('/')[0]}`} />
       
       <div className="mb-2">
-        <h3 className="text-lg font-bold text-gray-900" style={{ color: 'var(--text-main)' }}>{exp.title}</h3>
-        <div className="flex items-center gap-2 text-gray-600 mt-1">
+        <h3 className="text-lg font-bold" style={{ color: 'var(--text-main)' }}>{exp.title}</h3>
+        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mt-1">
           <Building className="w-4 h-4" />
           <span className="font-medium">{exp.company}</span>
         </div>
       </div>
       
-      <div className="inline-flex items-center gap-1.5 mb-3 px-1.5 py-0.5 bg-gray-200 text-gray-500 text-xs font-medium rounded border border-gray-100 truncate">
+      <div className="inline-flex items-center gap-1.5 mb-3 px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium rounded border border-gray-200 dark:border-gray-700">
         <Calendar size={12} />
         <span>{exp.date}</span>
       </div>
       
       {exp.description && (
-        <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line text-justify mb-4">
+        <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line text-justify mb-4">
           {exp.description}
         </p>
       )}
 
       {/* Enlaces y Certificados */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-4 mt-2">
+        
         {(exp as any).enlace && (
           <a 
             href={(exp as any).enlace} 
@@ -134,16 +135,25 @@ export default function PublicExperiencePage() {
         )}
         
         {(exp as any).imagen && (
-          <a 
-            href={(exp as any).imagen} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-300 px-4 py-2 rounded-lg transition-colors w-fit border border-gray-200"
-          >
-            <ImageIcon size={16} />
-            Ver Documento Adjunto
-          </a>
+          <div className="group relative w-full overflow-hidden rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-1.5 transition-all hover:border-primary/40 dark:hover:border-primary/60 hover:shadow-sm">
+            <div className="relative h-48 w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
+              <img 
+                src={(exp as any).imagen} 
+                alt={`Certificado de ${exp.title}`} 
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <a 
+                href={(exp as any).imagen} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity text-sm font-semibold gap-2 backdrop-blur-[2px]"
+              >
+                <Eye size={18} /> Ampliar documento
+              </a>
+            </div>
+          </div>
         )}
+
       </div>
     </div>
   );

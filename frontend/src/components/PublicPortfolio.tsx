@@ -350,18 +350,15 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
 
                 <div className="mt-2">
                   {data.experience.map((exp, index) => {
-                    // Definimos los colores del borde y el punto según el tipo de experiencia
                     const borderColor = exp.isAcademic ? 'border-accent/40' : 'border-primary/40';
                     const dotColor = exp.isAcademic ? 'bg-accent' : 'bg-primary';
 
                     return (
                       <div key={index} className={`relative pl-8 pb-8 border-l-2 ${borderColor} last:border-l-transparent last:pb-0`}>
-                        {/* EL NUEVO REDONDITO ESTILO BURBUJA */}
                         <div className={`absolute left-[-9px] top-0 w-4 h-4 rounded-full border-4 border-gray-200 dark:border-gray-700 ${dotColor}`} />
                         
-                        {/* TÍTULO Y ETIQUETAS DE CATEGORÍA */}
                         <div className="flex flex-wrap items-center gap-2 mb-1 -mt-1.5">
-                          <h3 className="font-bold sm:text-base text-gray-800 text-sm" style={{ color: 'var(--text-main)' }}>
+                          <h3 className="font-bold sm:text-base text-sm" style={{ color: 'var(--text-main)' }}>
                             {exp.title}
                           </h3>
                           {exp.isAcademic ? (
@@ -375,14 +372,17 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
                           )}
                         </div>
                         
-                        <p className="text-sm sm:text-base text-gray-500 mb-2">{exp.company}</p>
+                        {/* Adaptación para la Empresa */}
+                        <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-2">{exp.company}</p>
                         
-                        <div className="inline-flex items-center gap-1.5 mb-3 px-1.5 py-0.5 bg-gray-200 text-gray-500 text-[10px] font-medium rounded border border-gray-100 truncate">
+                        {/* Adaptación para la Fecha */}
+                        <div className="inline-flex items-center gap-1.5 mb-3 px-1.5 py-0.5 bg-gray-200 dark:bg-gray-800 text-gray-500 dark:text-gray-300 text-[10px] font-medium rounded border border-gray-100 dark:border-gray-700 truncate">
                           <Briefcase size={10} />
                           <span>{exp.date}</span>
                         </div>
                         
-                        <p className="text-xs text-gray-500 leading-relaxed whitespace-pre-line text-justify pr-2 text-[12px]">
+                        {/* Adaptación para la Descripción */}
+                        <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-line text-justify pr-2 text-[12px]">
                           {exp.description}
                         </p>
                       </div>
