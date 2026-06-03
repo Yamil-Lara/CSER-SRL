@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, Loader2, UserPlus } from 'lucide-react'
+import { Eye, EyeOff, Loader2, UserPlus, ArrowLeft } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
@@ -98,6 +98,16 @@ export function RegisterPage() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
+        <div className="mb-6">
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary-hover transition-colors"
+          >
+            <ArrowLeft size={16} />
+            Volver atrás
+          </Link>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-4">
