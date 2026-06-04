@@ -135,7 +135,7 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
       
       {/* Logo de la aplicación */}
       <div className="h-16 flex items-center px-6 border-b border-black/20">
-        <Link to={isAdmin ? '/gestion/dashboard' : '/dashboard'} className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/20">
             <span className="text-white font-bold text-sm">&lt;/&gt;</span>
           </div>

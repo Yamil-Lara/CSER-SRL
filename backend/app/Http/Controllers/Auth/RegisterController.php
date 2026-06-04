@@ -21,7 +21,10 @@ class RegisterController extends Controller
 
     public function __invoke(RegisterRequest $request): JsonResponse
     {
-        $result = $this->authService->register($request->validated());
+        $result = $this->authService->register(
+            $request->validated(),
+            $request->file('foto')
+        );
 
         return $this->successResponse($result['data'], 'Usuario registrado exitosamente', 201);
     }

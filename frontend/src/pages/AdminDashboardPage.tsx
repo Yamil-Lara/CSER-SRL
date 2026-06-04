@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Card } from '../components/ui/Card';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import api from '../utils/api';
 
 // ─── Interfaces ───────────────────────────────────────────────────────────────
@@ -89,9 +90,22 @@ function TableSkeleton({ rows = 5 }: { rows?: number }) {
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-function EstadoToggle({ activo }: { activo: number | boolean }) {
+interface EstadoToggleProps {
+  activo: number | boolean;
+  userId: number;
+  selfId?: number;
+  onToggle: (userId: number, currentStatus: number | boolean) => void;
+}
+function EstadoToggle({ activo, userId, selfId, onToggle }: EstadoToggleProps) {
+  const isSelf = selfId === userId;
   return (
-    <div className={`relative inline-flex items-center w-11 h-6 rounded-full transition-colors ${activo ? 'bg-green-500' : 'bg-gray-300'}`}>
+    <div
+      onClick={() => !isSelf && onToggle(userId, activo)}
+      className={`relative inline-flex items-center w-11 h-6 rounded-full transition-colors
+        ${isSelf ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
+        ${activo ? 'bg-green-500' : 'bg-gray-300'}`}
+      title={isSelf ? 'No puedes bloquearte a ti mismo' : (activo ? 'Desactivar usuario' : 'Activar usuario')}
+    >
       <span className={`inline-block w-4 h-4 bg-white rounded-full shadow transition-transform ${activo ? 'translate-x-6' : 'translate-x-1'}`} />
     </div>
   );
@@ -112,13 +126,14 @@ function EstadoBadge({ estado }: { estado: string }) {
 
 // ─── Componente Principal ─────────────────────────────────────────────────────
 export default function AdminDashboardPage() {
-  const { isAdmin, loading: authLoading } = useAuth();
+  const { isAdmin, loading: authLoading, user: authUser } = useAuth();
   const navigate = useNavigate();
 
   const [data, setData]               = useState<DashboardData | null>(null);
   const [loading, setLoading]         = useState(true);
   const [error, setError]             = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [pendingToggle, setPendingToggle] = useState<{ userId: number; currentStatus: number | boolean; userName: string } | null>(null);
 
   // CA7: doble verificación de rol
   useEffect(() => {
@@ -160,6 +175,29 @@ export default function AdminDashboardPage() {
     if (!authLoading && isAdmin) fetchDashboardData();
   }, [authLoading, isAdmin, fetchDashboardData]);
 
+  const handleToggleRequest = (userId: number, currentStatus: number | boolean) => {
+    const user = data?.recentUsers.find(u => u.id === userId);
+    if (!user) return;
+    setPendingToggle({ userId, currentStatus, userName: user.nombre });
+  };
+
+  const executeToggle = async () => {
+    if (!pendingToggle) return;
+    const { userId, currentStatus } = pendingToggle;
+    const newStatus = !currentStatus;
+    try {
+      await api.put(`/gestion/usuarios/${userId}`, { activo: newStatus });
+      setData(prev => prev ? {
+        ...prev,
+        recentUsers: prev.recentUsers.map(u => u.id === userId ? { ...u, activo: newStatus } : u),
+      } : prev);
+    } catch (err) {
+      console.error('Error al actualizar el estado:', err);
+    } finally {
+      setPendingToggle(null);
+    }
+  };
+
   if (authLoading) return (
     <div className="flex items-center justify-center h-64">
       <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -172,6 +210,7 @@ export default function AdminDashboardPage() {
   const hayAlertas = alertas.proyectosPendientes > 0 || alertas.comentariosPendientes > 0 || alertas.usuariosPendientes > 0;
 
   return (
+    <>
     <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-6">
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
@@ -353,7 +392,12 @@ export default function AdminDashboardPage() {
                       <span className="text-sm text-sidebar/60 truncate">
                         {user.profesion ?? user.especialidad ?? (user.rol === 'admin' ? 'Administrador' : '—')}
                       </span>
-                      <EstadoToggle activo={user.activo} />
+                      <EstadoToggle
+                        activo={user.activo}
+                        userId={user.id}
+                        selfId={authUser?.id}
+                        onToggle={handleToggleRequest}
+                      />
                     </li>
                   ))}
                 </ul>
@@ -423,5 +467,20 @@ export default function AdminDashboardPage() {
       </div>
 
     </div>
+
+    {pendingToggle && (
+      <ConfirmDialog
+        isOpen={!!pendingToggle}
+        onClose={() => setPendingToggle(null)}
+        onConfirm={executeToggle}
+        title={pendingToggle.currentStatus ? `¿Desactivar a ${pendingToggle.userName}?` : `¿Activar a ${pendingToggle.userName}?`}
+        description={pendingToggle.currentStatus
+          ? `El usuario "${pendingToggle.userName}" perderá acceso a la plataforma de inmediato. Podrás reactivarlo en cualquier momento.`
+          : `El usuario "${pendingToggle.userName}" recuperará acceso a la plataforma de inmediato.`}
+        confirmLabel={pendingToggle.currentStatus ? 'Sí, desactivar' : 'Sí, activar'}
+        variant="warning"
+      />
+    )}
+    </>
   );
 }

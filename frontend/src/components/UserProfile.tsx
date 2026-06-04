@@ -7,7 +7,7 @@ import { Input } from './ui/Input';
 import { Button } from './ui/Button';
 import { Textarea } from './ui/Textarea';
 import { User, FileText, GraduationCap, Eye, EyeOff, Save } from 'lucide-react';
-import PhoneInput from 'react-phone-number-input';
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { useAuth } from '../context/AuthContext';
 
@@ -144,6 +144,10 @@ const UserProfile: React.FC = () => {
 
     const carrErr = validateField('carrera', profile.carrera || '');
     if (carrErr) nextErrors.carrera = carrErr;
+
+    if (profile.telefono && !isValidPhoneNumber(profile.telefono)) {
+      nextErrors.telefono = 'El número no es válido para el código de país seleccionado';
+    }
 
     if (fotoFile) {
       const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
@@ -426,16 +430,32 @@ const response = await api.post(`/profile`, formData, {
                 international
                 defaultCountry="BO"
                 value={profile.telefono}
-                onChange={(value) => setProfile((current) => ({ ...current, telefono: value || '' }))}
+                onChange={(value) => {
+                  const phoneValue = value || '';
+                  setProfile((current) => ({ ...current, telefono: phoneValue }));
+                  
+                  if (phoneValue && !isValidPhoneNumber(phoneValue)) {
+                    setErrors(prev => ({ ...prev, telefono: 'El número no es válido para el código de país seleccionado' }));
+                  } else {
+                    setErrors(prev => {
+                      const next = { ...prev };
+                      delete next.telefono;
+                      return next;
+                    });
+                  }
+                }}
                 className={`w-full px-4 py-2.5 bg-card border rounded-lg text-sidebar placeholder:text-sidebar/40 
                   focus-within:ring-2 focus-within:ring-primary focus-within:border-transparent
                   transition-all ${errors.telefono ? 'border-destructive focus-within:ring-destructive' : 'border-muted'}`}
-                placeholder="Ej: +591 12345678"
+                placeholder="Ej: 70000000"
               />
               <style dangerouslySetInnerHTML={{__html: `
                 .PhoneInputInput { border: none !important; outline: none !important; background: transparent !important; flex: 1; }
                 .PhoneInput { display: flex; align-items: center; }
               `}} />
+              {errors.telefono && (
+                <p className="mt-1 text-sm text-destructive">{errors.telefono}</p>
+              )}
             </div>
           </div>
 

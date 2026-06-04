@@ -9,6 +9,7 @@ use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
@@ -21,17 +22,26 @@ class AuthService
         $this->userRepository = $userRepository;
     }
 
-    public function register(array $data): array
+    public function register(array $data, $foto = null): array
     {
-        $user = $this->userRepository->create([
-            'nombre' => $data['nombre'],
-            'username' => $data['username'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'rol' => 'usuario',
-            'estado' => 'pendiente',
-            'activo' => false,
-        ]);
+        $userData = [
+            'nombre'    => $data['nombre'],
+            'username'  => $data['username'],
+            'email'     => $data['email'],
+            'password'  => Hash::make($data['password']),
+            'rol'       => 'usuario',
+            'estado'    => 'pendiente',
+            'activo'    => false,
+            'profesion' => $data['profesion'] ?? null,
+            'ubicacion' => $data['ubicacion'] ?? null,
+            'telefono'  => $data['telefono'] ?? null,
+        ];
+
+        if ($foto) {
+            $userData['foto'] = $foto->store('perfiles', 'public');
+        }
+
+        $user = $this->userRepository->create($userData);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
