@@ -54,7 +54,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className="fixed top-4 right-4 z-50 flex gap-2">
         <button 
           onClick={() => startDashboardTour(!!isAdmin, true)}
-          className="p-2 bg-card border border-muted text-sidebar/70 hover:text-primary rounded-lg shadow-soft transition-colors"
+          className="p-2 bg-card border border-muted opacity-70 hover:text-primary rounded-lg shadow-soft transition-colors"
           title="Ver tour guiado"
         >
           <Info className="w-6 h-6" />
