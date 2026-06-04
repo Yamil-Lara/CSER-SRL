@@ -142,15 +142,15 @@ export const PublicHeader = () => {
         <div className="nav-actions flex flex-col md:flex-row items-center justify-center gap-4 mt-4 md:mt-0 pt-4 md:pt-0 border-t md:border-t-0 border-gray-200 dark:border-gray-700 w-full md:w-auto">
           {isAuthenticated ? (
             <>
-              {isAdmin ? (
-                <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/dashboard')}>
-                  Vista Global
-                </button>
-              ) : (
-                <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/dashboard')}>
-                  Dashboard
-                </button>
-              )}
+                    {isAdmin ? (
+                      <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/dashboard')}>
+                        Panel de Control
+                      </button>
+                    ) : (
+                      <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/dashboard')}>
+                        Dashboard
+                      </button>
+                   )}
               <button className="btn-primary-small flex justify-center items-center" onClick={handleLogout}>
                 Cerrar Sesión
               </button>
