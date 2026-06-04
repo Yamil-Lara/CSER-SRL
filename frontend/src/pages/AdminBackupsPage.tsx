@@ -68,11 +68,11 @@ export default function AdminBackupsPage() {
         <div className="p-6 max-w-7xl mx-auto space-y-8">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-sidebar flex items-center gap-3">
+                    <h1 className="text-2xl sm:text-3xl font-bold  flex items-center gap-3">
                         <Database className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                         Respaldo de Información
                     </h1>
-                    <p className="text-sidebar/70 mt-2 text-sm sm:text-base">Seguridad y Copias del Sistema</p>
+                    <p className="opacity-70 mt-2 text-sm sm:text-base">Seguridad y Copias del Sistema</p>
                 </div>
                 <button onClick={handleCreate} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-lg shadow-primary/20">
                     <RefreshCw className="w-4 h-4" /> Generar Nuevo Backup
@@ -86,10 +86,10 @@ export default function AdminBackupsPage() {
                     <table className="w-full text-left border-collapse min-w-[800px]">
                         <thead className="bg-muted/30">
                             <tr>
-                                <th className="py-4 px-6 text-xs font-bold text-sidebar/50 uppercase">Nombre del Archivo</th>
-                                <th className="py-4 px-6 text-xs font-bold text-sidebar/50 uppercase">Tamaño</th>
-                                <th className="py-4 px-6 text-xs font-bold text-sidebar/50 uppercase">Fecha</th>
-                                <th className="py-4 px-6 text-xs font-bold text-sidebar/50 uppercase text-right">Acciones</th>
+                                <th className="py-4 px-6 text-xs font-bold opacity-50 uppercase">Nombre del Archivo</th>
+                                <th className="py-4 px-6 text-xs font-bold opacity-50 uppercase">Tamaño</th>
+                                <th className="py-4 px-6 text-xs font-bold opacity-50 uppercase">Fecha</th>
+                                <th className="py-4 px-6 text-xs font-bold opacity-50 uppercase text-right">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -98,8 +98,8 @@ export default function AdminBackupsPage() {
                                     <td className="py-4 px-6 text-sm font-medium flex items-center gap-2">
                                         <FileText className="w-4 h-4 text-primary" /> {b.name}
                                     </td>
-                                    <td className="py-4 px-6 text-sm text-sidebar/60">{b.size}</td>
-                                    <td className="py-4 px-6 text-sm text-sidebar/60">{b.date}</td>
+                                    <td className="py-4 px-6 text-sm opacity-60">{b.size}</td>
+                                    <td className="py-4 px-6 text-sm opacity-60">{b.date}</td>
                                     <td className="py-4 px-6 text-right space-x-2">
                                         <button onClick={() => handleDownload(b.name)} className="p-2 text-primary hover:bg-primary/10 rounded-lg"><Download className="w-4 h-4" /></button>
                                         <button onClick={() => handleDelete(b.name)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>

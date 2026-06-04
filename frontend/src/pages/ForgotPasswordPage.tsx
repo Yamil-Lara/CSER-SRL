@@ -33,18 +33,18 @@ export default function ForgotPasswordPage() {
 
   if (sent) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-6 bg-card p-8 rounded-xl shadow-lg border border-muted">
+      <div className="min-h-screen  flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-6 card p-8 rounded-xl shadow-lg border border-muted">
           <div className="text-center">
             <div className="mx-auto h-14 w-14 bg-green-500/10 rounded-full flex items-center justify-center">
               <CheckCircle2 className="text-green-600" size={32} />
             </div>
-            <h2 className="mt-6 text-2xl font-extrabold text-sidebar">Email enviado</h2>
-            <p className="mt-3 text-sm text-sidebar/70">
+            <h2 className="mt-6 text-2xl font-extrabold ">Email enviado</h2>
+            <p className="mt-3 text-sm opacity-70">
               Si el correo <span className="font-semibold">{email}</span> está registrado,
               recibirás un enlace para restablecer tu contraseña.
             </p>
-            <p className="mt-3 text-xs text-sidebar/60">
+            <p className="mt-3 text-xs opacity-60">
               Revisa tu bandeja de entrada y la carpeta de spam. El enlace expira en 60 minutos.
             </p>
           </div>
@@ -64,14 +64,14 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-card p-8 rounded-xl shadow-lg border border-muted">
+    <div className="min-h-screen  flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 card p-8 rounded-xl shadow-lg border border-muted">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center">
             <Mail className="text-primary" size={24} />
           </div>
-          <h2 className="mt-6 text-2xl font-extrabold text-sidebar">¿Olvidaste tu contraseña?</h2>
-          <p className="mt-2 text-sm text-sidebar/60">
+          <h2 className="mt-6 text-2xl font-extrabold ">¿Olvidaste tu contraseña?</h2>
+          <p className="mt-2 text-sm opacity-60">
             Ingresa tu correo y te enviaremos un enlace para restablecerla.
           </p>
         </div>
@@ -84,7 +84,7 @@ export default function ForgotPasswordPage() {
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-sidebar mb-1">
+            <label htmlFor="email" className="block text-sm font-medium  mb-1">
               Correo Electrónico *
             </label>
             <input
@@ -95,7 +95,7 @@ export default function ForgotPasswordPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="appearance-none relative block w-full px-3 py-2 border border-muted bg-card text-sidebar rounded-lg focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+              className="appearance-none relative block w-full px-3 py-2 border border-muted card  rounded-lg focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
               placeholder="tu@email.com"
             />
           </div>
@@ -132,3 +132,5 @@ export default function ForgotPasswordPage() {
     </div>
   );
 }
+
+

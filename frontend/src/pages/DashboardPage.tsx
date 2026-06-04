@@ -29,21 +29,21 @@ export function DashboardPage() {
     return () => clearInterval(timer);
   }, []);
 
-  const completitudItems = [
-    { label: 'Foto de perfil',       done: !!user?.foto },
-    { label: 'Profesión',            done: !!user?.profesion },
-    { label: 'Especialidad',         done: !!user?.especialidad },
-    { label: 'Biografía',            done: !!user?.biografia },
-    { label: 'Ubicación',            done: !!user?.ubicacion },
-    { label: 'Teléfono',             done: !!user?.telefono },
-    { label: 'Red social',           done: !!(user?.linkedin || user?.github_perfil || user?.sitio_web) },
-    { label: 'Proyecto publicado',   done: projects.some((p) => p.estado === 'aprobado') },
-    { label: 'Experiencia laboral',  done: experiences.some((e) => e.tipo === 'laboral') },
-    { label: 'Formación académica',  done: experiences.some((e) => e.tipo === 'academica') },
-  ];
-  const completitudPct = Math.round(
-    (completitudItems.filter((i) => i.done).length / completitudItems.length) * 100
-  );
+ const completitudItems = [
+ { label: 'Foto de perfil', done: !!user?.foto },
+ { label: 'Profesión', done: !!user?.profesion },
+ { label: 'Especialidad', done: !!user?.especialidad },
+ { label: 'Biografía', done: !!user?.biografia },
+ { label: 'Ubicación', done: !!user?.ubicacion },
+ { label: 'Teléfono', done: !!user?.telefono },
+ { label: 'Red social', done: !!(user?.linkedin || user?.github_perfil || user?.sitio_web) },
+ { label: 'Proyecto publicado', done: projects.some((p) => p.estado === 'aprobado') },
+ { label: 'Experiencia laboral', done: experiences.some((e) => e.tipo === 'laboral') },
+ { label: 'Formación académica', done: experiences.some((e) => e.tipo === 'academica') },
+ ];
+ const completitudPct = Math.round(
+ (completitudItems.filter((i) => i.done).length / completitudItems.length) * 100
+ );
 
   const stats = [
     {
@@ -76,33 +76,33 @@ export function DashboardPage() {
     },
   ];
 
-  const recentProjects = projects.slice(0, 5);
+ const recentProjects = projects.slice(0, 5);
 
-  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+ const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
-  const handleDelete = async () => {
-    if (!pendingDeleteId) return;
-    try {
-      await deleteProject(pendingDeleteId);
-    } catch (err: any) {
-      alert("Error al eliminar: " + (err.response?.data?.message || err.message));
-    } finally {
-      setPendingDeleteId(null);
-    }
-  };
+ const handleDelete = async () => {
+ if (!pendingDeleteId) return;
+ try {
+ await deleteProject(pendingDeleteId);
+ } catch (err: any) {
+ alert("Error al eliminar: " + (err.response?.data?.message || err.message));
+ } finally {
+ setPendingDeleteId(null);
+ }
+ };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
+ if (loading) {
+ return (
+ <div className="flex justify-center items-center h-64">
+ <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+ </div>
+ );
+ }
 
   return (
     <div className="space-y-6">
       {/* Header aligned perfectly with the system margins */}
-      <header className="page-header">
+      <header className="page-header flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="page-title">
             Hola, {user?.nombre?.split(' ')[0]}
@@ -111,17 +111,25 @@ export function DashboardPage() {
             Gestiona tu portafolio profesional y mantén tu perfil actualizado
           </p>
         </div>
-        <div className="flex items-center gap-2 text-primary font-bold border border-primary/20 bg-primary/5 px-4 py-2 rounded-lg">
-          <Clock className="w-5 h-5" />
-          <span>{currentTime}</span>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="flex items-center gap-2 text-primary font-bold border border-primary/20 bg-primary/5 px-4 py-2 rounded-lg">
+            <Clock className="w-5 h-5" />
+            <span>{currentTime}</span>
+          </div>
+          <Link to="/dashboard/proyectos" state={{ openCreateModal: true }}>
+            <Button variant="primary" className="gap-2 shadow-sm w-full sm:w-auto">
+              <Plus className="w-5 h-5" />
+              Añadir Nuevo Proyecto
+            </Button>
+          </Link>
         </div>
       </header>
 
-      {error && (
-        <div className="p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-xl text-sm">
-          {error}
-        </div>
-      )}
+ {error && (
+ <div className="p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-xl text-sm">
+ {error}
+ </div>
+ )}
 
       {/* Stats Grid - 4 Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -491,12 +499,14 @@ export function DashboardPage() {
         </div>
       </div>
 
-      <ConfirmModal
-        show={!!pendingDeleteId}
-        onClose={() => setPendingDeleteId(null)}
-        onConfirm={handleDelete}
-        message="¿Estás seguro de que deseas eliminar este proyecto? Esta acción no se puede deshacer."
-      />
-    </div>
-  );
+ <ConfirmModal
+ show={!!pendingDeleteId}
+ onClose={() => setPendingDeleteId(null)}
+ onConfirm={handleDelete}
+ message="¿Estás seguro de que deseas eliminar este proyecto? Esta acción no se puede deshacer."
+ />
+ </div>
+ );
 }
+
+

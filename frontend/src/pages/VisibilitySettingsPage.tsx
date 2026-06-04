@@ -151,7 +151,7 @@ export function VisibilitySettingsPage() {
         </header>
         <div className="flex justify-center items-center h-64">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <span className="ml-2 text-sidebar/70">Cargando configuración...</span>
+          <span className="ml-2 opacity-70">Cargando configuración...</span>
         </div>
       </div>
     );
@@ -213,13 +213,13 @@ export function VisibilitySettingsPage() {
                 >
                   <div className="flex items-start gap-4 flex-1">
                     <div className={`p-3 rounded-lg ${isVisible ? 'bg-primary/10' : 'bg-muted'}`}>
-                      <Icon className={`w-6 h-6 ${isVisible ? 'text-primary' : 'text-sidebar/40'}`} />
+                      <Icon className={`w-6 h-6 ${isVisible ? 'text-primary' : 'opacity-40'}`} />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-sidebar mb-1">
+                      <h3 className="text-lg font-semibold  mb-1">
                         {section.title}
                       </h3>
-                      <p className="text-sm text-sidebar/70">
+                      <p className="text-sm opacity-70">
                         {section.description}
                       </p>
                     </div>

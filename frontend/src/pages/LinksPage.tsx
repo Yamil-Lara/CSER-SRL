@@ -102,7 +102,7 @@ const LinksPage = () => {
 
       {/* Condición de carga movida aquí abajo */}
       {fetching ? (
-        <div className="flex justify-center items-center h-64 text-sidebar/60">
+        <div className="flex justify-center items-center h-64 opacity-60">
           Cargando Redes Sociales...
         </div>
       ) : (

@@ -48,10 +48,10 @@ export function Modal({
         
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-muted">
-          <h2 className="text-2xl font-bold text-sidebar">{title}</h2>
+          <h2 className="text-2xl font-bold ">{title}</h2>
           <button
             onClick={onClose}
-            className="text-sidebar/50 hover:text-sidebar transition-colors p-1 hover:bg-muted rounded-lg">
+            className="opacity-50 hover: transition-colors p-1 hover:bg-muted rounded-lg">
             
             <X className="w-5 h-5" />
           </button>

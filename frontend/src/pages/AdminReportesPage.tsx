@@ -61,8 +61,8 @@ function KpiCard({ label, value, color, icon: Icon }: { label: string; value: nu
         <Icon className="w-5 h-5" />
       </div>
       <div>
-        <div className="text-2xl font-extrabold text-sidebar tabular-nums">{value.toLocaleString('es-ES')}</div>
-        <div className="text-xs text-sidebar/50">{label}</div>
+        <div className="text-2xl font-extrabold  tabular-nums">{value.toLocaleString('es-ES')}</div>
+        <div className="text-xs opacity-50">{label}</div>
       </div>
     </div>
   );
@@ -71,7 +71,7 @@ function KpiCard({ label, value, color, icon: Icon }: { label: string; value: nu
 // ─── Componente de tabla semanal ──────────────────────────────────────────────
 function WeeklyTable({ data, columns }: { data: Record<string, any>[]; columns: { key: string; label: string }[] }) {
   if (!data || data.length === 0) {
-    return <p className="text-sidebar/40 text-sm text-center py-4">Sin datos semanales para este periodo.</p>;
+    return <p className="opacity-40 text-sm text-center py-4">Sin datos semanales para este periodo.</p>;
   }
   return (
     <div className="overflow-x-auto rounded-xl border border-muted">
@@ -79,7 +79,7 @@ function WeeklyTable({ data, columns }: { data: Record<string, any>[]; columns: 
         <thead>
           <tr className="bg-muted/30">
             {columns.map(col => (
-              <th key={col.key} className="text-left px-4 py-2.5 text-xs font-semibold text-sidebar/50 uppercase tracking-wide">{col.label}</th>
+              <th key={col.key} className="text-left px-4 py-2.5 text-xs font-semibold opacity-50 uppercase tracking-wide">{col.label}</th>
             ))}
           </tr>
         </thead>
@@ -87,7 +87,7 @@ function WeeklyTable({ data, columns }: { data: Record<string, any>[]; columns: 
           {data.map((row: any, i: number) => (
             <tr key={i} className="hover:bg-muted/10 transition-colors">
               {columns.map(col => (
-                <td key={col.key} className="px-4 py-2.5 text-sidebar tabular-nums">{row[col.key] ?? 0}</td>
+                <td key={col.key} className="px-4 py-2.5  tabular-nums">{row[col.key] ?? 0}</td>
               ))}
             </tr>
           ))}
@@ -246,14 +246,14 @@ export default function AdminReportesPage() {
             <FileText className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-sidebar leading-tight">Reportes del Sistema</h1>
-            <p className="text-sm text-sidebar/50 mt-0.5">
+            <h1 className="text-2xl font-bold  leading-tight">Reportes del Sistema</h1>
+            <p className="text-sm opacity-50 mt-0.5">
               Genera, consulta y exporta métricas de la plataforma CSER
             </p>
           </div>
         </div>
         {lastUpdated && (
-          <div className="flex items-center gap-2 text-xs text-sidebar/40 self-start">
+          <div className="flex items-center gap-2 text-xs opacity-40 self-start">
             <Clock className="w-3.5 h-3.5" />
             Última actualización: {lastUpdated}
           </div>
@@ -264,7 +264,7 @@ export default function AdminReportesPage() {
       <Card className="!p-5">
         <div className="flex items-center gap-2 mb-3">
           <Calendar className="w-4 h-4 text-primary" />
-          <h2 className="text-sm font-semibold text-sidebar">Periodo de tiempo</h2>
+          <h2 className="text-sm font-semibold ">Periodo de tiempo</h2>
         </div>
 
         <div className="flex flex-wrap gap-2 mb-3">
@@ -275,7 +275,7 @@ export default function AdminReportesPage() {
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all border
                 ${periodoPreset === opt.key
                   ? 'bg-primary text-white border-primary shadow-md'
-                  : 'bg-card text-sidebar/60 border-muted hover:border-primary/30 hover:text-sidebar'
+                  : 'bg-card opacity-60 border-muted hover:border-primary/30 hover:'
                 }`}
             >
               {opt.label}
@@ -286,21 +286,21 @@ export default function AdminReportesPage() {
         {periodoPreset === 'personalizado' && (
           <div className="flex flex-wrap items-center gap-3 mt-3 p-3 rounded-xl bg-muted/20 border border-muted">
             <div className="flex items-center gap-2">
-              <label className="text-xs font-medium text-sidebar/60">Desde:</label>
+              <label className="text-xs font-medium opacity-60">Desde:</label>
               <input
                 type="date"
                 value={fechaInicio}
                 onChange={(e) => setFechaInicio(e.target.value)}
-                className="px-3 py-1.5 rounded-lg border border-muted bg-card text-sidebar text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                className="px-3 py-1.5 rounded-lg border border-muted bg-card  text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
               />
             </div>
             <div className="flex items-center gap-2">
-              <label className="text-xs font-medium text-sidebar/60">Hasta:</label>
+              <label className="text-xs font-medium opacity-60">Hasta:</label>
               <input
                 type="date"
                 value={fechaFin}
                 onChange={(e) => setFechaFin(e.target.value)}
-                className="px-3 py-1.5 rounded-lg border border-muted bg-card text-sidebar text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                className="px-3 py-1.5 rounded-lg border border-muted bg-card  text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
               />
             </div>
           </div>
@@ -319,7 +319,7 @@ export default function AdminReportesPage() {
               className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all border
                 ${isActive
                   ? `${tab.bgColor} ${tab.color} border-current shadow-sm`
-                  : 'bg-card text-sidebar/50 border-muted hover:bg-muted/20 hover:text-sidebar'
+                  : 'bg-card opacity-50 border-muted hover:bg-muted/20 hover:'
                 }`}
             >
               <Icon className="w-4 h-4" />
@@ -401,7 +401,7 @@ export default function AdminReportesPage() {
                 <Card className="!p-4">
                   <div className="flex items-center gap-2 mb-3">
                     <TrendingUp className="w-4 h-4 text-blue-500" />
-                    <h3 className="text-sm font-semibold text-sidebar">Métricas de Usuarios — {d.periodo}</h3>
+                    <h3 className="text-sm font-semibold ">Métricas de Usuarios — {d.periodo}</h3>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <KpiCard label="Registrados" value={d.total_registrados} color="bg-blue-50 text-blue-500 dark:bg-blue-500/10 dark:text-blue-400" icon={Users} />
@@ -414,12 +414,12 @@ export default function AdminReportesPage() {
                 {/* Distribución por rol */}
                 {d.por_rol && Object.keys(d.por_rol).length > 0 && (
                   <Card className="!p-4">
-                    <h3 className="text-sm font-semibold text-sidebar mb-3">Distribución por Rol</h3>
+                    <h3 className="text-sm font-semibold  mb-3">Distribución por Rol</h3>
                     <div className="flex flex-wrap gap-3">
                       {Object.entries(d.por_rol).map(([rol, total]) => (
                         <div key={rol} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-muted/20 border border-muted">
-                          <span className="text-xs font-semibold text-sidebar/50 uppercase">{rol}</span>
-                          <span className="text-lg font-extrabold text-sidebar">{total}</span>
+                          <span className="text-xs font-semibold opacity-50 uppercase">{rol}</span>
+                          <span className="text-lg font-extrabold ">{total}</span>
                         </div>
                       ))}
                     </div>
@@ -428,7 +428,7 @@ export default function AdminReportesPage() {
 
                 {/* Registros por semana */}
                 <Card className="!p-4">
-                  <h3 className="text-sm font-semibold text-sidebar mb-3">Registros por Semana</h3>
+                  <h3 className="text-sm font-semibold  mb-3">Registros por Semana</h3>
                   <WeeklyTable
                     data={d.por_semana}
                     columns={[
@@ -449,7 +449,7 @@ export default function AdminReportesPage() {
                 <Card className="!p-4">
                   <div className="flex items-center gap-2 mb-3">
                     <TrendingUp className="w-4 h-4 text-emerald-500" />
-                    <h3 className="text-sm font-semibold text-sidebar">Métricas de Proyectos — {d.periodo}</h3>
+                    <h3 className="text-sm font-semibold ">Métricas de Proyectos — {d.periodo}</h3>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                     <KpiCard label="Total Creados" value={d.total} color="bg-blue-50 text-blue-500 dark:bg-blue-500/10 dark:text-blue-400" icon={FolderGit2} />
@@ -463,7 +463,7 @@ export default function AdminReportesPage() {
                 {/* Distribución por categoría */}
                 {d.por_categoria && Object.keys(d.por_categoria).length > 0 && (
                   <Card className="!p-4">
-                    <h3 className="text-sm font-semibold text-sidebar mb-3">Distribución por Categoría</h3>
+                    <h3 className="text-sm font-semibold  mb-3">Distribución por Categoría</h3>
                     <div className="flex flex-wrap gap-3">
                       {Object.entries(d.por_categoria).map(([cat, total]) => (
                         <div key={cat} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/25">
@@ -477,7 +477,7 @@ export default function AdminReportesPage() {
 
                 {/* Por semana */}
                 <Card className="!p-4">
-                  <h3 className="text-sm font-semibold text-sidebar mb-3">Proyectos por Semana</h3>
+                  <h3 className="text-sm font-semibold  mb-3">Proyectos por Semana</h3>
                   <WeeklyTable
                     data={d.por_semana}
                     columns={[
@@ -501,7 +501,7 @@ export default function AdminReportesPage() {
                 <Card className="!p-4">
                   <div className="flex items-center gap-2 mb-3">
                     <TrendingUp className="w-4 h-4 text-amber-500" />
-                    <h3 className="text-sm font-semibold text-sidebar">Métricas de Moderación — {d.periodo}</h3>
+                    <h3 className="text-sm font-semibold ">Métricas de Moderación — {d.periodo}</h3>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <KpiCard label="Total Revisados" value={d.total} color="bg-blue-50 text-blue-500 dark:bg-blue-500/10 dark:text-blue-400" icon={MessageSquare} />
@@ -513,7 +513,7 @@ export default function AdminReportesPage() {
 
                 {/* Por semana */}
                 <Card className="!p-4">
-                  <h3 className="text-sm font-semibold text-sidebar mb-3">Moderación por Semana</h3>
+                  <h3 className="text-sm font-semibold  mb-3">Moderación por Semana</h3>
                   <WeeklyTable
                     data={d.por_semana}
                     columns={[
@@ -540,21 +540,21 @@ export default function AdminReportesPage() {
                   <Card className="!p-4 border-l-4 border-l-blue-500">
                     <div className="flex items-center gap-2 mb-3">
                       <Users className="w-4 h-4 text-blue-500" />
-                      <h3 className="text-sm font-semibold text-sidebar">Usuarios</h3>
+                      <h3 className="text-sm font-semibold ">Usuarios</h3>
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-sidebar/60">Total registrados</span>
-                        <span className="text-sm font-bold text-sidebar">{d.usuarios.total}</span>
+                        <span className="text-sm opacity-60">Total registrados</span>
+                        <span className="text-sm font-bold ">{d.usuarios.total}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-sidebar/60">Activos</span>
+                        <span className="text-sm opacity-60">Activos</span>
                         <span className="text-sm font-bold text-emerald-600">{d.usuarios.activos}</span>
                       </div>
                       {d.usuarios.por_rol && Object.entries(d.usuarios.por_rol).map(([rol, total]) => (
                         <div key={rol} className="flex justify-between">
-                          <span className="text-sm text-sidebar/60">Rol: {rol}</span>
-                          <span className="text-sm font-bold text-sidebar">{total}</span>
+                          <span className="text-sm opacity-60">Rol: {rol}</span>
+                          <span className="text-sm font-bold ">{total}</span>
                         </div>
                       ))}
                     </div>
@@ -564,23 +564,23 @@ export default function AdminReportesPage() {
                   <Card className="!p-4 border-l-4 border-l-emerald-500">
                     <div className="flex items-center gap-2 mb-3">
                       <FolderGit2 className="w-4 h-4 text-emerald-500" />
-                      <h3 className="text-sm font-semibold text-sidebar">Proyectos</h3>
+                      <h3 className="text-sm font-semibold ">Proyectos</h3>
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-sidebar/60">Total</span>
-                        <span className="text-sm font-bold text-sidebar">{d.proyectos.total}</span>
+                        <span className="text-sm opacity-60">Total</span>
+                        <span className="text-sm font-bold ">{d.proyectos.total}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-sidebar/60">Aprobados</span>
+                        <span className="text-sm opacity-60">Aprobados</span>
                         <span className="text-sm font-bold text-emerald-600">{d.proyectos.aprobados}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-sidebar/60">Rechazados</span>
+                        <span className="text-sm opacity-60">Rechazados</span>
                         <span className="text-sm font-bold text-red-600">{d.proyectos.rechazados}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-sidebar/60">Pendientes</span>
+                        <span className="text-sm opacity-60">Pendientes</span>
                         <span className="text-sm font-bold text-amber-600">{d.proyectos.pendientes}</span>
                       </div>
                     </div>
@@ -590,23 +590,23 @@ export default function AdminReportesPage() {
                   <Card className="!p-4 border-l-4 border-l-amber-500">
                     <div className="flex items-center gap-2 mb-3">
                       <MessageSquare className="w-4 h-4 text-amber-500" />
-                      <h3 className="text-sm font-semibold text-sidebar">Moderación</h3>
+                      <h3 className="text-sm font-semibold ">Moderación</h3>
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-sidebar/60">Total</span>
-                        <span className="text-sm font-bold text-sidebar">{d.comentarios.total}</span>
+                        <span className="text-sm opacity-60">Total</span>
+                        <span className="text-sm font-bold ">{d.comentarios.total}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-sidebar/60">Aprobados</span>
+                        <span className="text-sm opacity-60">Aprobados</span>
                         <span className="text-sm font-bold text-emerald-600">{d.comentarios.aprobados}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-sidebar/60">Rechazados</span>
+                        <span className="text-sm opacity-60">Rechazados</span>
                         <span className="text-sm font-bold text-red-600">{d.comentarios.rechazados}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-sidebar/60">Pendientes</span>
+                        <span className="text-sm opacity-60">Pendientes</span>
                         <span className="text-sm font-bold text-amber-600">{d.comentarios.pendientes}</span>
                       </div>
                     </div>
@@ -618,7 +618,7 @@ export default function AdminReportesPage() {
                   <Card className="!p-4">
                     <div className="flex items-center gap-2 mb-3">
                       <AlertTriangle className="w-4 h-4 text-amber-500" />
-                      <h3 className="text-sm font-semibold text-sidebar">Alertas Activas del Sistema</h3>
+                      <h3 className="text-sm font-semibold ">Alertas Activas del Sistema</h3>
                     </div>
                     <div className="space-y-2">
                       {d.alertas.map((alerta, i) => (
@@ -651,8 +651,8 @@ export default function AdminReportesPage() {
               <FileText className="w-8 h-8 text-primary/60" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-sidebar/70">Selecciona un periodo y genera tu reporte</h3>
-              <p className="text-sm text-sidebar/40 mt-1">
+              <h3 className="text-lg font-semibold opacity-70">Selecciona un periodo y genera tu reporte</h3>
+              <p className="text-sm opacity-40 mt-1">
                 Elige el tipo de reporte, ajusta el periodo y haz clic en "Generar Reporte" para ver las métricas.
               </p>
             </div>

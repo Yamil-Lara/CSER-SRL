@@ -160,17 +160,17 @@ export default function AdminUsersPage() {
 
             {/* Títulos estáticos */}
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-sidebar flex items-center gap-3">
+                <h1 className="text-3xl font-bold  flex items-center gap-3">
                     <Users className="w-8 h-8 text-primary" />
                     Gestión de Usuarios
                 </h1>
-                <p className="text-sidebar/70 mt-2">Administra los usuarios registrados en la plataforma</p>
+                <p className="opacity-70 mt-2">Administra los usuarios registrados en la plataforma</p>
             </div>
 
             {/* Buscador estático conectado al backend */}
             <div className="bg-card border border-muted rounded-xl p-2 mb-6 shadow-sm">
                 <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-sidebar/40 w-5 h-5" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 opacity-40 w-5 h-5" />
                     <input 
                         type="text" 
                         placeholder="Buscar por nombre, email o profesión..." 
@@ -198,13 +198,13 @@ export default function AdminUsersPage() {
                     <table className="w-full text-left border-collapse min-w-[900px]">
                         <thead>
                             <tr className="border-b border-muted">
-                                <th className="py-4 px-6 font-semibold text-sm text-sidebar/70">Nombre</th>
-                                <th className="py-4 px-6 font-semibold text-sm text-sidebar/70">Correo</th>
-                                <th className="py-4 px-6 font-semibold text-sm text-sidebar/70">Profesión</th>
-                                <th className="py-4 px-6 font-semibold text-sm text-sidebar/70">Rol</th>
-                                <th className="py-4 px-6 font-semibold text-sm text-sidebar/70 text-center">Estado</th>
-                                <th className="py-4 px-6 font-semibold text-sm text-sidebar/70 text-center">Registro</th>
-                                <th className="py-4 px-6 font-semibold text-sm text-sidebar/70 text-center">Acciones</th>
+                                <th className="py-4 px-6 font-semibold text-sm opacity-70">Nombre</th>
+                                <th className="py-4 px-6 font-semibold text-sm opacity-70">Correo</th>
+                                <th className="py-4 px-6 font-semibold text-sm opacity-70">Profesión</th>
+                                <th className="py-4 px-6 font-semibold text-sm opacity-70">Rol</th>
+                                <th className="py-4 px-6 font-semibold text-sm opacity-70 text-center">Estado</th>
+                                <th className="py-4 px-6 font-semibold text-sm opacity-70 text-center">Registro</th>
+                                <th className="py-4 px-6 font-semibold text-sm opacity-70 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -213,11 +213,11 @@ export default function AdminUsersPage() {
                                     <td className="py-4 px-6 text-sm font-medium">
                                         <div className="flex flex-col">
                                             <span>{user.nombre}</span>
-                                            <span className="text-xs text-sidebar/50">@{user.username}</span>
+                                            <span className="text-xs opacity-50">@{user.username}</span>
                                         </div>
                                     </td>
-                                    <td className="py-4 px-6 text-sm text-sidebar/70">{user.email}</td>
-                                    <td className="py-4 px-6 text-sm text-sidebar/70">{user.profesion || '—'}</td>
+                                    <td className="py-4 px-6 text-sm opacity-70">{user.email}</td>
+                                    <td className="py-4 px-6 text-sm opacity-70">{user.profesion || '—'}</td>
                                     <td className="py-4 px-6 text-sm">
                                         <div className="flex items-center gap-2">
                                             <Badge variant={user.rol === 'admin' ? 'destructive' : 'default'} className={user.rol === 'admin' ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-600'}>
@@ -245,7 +245,7 @@ export default function AdminUsersPage() {
                                             <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${user.activo ? 'translate-x-6' : 'translate-x-1'}`} />
                                         </div>
                                     </td>
-                                    <td className="py-4 px-6 text-sm text-center text-sidebar/70 whitespace-nowrap">
+                                    <td className="py-4 px-6 text-sm text-center opacity-70 whitespace-nowrap">
                                         {user.created_at ? new Date(user.created_at).toLocaleDateString() : '—'}
                                     </td>
                                     <td className="py-4 px-6 text-sm">
@@ -278,15 +278,15 @@ export default function AdminUsersPage() {
                             ))}
                             {users.length === 0 && (
                                 <tr>
-                                    <td colSpan={7} className="py-12 text-center text-sidebar/50 bg-muted/10">No se encontraron usuarios.</td>
+                                    <td colSpan={7} className="py-12 text-center opacity-50 bg-muted/10">No se encontraron usuarios.</td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
 
                     {/* Controles de Paginación y Resumen */}
-                    <div className="p-4 border-t border-muted flex flex-col md:flex-row justify-between items-center text-sm text-sidebar/70 bg-muted/10 gap-4">
-                        <span>Total de registros: <strong className="text-sidebar">{totalUsers}</strong></span>
+                    <div className="p-4 border-t border-muted flex flex-col md:flex-row justify-between items-center text-sm opacity-70 bg-muted/10 gap-4">
+                        <span>Total de registros: <strong className="">{totalUsers}</strong></span>
                         
                         {lastPage > 1 && (
                             <div className="flex items-center gap-4">
@@ -297,7 +297,7 @@ export default function AdminUsersPage() {
                                 >
                                     <ChevronLeft className="w-5 h-5" />
                                 </button>
-                                <span className="font-medium text-sidebar">
+                                <span className="font-medium ">
                                     Página {currentPage} de {lastPage}
                                 </span>
                                 <button 

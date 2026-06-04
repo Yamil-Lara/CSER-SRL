@@ -14,14 +14,14 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="w-full">
         {label &&
-        <label className="block text-sm font-medium text-sidebar mb-1.5">
+        <label className="block text-sm font-medium  mb-1.5">
             {label}
             {props.required && <span className="text-destructive ml-1">*</span>}
           </label>
         }
         <select
           ref={ref}
-          className={`w-full px-4 py-2.5 bg-card border rounded-lg text-sidebar
+          className={`w-full px-4 py-2.5 bg-card border rounded-lg 
             focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
             disabled:opacity-50 disabled:cursor-not-allowed transition-all
             ${error ? 'border-destructive focus:ring-destructive' : 'border-muted'}
@@ -36,7 +36,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         </select>
         {error && <p className="mt-1.5 text-sm text-destructive">{error}</p>}
         {helperText && !error &&
-        <p className="mt-1.5 text-sm text-sidebar/60">{helperText}</p>
+        <p className="mt-1.5 text-sm opacity-60">{helperText}</p>
         }
       </div>);
 

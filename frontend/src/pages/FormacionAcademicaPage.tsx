@@ -261,17 +261,17 @@ export function FormacionAcademicaPage() {
           <div className="p-2 rounded-lg bg-accent/10">
             <GraduationCap className="w-6 h-6 text-accent" />
           </div>
-          <h2 className="text-xl font-bold text-sidebar">Formación Académica</h2>
+          <h2 className="text-xl font-bold ">Formación Académica</h2>
         </div>
 
         {loading ? (
-          <p className="text-center py-6 text-sidebar/60">Cargando...</p>
+          <p className="text-center py-6 opacity-60">Cargando...</p>
         ) : academicExperiences.length === 0 ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-              <GraduationCap className="w-8 h-8 text-sidebar/30" />
+              <GraduationCap className="w-8 h-8 opacity-30" />
             </div>
-            <p className="text-sidebar/60 mb-4">No tienes formación académica registrada</p>
+            <p className="opacity-60 mb-4">No tienes formación académica registrada</p>
             <Button variant="outline" size="sm" onClick={() => handleOpenModal()} className="gap-2">
               <Plus className="w-4 h-4" />
               Agregar Primera Formación
@@ -284,8 +284,8 @@ export function FormacionAcademicaPage() {
                 <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-accent border-4 border-white dark:border-gray-800" />
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-sidebar">{exp.cargo_titulo}</h3>
-                    <div className="flex items-center gap-2 text-sidebar/70 mt-1">
+                    <h3 className="text-lg font-semibold ">{exp.cargo_titulo}</h3>
+                    <div className="flex items-center gap-2 opacity-70 mt-1">
                       <Building className="w-4 h-4" />
                       <span>{exp.institucion_empresa}</span>
                     </div>
@@ -300,7 +300,7 @@ export function FormacionAcademicaPage() {
                     </Button>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-sidebar/60 mb-3">
+                <div className="flex items-center gap-2 text-sm opacity-60 mb-3">
                   <Calendar className="w-4 h-4" />
                   <span>{formatDate(exp.fecha_inicio)} - {exp.actual ? 'Presente' : formatDate(exp.fecha_fin!)}</span>
                 </div>
@@ -414,7 +414,7 @@ export function FormacionAcademicaPage() {
               onChange={(e) => setFormData({ ...formData, actual: e.target.checked ? 1 : 0, fecha_fin: '' })}
               className="w-4 h-4 text-primary bg-card border-muted rounded focus:ring-2 focus:ring-primary"
             />
-            <label htmlFor="actual_academica" className="text-sm text-sidebar">
+            <label htmlFor="actual_academica" className="text-sm ">
               Actualmente estudio aquí
             </label>
           </div>
@@ -498,3 +498,4 @@ export function FormacionAcademicaPage() {
     </div>
   );
 }
+

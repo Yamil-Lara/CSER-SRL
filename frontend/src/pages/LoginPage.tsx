@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { Eye, EyeOff, LogIn, ArrowLeft } from 'lucide-react';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -67,15 +67,25 @@ export default function LoginPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-card p-8 rounded-xl shadow-lg border border-muted">
+    <div className="min-h-screen  flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 card p-8 rounded-xl shadow-lg border border-muted">
+        <div className="-mt-2 mb-2">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary-hover transition-colors"
+          >
+            <ArrowLeft size={16} />
+            Volver atrás
+          </Link>
+        </div>
+
         {/* Logo */}
         <div className="text-center">
           <div className="mx-auto h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center">
             <span className="text-primary font-bold text-xl">&lt;/&gt;</span>
           </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-sidebar">Iniciar Sesión</h2>
-          <p className="mt-2 text-sm text-sidebar/60">
+          <h2 className="mt-6 text-3xl font-extrabold ">Iniciar Sesión</h2>
+          <p className="mt-2 text-sm opacity-60">
             Accede a tu portafolio profesional
           </p>
         </div>
@@ -96,7 +106,7 @@ export default function LoginPage() {
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-sidebar mb-1">
+              <label htmlFor="email" className="block text-sm font-medium  mb-1">
                 Correo Electrónico *
               </label>
               <input
@@ -107,13 +117,13 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none relative block w-full px-3 py-2 border border-muted bg-card text-sidebar rounded-lg focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                className="appearance-none relative block w-full px-3 py-2 border border-muted dark:border-slate-700 bg-transparent dark:bg-slate-900/50  rounded-lg focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
                 placeholder="tu@email.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-sidebar mb-1">
+              <label htmlFor="password" className="block text-sm font-medium  mb-1">
                 Contraseña *
               </label>
               <div className="relative">
@@ -125,7 +135,7 @@ export default function LoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none relative block w-full px-3 py-2 border border-muted bg-card text-sidebar rounded-lg focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm pr-10"
+                  className="appearance-none relative block w-full px-3 py-2 border border-muted dark:border-slate-700 bg-transparent dark:bg-slate-900/50  rounded-lg focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm pr-10"
                   placeholder="Tu contraseña"
                 />
                 <button
@@ -160,8 +170,8 @@ export default function LoginPage() {
           </div>
 
           {/* Credenciales de prueba */}
-          <div className="mt-4 p-3 bg-muted rounded-lg">
-            <p className="text-xs text-sidebar/60 text-center">
+          <div className="mt-4 p-3 bg-muted dark:bg-slate-900/60 rounded-lg border border-muted dark:border-slate-700">
+            <p className="text-xs opacity-60 text-center">
               <span className="font-semibold">Credenciales de prueba:</span><br />
               Admin: admin@cser.com / Admin@2026<br />
               Usuario: maria.garcia@cser.com / Usuario@2026
@@ -181,3 +191,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+

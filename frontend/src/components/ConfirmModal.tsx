@@ -37,7 +37,7 @@ const ConfirmModal: React.FC<Props> = ({
         <div className="p-2 bg-amber-100 rounded-full text-amber-600 mt-1">
           <Info className="w-6 h-6" />
         </div>
-        <p className="text-sidebar/80 m-0 whitespace-pre-line">
+        <p className="opacity-80 m-0 whitespace-pre-line">
           {message}
         </p>
       </div>

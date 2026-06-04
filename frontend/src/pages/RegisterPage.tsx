@@ -140,8 +140,17 @@ export function RegisterPage() {
   )
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen  flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
+        <div className="mb-6">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary-hover transition-colors"
+          >
+            <ArrowLeft size={16} />
+            Volver atrás
+          </Link>
+        </div>
 
         {/* Header */}
         <div className="text-center mb-8">
@@ -159,7 +168,6 @@ export function RegisterPage() {
         {/* Card */}
         <div className="bg-card rounded-2xl shadow-soft p-8 border border-muted">
           <StepIndicator />
-
           {generalError && (
             <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
               <p className="text-sm text-destructive">{generalError}</p>
@@ -184,6 +192,7 @@ export function RegisterPage() {
                 disabled={isLoading}
               />
 
+
               <Input
                 label="Correo Electrónico"
                 name="email"
@@ -198,6 +207,7 @@ export function RegisterPage() {
                 required
                 disabled={isLoading}
               />
+
 
               <div className="relative">
                 <Input
@@ -357,7 +367,7 @@ export function RegisterPage() {
           )}
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-sidebar/70">
+            <p className="text-sm opacity-70">
               ¿Ya tienes una cuenta?{' '}
               <Link to="/login" className="text-primary font-medium hover:underline">
                 Inicia sesión
@@ -369,3 +379,5 @@ export function RegisterPage() {
     </div>
   )
 }
+
+
