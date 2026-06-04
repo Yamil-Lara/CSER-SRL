@@ -18,12 +18,12 @@ export function Button({
   const variants = {
     primary:
     'bg-primary text-white hover:bg-primary-hover focus:ring-primary shadow-sm hover:shadow',
-    secondary: 'bg-muted text-sidebar hover:bg-gray-200 focus:ring-gray-200',
+    secondary: 'bg-muted  hover:bg-gray-200 focus:ring-gray-200',
     accent:
     'bg-accent text-white hover:bg-accent-hover focus:ring-accent shadow-sm hover:shadow',
     outline:
     'border-2 border-primary text-primary hover:bg-primary/5 focus:ring-primary',
-    ghost: 'text-sidebar hover:bg-muted focus:ring-muted'
+    ghost: ' hover:bg-muted focus:ring-muted'
   };
   const sizes = {
     sm: 'text-sm px-3 py-1.5',

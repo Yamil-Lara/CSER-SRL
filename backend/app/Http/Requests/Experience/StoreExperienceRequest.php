@@ -29,6 +29,21 @@ class StoreExperienceRequest extends FormRequest
             'fecha_inicio' => 'required|date',
             'fecha_fin' => 'nullable|date|after:fecha_inicio',
             'actual' => 'required|boolean',
+            // NUEVAS REGLAS PARA LA IMAGEN:
+            'imagen' => [
+                'nullable',
+                'file',
+                'max:10240', // 10MB
+                function ($attribute, $value, $fail) {
+                    if ($value instanceof \Illuminate\Http\UploadedFile) {
+                        $extension = strtolower($value->getClientOriginalExtension());
+                        if (!in_array($extension, ['jpeg', 'png', 'jpg', 'webp'])) {
+                            $fail('La imagen debe ser de tipo: jpeg, png, jpg, webp');
+                        }
+                    }
+                },
+            ],
+            'enlace_certificado' => 'nullable|url|max:255',
         ];
     }
 
@@ -52,6 +67,32 @@ class StoreExperienceRequest extends FormRequest
             'fecha_fin.after' => 'La fecha de fin debe ser posterior a la fecha de inicio',
             'actual.required' => 'El campo actual es requerido',
             'actual.boolean' => 'El campo actual debe ser verdadero o falso',
+            'imagen.max' => 'La imagen no puede superar los 10MB',
+            'enlace_certificado.url' => 'El enlace del certificado debe ser una URL válida',
+            'enlace_certificado.max' => 'El enlace no puede superar los 255 caracteres',
         ];
+    }
+    /**
+     * NUEVO: Preparar los datos antes de la validación
+     * Esto limpia los datos sucios que provienen del FormData de React
+     */
+    protected function prepareForValidation(): void
+    {
+        // 1. Convertir string vacío de fecha_fin a verdader null
+        if ($this->has('fecha_fin') && ($this->fecha_fin === '' || $this->fecha_fin === 'null')) {
+            $this->merge(['fecha_fin' => null]);
+        }
+        
+        // 2. Convertir string vacío de descripción a verdadero null
+        if ($this->has('descripcion') && ($this->descripcion === '' || $this->descripcion === 'null')) {
+            $this->merge(['descripcion' => null]);
+        }
+
+        // 3. Asegurar que el booleano 'actual' se evalúe correctamente ("0"/"1" a true/false)
+        if ($this->has('actual')) {
+            $this->merge([
+                'actual' => filter_var($this->actual, FILTER_VALIDATE_BOOLEAN)
+            ]);
+        }
     }
 }

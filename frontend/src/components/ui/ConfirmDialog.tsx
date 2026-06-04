@@ -64,13 +64,13 @@ export function ConfirmDialog({
             <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${iconBg}`}>
               <AlertTriangle className={`w-5 h-5 ${iconColor}`} />
             </div>
-            <h2 id="confirm-dialog-title" className="text-base font-semibold text-sidebar">
+            <h2 id="confirm-dialog-title" className="text-base font-semibold ">
               {title}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="text-sidebar/40 hover:text-sidebar transition-colors p-1 hover:bg-muted rounded-lg"
+            className="opacity-40 hover: transition-colors p-1 hover:bg-muted rounded-lg"
             aria-label="Cerrar"
           >
             <X className="w-5 h-5" />
@@ -79,7 +79,7 @@ export function ConfirmDialog({
 
         {/* Body */}
         <div className="px-6 py-5">
-          <p className="text-sm text-sidebar/70 leading-relaxed">{description}</p>
+          <p className="text-sm opacity-70 leading-relaxed">{description}</p>
         </div>
 
         {/* Footer */}
@@ -100,3 +100,4 @@ export function ConfirmDialog({
     </div>
   );
 }
+

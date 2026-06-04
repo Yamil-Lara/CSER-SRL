@@ -1,11 +1,12 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Card } from './ui/Card';
 import { 
-  Code2, MapPin, Mail, Code, Briefcase, FolderGit2, Image as ImageIcon, GraduationCap 
+  Code2, MapPin, Mail, Code, Briefcase, FolderGit2, Image as ImageIcon, GraduationCap, Calendar 
 } from 'lucide-react';
 import { PublicHeader } from './layout/PublicHeader';
 import { FaLinkedin, FaGithub, FaGlobe, FaFacebook, FaInstagram, FaXTwitter, FaTiktok, FaThreads } from 'react-icons/fa6';
+import ContactOfferModal from './ContactOfferModal';
 
 // Workaround para TypeScript
 const LinkedinIcon = FaLinkedin as React.ElementType;
@@ -71,6 +72,8 @@ interface PublicPortfolioProps {
 
 export default function PublicPortfolio({ data }: PublicPortfolioProps) {
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const { username } = useParams();
 
   // Helper para sacar la inicial
   const getInitial = (name: string) => name ? name.charAt(0).toUpperCase() : 'U';
@@ -111,7 +114,7 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
       {/* Header Recreado para Vista Pública */}
       <PublicHeader />
 
-      <main className="max-w-6xl mx-auto px-4 pt-32 pb-8">
+      <main className="max-w-6xl mx-auto px-4 pt-28 pb-8">
         {!anyVisible ? (
           <div className="card flex flex-col items-center justify-center p-12 rounded-2xl shadow-sm mt-8 text-center">
             <div className="p-4 rounded-full mb-4" style={{ backgroundColor: 'var(--muted)', color: 'var(--text-muted)' }}>
@@ -136,9 +139,20 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
               )}
               
               <div className="flex flex-col w-full">
-                <h1 className="text-2xl sm:text-3xl font-bold mb-1">{data.name}</h1>
-                <div className="text-primary text-base sm:text-lg font-medium">{data.profession}</div>
-                <p className="text-sm sm:text-base text-gray-500">{data.technologies}</p>
+                <div className="flex flex-col sm:flex-row justify-between items-start w-full gap-4 mb-1">
+                  <div>
+                    <h1 className="text-2xl sm:text-3xl font-bold mb-1">{data.name}</h1>
+                    <div className="text-primary text-base sm:text-lg font-medium">{data.profession}</div>
+                  </div>
+                  <button 
+                    onClick={() => setIsModalOpen(true)}
+                    className="bg-primary text-white px-4 py-2 rounded-lg font-medium shadow-sm hover:bg-primary/90 flex items-center gap-2"
+                  >
+                    <Briefcase size={18} />
+                    Contactar para una oferta
+                  </button>
+                </div>
+                <p className="text-sm sm:text-base text-gray-500 mb-2">{data.technologies}</p>
                 
                 <p className="text-sm sm:text-base leading-relaxed mb-1" style={{ color: 'var(--text-main)' }}>
                   {data.bio}
@@ -330,38 +344,79 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
             {/* 3. Experiencia Card */}
             {vis.experiencia_visible && data.experience && data.experience.length > 0 && (
               <Card className="card shadow-sm">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="bg-primary/20 text-primary p-2 rounded-lg">
-                    <Briefcase size={20} />
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-primary/20 text-primary p-2 rounded-lg">
+                      <Briefcase size={20} />
+                    </div>
+                    <h2 className="text-xl font-bold text-gray-900" style={{ color: 'var(--text-main)' }}>Experiencia</h2>
                   </div>
-                  <h2 className="text-xl font-bold text-gray-900">Experiencia</h2>
+                  
+                  {/* Botón hacia la pestaña de certificados */}
+                  <button 
+                    onClick={() => navigate(`/portfolio/${username}/experiencia`)}
+                    className="text-sm font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-4 py-2 rounded-lg transition-colors flex items-center gap-2 w-fit border border-primary/10"
+                  >
+                    Ver certificados y enlaces &rarr;
+                  </button>
                 </div>
 
-                <div className="space-y-8 relative before:absolute before:inset-0 before:ml-[6px] before:w-[2px] before:-translate-x-px before:bg-gray-500">
-                  {data.experience.map((exp, index) => (
-                    <div key={index} className="relative pl-6">
-                      <div className="absolute left-[3px] w-2 h-2 rounded-sm bg-primary top-1.5 ring-4 bg-primary/20 text-primary shadow-sm -translate-x-[2px]"></div>
-                      
-                      <h3 className="font-bold sm:text-base text-gray-800 text-sm" style={{ color: 'var(--text-main)' }}>{exp.title}</h3>
-                      <p className="text-sm sm:text-base text-gray-500 mb-2">{exp.company}</p>
-                      
-                      <div className="inline-flex items-center gap-1.5 mb-3 px-1.5 py-0.5 bg-gray-200 text-gray-500 text-[10px] font-medium rounded border border-gray-100 truncate">
-                        <Briefcase size={10} />
-                        <span>{exp.date}</span>
+                <div className="mt-2">
+                  {data.experience.map((exp, index) => {
+                    const borderColor = exp.isAcademic ? 'border-accent/40' : 'border-primary/40';
+                    const dotColor = exp.isAcademic ? 'bg-accent' : 'bg-primary';
+
+                    return (
+                      <div key={index} className={`relative pl-8 pb-8 border-l-2 ${borderColor} last:border-l-transparent last:pb-0`}>
+                        <div className={`absolute left-[-9px] top-0 w-4 h-4 rounded-full border-4 border-gray-200 dark:border-gray-700 ${dotColor}`} />
+                        
+                        <div className="flex flex-wrap items-center gap-2 mb-1 -mt-1.5">
+                          <h3 className="font-bold sm:text-base text-sm" style={{ color: 'var(--text-main)' }}>
+                            {exp.title}
+                          </h3>
+                          {exp.isAcademic ? (
+                            <span className="px-2 py-0.5 bg-accent/10 text-accent text-[10px] font-bold rounded border border-accent/20 uppercase tracking-wide">
+                              Académico
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold rounded border border-primary/20 uppercase tracking-wide">
+                              Laboral
+                            </span>
+                          )}
+                        </div>
+                        
+                        {/* Adaptación para la Empresa */}
+                        <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-2">{exp.company}</p>
+                        
+                        {/* Adaptación para la Fecha */}
+                        <div className="inline-flex items-center gap-1.5 mb-3 px-1.5 py-0.5 bg-gray-200 dark:bg-gray-800 text-gray-500 dark:text-gray-300 text-[10px] font-medium rounded border border-gray-100 dark:border-gray-700 truncate">
+                          <Briefcase size={10} />
+                          <span>{exp.date}</span>
+                        </div>
+                        
+                        {/* Adaptación para la Descripción */}
+                        <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-line text-justify pr-2 text-[12px]">
+                          {exp.description}
+                        </p>
                       </div>
-                      
-                      <p className="text-xs text-gray-500 leading-relaxed whitespace-pre-line text-justify pr-2 text-[12px]">
-                        {exp.description}
-                      </p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </Card>
             )}
-
           </div>
         )}
       </main>
+
+      {/* Modal de Contacto */}
+      <ContactOfferModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        // We need the username, it's in the URL of PublicPortfolio page, or we can pass it
+        // Actually, the PublicPortfolio component doesn't have username in data, let's extract it from URL here
+        username={window.location.pathname.split('/').pop() || ''}
+        fullName={data.name}
+      />
     </div>
   );
 }

@@ -38,7 +38,8 @@ class ComentarioController extends Controller
             $comentario = $this->comentarioService->createComentario(
                 Auth::id(),
                 $proyectoId,
-                $request->validated()['contenido']
+                $request->validated()['contenido'],
+                $request->validated()['parent_id'] ?? null
             );
             return $this->successResponse($comentario, 'Comentario publicado exitosamente', 201);
         } catch (\Exception $e) {
@@ -80,6 +81,63 @@ class ComentarioController extends Controller
             return $this->successResponse(null, 'Comentario eliminado exitosamente');
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), 400);
+        }
+    }
+
+    public function like(int $id): JsonResponse
+    {
+        return $this->handleInteraction($id, 'like');
+    }
+
+    public function dislike(int $id): JsonResponse
+    {
+        return $this->handleInteraction($id, 'dislike');
+    }
+
+    private function handleInteraction(int $comentarioId, string $tipo): JsonResponse
+    {
+        try {
+            $userId = Auth::id();
+            $comentario = Comentario::findOrFail($comentarioId);
+
+            $interaccion = \App\Models\ComentarioInteraccion::where('comentario_id', $comentarioId)
+                ->where('usuario_id', $userId)
+                ->first();
+
+            if ($interaccion) {
+                if ($interaccion->tipo === $tipo) {
+                    // Si ya tenía el mismo tipo, se lo quitamos (toggle off)
+                    $interaccion->delete();
+                } else {
+                    // Si tenía el tipo opuesto, se lo cambiamos
+                    $interaccion->update(['tipo' => $tipo]);
+                }
+            } else {
+                // No tenía interacción, creamos una nueva
+                \App\Models\ComentarioInteraccion::create([
+                    'comentario_id' => $comentarioId,
+                    'usuario_id' => $userId,
+                    'tipo' => $tipo
+                ]);
+            }
+
+            // Recalculamos los totales
+            $likes = \App\Models\ComentarioInteraccion::where('comentario_id', $comentarioId)->where('tipo', 'like')->count();
+            $dislikes = \App\Models\ComentarioInteraccion::where('comentario_id', $comentarioId)->where('tipo', 'dislike')->count();
+
+            $comentario->update([
+                'likes' => $likes,
+                'dislikes' => $dislikes
+            ]);
+
+            return $this->successResponse([
+                'likes' => $likes,
+                'dislikes' => $dislikes,
+                'user_interaction' => \App\Models\ComentarioInteraccion::where('comentario_id', $comentarioId)->where('usuario_id', $userId)->value('tipo')
+            ], ucfirst($tipo) . ' procesado');
+
+        } catch (\Exception $e) {
+            return $this->errorResponse('Error al procesar la interacción: ' . $e->getMessage(), 400);
         }
     }
 

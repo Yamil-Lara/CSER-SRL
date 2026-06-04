@@ -4,7 +4,6 @@ import { Plus, X } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 import ProjectModal from '../components/ProjectModal';
 import ProjectCard from '../components/ProjectCard';
-import ProjectCommentsManager from '../components/ProjectCommentsManager';
 import api from '../utils/api'; 
 
 export interface Project {
@@ -22,6 +21,7 @@ export interface Project {
   demoUrl?: string;
   status: string;
   image?: string | null;
+  comentariosNuevos?: number;
 }
 
 export default function ProjectsPage() {
@@ -29,7 +29,6 @@ export default function ProjectsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
-  const [commentsProject, setCommentsProject] = useState<Project | null>(null);
 
   const location = useLocation();
   const editModalHandled = useRef(false);
@@ -79,7 +78,8 @@ export default function ProjectsPage() {
         githubUrl: item.github,
         demoUrl: item.demo,
         status: item.estado,
-        image: item.imagen || null
+        image: item.imagen || null,
+        comentariosNuevos: item.comentarios_nuevos || 0
       }));
 
       setProjects(formattedProjects);
@@ -136,10 +136,6 @@ export default function ProjectsPage() {
     setIsModalOpen(false);
   };
 
-  const openCommentsManager = (project: Project) => {
-    setCommentsProject(project);
-  };
-
   return (
     <div>
       <header className="page-header">
@@ -170,13 +166,11 @@ export default function ProjectsPage() {
                project={project} 
                onDelete={handleDeleteProject}
                onEdit={openEditModal} 
-               onManageComments={openCommentsManager}
              />
           ))}
         </div>
       )}
 
-      {/* Modal para Crear/Editar Proyecto */}
       {isModalOpen && (
         <ProjectModal 
           onClose={closeModal} 
@@ -185,31 +179,6 @@ export default function ProjectsPage() {
         />
       )}
 
-      {/* Modal para el Gestor de Comentarios */}
-      {commentsProject && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-          <div className="bg-white rounded-[24px] w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            {/* Header del Modal */}
-            <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-white">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900">Comentarios del Proyecto</h2>
-                <p className="text-sm text-slate-500 font-medium">{commentsProject.title}</p>
-              </div>
-              <button 
-                onClick={() => setCommentsProject(null)} 
-                className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-full transition-colors"
-              >
-                <X size={24} />
-              </button>
-            </div>
-            
-            {/* Cuerpo del Modal */}
-            <div className="overflow-y-auto p-6 bg-slate-50 flex-1">
-              <ProjectCommentsManager proyectoId={commentsProject.id} />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

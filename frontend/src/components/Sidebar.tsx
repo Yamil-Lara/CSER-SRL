@@ -14,7 +14,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [dbUsername, setDbUsername] = useState<string | null>(null);
 
   useEffect(() => {
@@ -33,6 +33,12 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
     }
   }, []);
 
+  // Función de logout seguro
+  const handleLogout = async () => {
+    await logout();
+    // La redirección se maneja automáticamente en AuthContext con window.location.replace
+  };
+
   return (
     <aside className={`sidebar-container ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-logo" style={{ justifyContent: isCollapsed ? 'center' : 'flex-start', padding: isCollapsed ? '0' : '0 0.5rem' }}>
@@ -44,6 +50,7 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
 
       <nav className="sidebar-nav">
         <SidebarItem to="/dashboard/resumen" icon={<LayoutDashboard size={18} />} text="Mi Resumen" isCollapsed={isCollapsed} />
+        <SidebarItem to="/dashboard/reclutadores" icon={<Briefcase size={18} />} text="Reclutadores" isCollapsed={isCollapsed} />
         <SidebarItem to="/dashboard/perfil" icon={<User size={18} />} text="Editar Perfil" isCollapsed={isCollapsed} />
         <SidebarItem to="/dashboard/proyectos" icon={<FolderGit2 size={18} />} text="Mis Proyectos" isCollapsed={isCollapsed} />
         <SidebarItem to="/dashboard/habilidades" icon={<Wrench size={18} />} text="Mis Habilidades" isCollapsed={isCollapsed} />
@@ -69,7 +76,16 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
           {!isCollapsed && <span>Colapsar</span>}
         </div>
         
-        <SidebarItem to="/" icon={<LogOut size={18} />} text="Cerrar sesión" isCollapsed={isCollapsed} danger />
+        {/* CORREGIDO: Botón de logout ahora limpia sesión correctamente */}
+        <div 
+          className="sidebar-item danger" 
+          onClick={handleLogout}
+          style={{ justifyContent: isCollapsed ? 'center' : 'flex-start', padding: isCollapsed ? '0.75rem 0' : '0.75rem 1rem', cursor: 'pointer' }}
+          title={isCollapsed ? 'Cerrar sesión' : ''}
+        >
+          <LogOut size={18} />
+          {!isCollapsed && <span>Cerrar sesión</span>}
+        </div>
       </div>
     </aside>
   );

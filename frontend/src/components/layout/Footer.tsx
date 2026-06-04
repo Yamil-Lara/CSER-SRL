@@ -14,29 +14,29 @@ export function Footer() {
               <div className="bg-primary/10 p-1.5 rounded-lg text-primary">
                 <Code2 className="w-5 h-5" />
               </div>
-              <span className="text-lg font-bold text-sidebar">DevFolio</span>
+              <span className="text-lg font-bold ">DevFolio</span>
             </div>
-            <p className="text-sm text-sidebar/70 mb-6 leading-relaxed">
+            <p className="text-sm opacity-70 mb-6 leading-relaxed">
               El sistema generador de portafolios digitales diseñado
               específicamente para profesionales del software.
             </p>
             <div className="flex gap-4">
               <a
                 href="#"
-                className="text-sidebar/50 hover:text-primary transition-colors">
+                className="opacity-50 hover:text-primary transition-colors">
                 
                 <X className="w-5 h-5" />
               </a>
               <a
                 href="#"
-                className="text-sidebar/50 hover:text-primary transition-colors">
+                className="opacity-50 hover:text-primary transition-colors">
                 
                 // @ts-ignore
                 <GithubIcon className="w-5 h-5" />
               </a>
               <a
                 href="#"
-                className="text-sidebar/50 hover:text-primary transition-colors">
+                className="opacity-50 hover:text-primary transition-colors">
                 
                 // @ts-ignore
                 <LinkedinIcon className="w-5 h-5" />
@@ -46,12 +46,12 @@ export function Footer() {
 
           {/* Links */}
           <div>
-            <h3 className="font-semibold text-sidebar mb-4">Producto</h3>
+            <h3 className="font-semibold  mb-4">Producto</h3>
             <ul className="space-y-3">
               <li>
                 <a
                   href="#"
-                  className="text-sm text-sidebar/70 hover:text-primary transition-colors">
+                  className="text-sm opacity-70 hover:text-primary transition-colors">
                   
                   Características
                 </a>
@@ -59,7 +59,7 @@ export function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-sm text-sidebar/70 hover:text-primary transition-colors">
+                  className="text-sm opacity-70 hover:text-primary transition-colors">
                   
                   Explorar Portafolios
                 </a>
@@ -67,7 +67,7 @@ export function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-sm text-sidebar/70 hover:text-primary transition-colors">
+                  className="text-sm opacity-70 hover:text-primary transition-colors">
                   
                   Precios
                 </a>
@@ -75,7 +75,7 @@ export function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-sm text-sidebar/70 hover:text-primary transition-colors">
+                  className="text-sm opacity-70 hover:text-primary transition-colors">
                   
                   Actualizaciones
                 </a>
@@ -84,12 +84,12 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-semibold text-sidebar mb-4">Recursos</h3>
+            <h3 className="font-semibold  mb-4">Recursos</h3>
             <ul className="space-y-3">
               <li>
                 <a
                   href="#"
-                  className="text-sm text-sidebar/70 hover:text-primary transition-colors">
+                  className="text-sm opacity-70 hover:text-primary transition-colors">
                   
                   Blog
                 </a>
@@ -97,7 +97,7 @@ export function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-sm text-sidebar/70 hover:text-primary transition-colors">
+                  className="text-sm opacity-70 hover:text-primary transition-colors">
                   
                   Guías de Carrera
                 </a>
@@ -105,7 +105,7 @@ export function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-sm text-sidebar/70 hover:text-primary transition-colors">
+                  className="text-sm opacity-70 hover:text-primary transition-colors">
                   
                   Centro de Ayuda
                 </a>
@@ -113,7 +113,7 @@ export function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-sm text-sidebar/70 hover:text-primary transition-colors">
+                  className="text-sm opacity-70 hover:text-primary transition-colors">
                   
                   API
                 </a>
@@ -122,12 +122,12 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-semibold text-sidebar mb-4">Legal</h3>
+            <h3 className="font-semibold  mb-4">Legal</h3>
             <ul className="space-y-3">
               <li>
                 <a
                   href="#"
-                  className="text-sm text-sidebar/70 hover:text-primary transition-colors">
+                  className="text-sm opacity-70 hover:text-primary transition-colors">
                   
                   Términos de Servicio
                 </a>
@@ -135,7 +135,7 @@ export function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-sm text-sidebar/70 hover:text-primary transition-colors">
+                  className="text-sm opacity-70 hover:text-primary transition-colors">
                   
                   Política de Privacidad
                 </a>
@@ -143,7 +143,7 @@ export function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-sm text-sidebar/70 hover:text-primary transition-colors">
+                  className="text-sm opacity-70 hover:text-primary transition-colors">
                   
                   Cookies
                 </a>
@@ -153,7 +153,7 @@ export function Footer() {
         </div>
 
         <div className="pt-8 border-t border-muted flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-sidebar/60">
+          <p className="text-sm opacity-60">
             © {new Date().getFullYear()} DevFolio. Todos los derechos
             reservados.
           </p>

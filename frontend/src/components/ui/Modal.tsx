@@ -38,7 +38,7 @@ export function Modal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-sidebar/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose} />
       
 
@@ -48,10 +48,10 @@ export function Modal({
         
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-muted">
-          <h2 className="text-2xl font-bold text-sidebar">{title}</h2>
+          <h2 className="text-2xl font-bold ">{title}</h2>
           <button
             onClick={onClose}
-            className="text-sidebar/50 hover:text-sidebar transition-colors p-1 hover:bg-muted rounded-lg">
+            className="opacity-50 hover: transition-colors p-1 hover:bg-muted rounded-lg">
             
             <X className="w-5 h-5" />
           </button>

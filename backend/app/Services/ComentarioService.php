@@ -26,7 +26,7 @@ class ComentarioService
         return $comentarios->map(fn($c) => $this->formatComentario($c))->toArray();
     }
 
-    public function createComentario(int $usuarioId, int $proyectoId, string $contenido): array
+    public function createComentario(int $usuarioId, int $proyectoId, string $contenido, ?int $parentId = null): array
     {
         $proyecto = $this->comentarioRepository->findProyectoAprobado($proyectoId);
 
@@ -34,11 +34,14 @@ class ComentarioService
             throw new \Exception('Proyecto no encontrado o no disponible');
         }
 
+        $isProjectOwner = $proyecto->usuario_id === $usuarioId;
+
         $comentario = $this->comentarioRepository->create([
             'proyecto_id' => $proyectoId,
             'usuario_id'  => $usuarioId,
             'contenido'   => $contenido,
-            'aprobado'    => 0,
+            'aprobado'    => $isProjectOwner ? 1 : 0,
+            'parent_id'   => $parentId,
         ]);
 
         return $this->formatComentario($comentario->load('usuario:id,nombre,username,foto'));
@@ -70,16 +73,31 @@ class ComentarioService
     // FORMATEADOR BASE (Solo debe existir una vez)
     private function formatComentario($comentario): array
     {
+        $userId = \Illuminate\Support\Facades\Auth::id();
+        $userInteraction = null;
+        if ($userId && $comentario->relationLoaded('interacciones')) {
+            $interaction = $comentario->interacciones->firstWhere('usuario_id', $userId);
+            if ($interaction) {
+                $userInteraction = $interaction->tipo;
+            }
+        }
+
         return [
             'id'        => $comentario->id,
             'contenido' => $comentario->contenido,
             'fecha'     => $comentario->created_at->format('d/m/Y H:i'),
+            'likes'     => $comentario->likes ?? 0,
+            'dislikes'  => $comentario->dislikes ?? 0,
+            'user_interaction' => $userInteraction,
             'autor'     => $comentario->usuario ? [
                 'id'       => $comentario->usuario->id,
                 'nombre'   => $comentario->usuario->nombre,
                 'username' => $comentario->usuario->username,
                 'foto'     => $comentario->usuario->foto ? $comentario->usuario->foto : null,
             ] : null,
+            'respuestas'=> $comentario->relationLoaded('respuestas') && $comentario->respuestas 
+                            ? $comentario->respuestas->map(fn($r) => $this->formatComentario($r))->toArray() 
+                            : [],
         ];
     }
 

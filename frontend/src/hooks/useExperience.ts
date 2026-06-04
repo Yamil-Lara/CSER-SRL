@@ -12,6 +12,8 @@ export interface Experiencia {
   fecha_inicio: string;
   fecha_fin?: string;
   actual: number;
+  imagen?: string | null;
+  enlace_certificado?: string | null; // <--- NUEVO CAMPO
 }
 
 export function useExperience() {
@@ -49,10 +51,11 @@ export function useExperience() {
     loadExperiences();
   }, [loadExperiences]);
 
-  const createExperience = async (expData: Omit<Experiencia, 'id' | 'usuario_id'>) => {
+  const createExperience = async (expData: FormData | any) => {
     try {
+      // Axios configura el multipart y el boundary automáticamente
       const response = await api.post('/experiences', expData);
-      await loadExperiences(); // Recargamos la lista actualizada
+      await loadExperiences();
       return response.data;
     } catch (err: any) {
       console.error('Error al crear experiencia:', err);
@@ -60,11 +63,19 @@ export function useExperience() {
     }
   };
 
-  const updateExperience = async (id: number, expData: Partial<Experiencia>) => {
+  const updateExperience = async (id: number, expData: FormData | any) => {
     try {
-      const response = await api.put(`/experiences/${id}`, expData);
-      await loadExperiences(); // Recargamos la lista actualizada
-      return response.data;
+      if (expData instanceof FormData) {
+        expData.append('_method', 'PUT'); 
+        // Axios configura el multipart automáticamente
+        const response = await api.post(`/experiences/${id}`, expData);
+        await loadExperiences();
+        return response.data;
+      } else {
+        const response = await api.put(`/experiences/${id}`, expData);
+        await loadExperiences();
+        return response.data;
+      }
     } catch (err: any) {
       console.error('Error al actualizar experiencia:', err);
       throw err;

@@ -40,13 +40,13 @@ export default function ResetPasswordPage() {
 
   if (!token || !email) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center py-12 px-4">
-        <div className="max-w-md w-full space-y-6 bg-card p-8 rounded-xl shadow-lg border border-muted text-center">
+      <div className="min-h-screen  flex items-center justify-center py-12 px-4">
+        <div className="max-w-md w-full space-y-6 card p-8 rounded-xl shadow-lg border border-muted text-center">
           <div className="mx-auto h-14 w-14 bg-destructive/10 rounded-full flex items-center justify-center">
             <AlertCircle className="text-destructive" size={32} />
           </div>
-          <h2 className="text-2xl font-bold text-sidebar">Enlace inválido</h2>
-          <p className="text-sm text-sidebar/70">
+          <h2 className="text-2xl font-bold ">Enlace inválido</h2>
+          <p className="text-sm opacity-70">
             El enlace de recuperación no es válido o está incompleto.
           </p>
           <Link
@@ -102,13 +102,13 @@ export default function ResetPasswordPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center py-12 px-4">
-        <div className="max-w-md w-full space-y-6 bg-card p-8 rounded-xl shadow-lg border border-muted text-center">
+      <div className="min-h-screen  flex items-center justify-center py-12 px-4">
+        <div className="max-w-md w-full space-y-6 card p-8 rounded-xl shadow-lg border border-muted text-center">
           <div className="mx-auto h-14 w-14 bg-green-500/10 rounded-full flex items-center justify-center">
             <CheckCircle2 className="text-green-600" size={32} />
           </div>
-          <h2 className="text-2xl font-bold text-sidebar">¡Contraseña actualizada!</h2>
-          <p className="text-sm text-sidebar/70">
+          <h2 className="text-2xl font-bold ">¡Contraseña actualizada!</h2>
+          <p className="text-sm opacity-70">
             Serás redirigido al inicio de sesión en unos segundos...
           </p>
         </div>
@@ -117,17 +117,17 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center py-12 px-4">
-      <div className="max-w-md w-full space-y-8 bg-card p-8 rounded-xl shadow-lg border border-muted">
+    <div className="min-h-screen  flex items-center justify-center py-12 px-4">
+      <div className="max-w-md w-full space-y-8 card p-8 rounded-xl shadow-lg border border-muted">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center">
             <KeyRound className="text-primary" size={24} />
           </div>
-          <h2 className="mt-6 text-2xl font-extrabold text-sidebar">Restablecer contraseña</h2>
-          <p className="mt-2 text-sm text-sidebar/60">
+          <h2 className="mt-6 text-2xl font-extrabold ">Restablecer contraseña</h2>
+          <p className="mt-2 text-sm opacity-60">
             Crea una nueva contraseña segura para tu cuenta.
           </p>
-          <p className="mt-1 text-xs text-sidebar/50">
+          <p className="mt-1 text-xs opacity-50">
             Cuenta: <span className="font-medium">{email}</span>
           </p>
         </div>
@@ -140,7 +140,7 @@ export default function ResetPasswordPage() {
           )}
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-sidebar mb-1">
+            <label htmlFor="password" className="block text-sm font-medium  mb-1">
               Nueva contraseña *
             </label>
             <div className="relative">
@@ -151,13 +151,13 @@ export default function ResetPasswordPage() {
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border border-muted bg-card text-sidebar rounded-lg focus:outline-none focus:ring-primary focus:border-primary sm:text-sm pr-10"
+                className="appearance-none block w-full px-3 py-2 border border-muted card  rounded-lg focus:outline-none focus:ring-primary focus:border-primary sm:text-sm pr-10"
                 placeholder="Mínimo 8 caracteres"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-sidebar/50 hover:text-sidebar"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center opacity-50 hover:"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -176,7 +176,7 @@ export default function ResetPasswordPage() {
                     />
                   ))}
                 </div>
-                <p className="text-xs text-sidebar/60 mt-1">
+                <p className="text-xs opacity-60 mt-1">
                   Fortaleza: <span className="font-medium">{passwordStrength.label}</span>
                 </p>
               </div>
@@ -184,7 +184,7 @@ export default function ResetPasswordPage() {
           </div>
 
           <div>
-            <label htmlFor="password_confirmation" className="block text-sm font-medium text-sidebar mb-1">
+            <label htmlFor="password_confirmation" className="block text-sm font-medium  mb-1">
               Confirmar contraseña *
             </label>
             <input
@@ -193,7 +193,7 @@ export default function ResetPasswordPage() {
               required
               value={passwordConfirmation}
               onChange={(e) => setPasswordConfirmation(e.target.value)}
-              className="appearance-none block w-full px-3 py-2 border border-muted bg-card text-sidebar rounded-lg focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+              className="appearance-none block w-full px-3 py-2 border border-muted card  rounded-lg focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
               placeholder="Repite la contraseña"
             />
             {passwordConfirmation && (
@@ -228,3 +228,5 @@ export default function ResetPasswordPage() {
     </div>
   );
 }
+
+

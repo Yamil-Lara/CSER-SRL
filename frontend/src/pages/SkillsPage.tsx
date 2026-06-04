@@ -71,7 +71,7 @@ export function SkillsPage() {
       {error && <Alert type="error" message={error} className="mb-6" />}
 
       {loading ? (
-         <div className="flex justify-center items-center h-64 text-sidebar/60">
+         <div className="flex justify-center items-center h-64 opacity-60">
            Cargando habilidades...
          </div>
       ) : (

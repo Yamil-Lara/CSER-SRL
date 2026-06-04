@@ -97,7 +97,7 @@ const SkillForm: React.FC<Props> = ({ show, onClose, onSave, editingSkill, skill
         />
 
         <div>
-          <label className="block text-sm font-medium text-sidebar mb-3">
+          <label className="block text-sm font-medium  mb-3">
             Nivel de Dominio: <span className="font-bold text-primary">{level}%</span>
           </label>
           <input
@@ -108,7 +108,7 @@ const SkillForm: React.FC<Props> = ({ show, onClose, onSave, editingSkill, skill
             onChange={(e) => setLevel(Number(e.target.value))}
             className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
           />
-          <div className="flex justify-between text-sidebar/60 mt-2 text-xs">
+          <div className="flex justify-between opacity-60 mt-2 text-xs">
             <span>Principiante</span>
             <span>Intermedio</span>
             <span>Avanzado</span>

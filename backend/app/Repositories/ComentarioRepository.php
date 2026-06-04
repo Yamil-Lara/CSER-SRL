@@ -11,8 +11,11 @@ class ComentarioRepository
     {
         return Comentario::where('proyecto_id', $proyectoId)
             ->where('aprobado', true)
+            ->whereNull('parent_id')
             ->with([
                 'usuario:id,nombre,username,foto',
+                'respuestas.usuario:id,nombre,username,foto',
+                'interacciones'
             ])
             ->latest()
             ->get();
@@ -39,8 +42,11 @@ class ComentarioRepository
     public function getAllByProyecto(int $proyectoId)
     {
         return Comentario::where('proyecto_id', $proyectoId)
+            ->whereNull('parent_id')
             ->with([
                 'usuario:id,nombre,username,foto',
+                'respuestas.usuario:id,nombre,username,foto',
+                'interacciones'
             ])
             ->latest()
             ->get();
