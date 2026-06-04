@@ -39,15 +39,15 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 // Componentes temporales para las rutas de admin que faltan
 const AdminDashboard = () => (
   <div>
-    <h1 className="text-2xl font-bold text-sidebar">Panel de Administrador</h1>
-    <p className="text-sidebar/70 mt-2">Bienvenido al panel de control</p>
+    <h1 className="text-2xl font-bold ">Panel de Administrador</h1>
+    <p className="opacity-70 mt-2">Bienvenido al panel de control</p>
   </div>
 );
 
 const AdminReportes = () => (
   <div>
-    <h1 className="text-2xl font-bold text-sidebar">Reportes PDF</h1>
-    <p className="text-sidebar/70 mt-2">Genera reportes del sistema</p>
+    <h1 className="text-2xl font-bold ">Reportes PDF</h1>
+    <p className="opacity-70 mt-2">Genera reportes del sistema</p>
   </div>
 );
 
