@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { MessageSquare, Send, Trash2 } from "lucide-react";
+import { MessageSquare, Send, Trash2, ThumbsUp, ThumbsDown } from "lucide-react";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 
@@ -15,13 +15,18 @@ interface Comentario {
         username: string;
         foto?: string | null;
     };
+    likes?: number;
+    dislikes?: number;
+    user_interaction?: 'like' | 'dislike' | null;
+    respuestas?: Comentario[];
 }
 
 interface ProjectCommentsProps {
     proyectoId?: string;
+    proyectoAutorId?: number;
 }
 
-const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
+const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId, proyectoAutorId }) => {
     const navigate = useNavigate();
     const { isAdmin } = useAuth();
     
@@ -29,12 +34,15 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
-    // Estados para los comentarios
     const [comentarios, setComentarios] = useState<Comentario[]>([]);
     const [nuevoComentario, setNuevoComentario] = useState("");
+    const [likedComments, setLikedComments] = useState<Set<number>>(new Set());
+    const [dislikedComments, setDislikedComments] = useState<Set<number>>(new Set());
     const [loadingComentarios, setLoadingComentarios] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [errorMensaje, setErrorMensaje] = useState("");
+    const [replyingTo, setReplyingTo] = useState<number | null>(null);
+    const [replyContent, setReplyContent] = useState("");
 
     // Efecto 1: Validar sesión y recuperar ID del usuario activo
     useEffect(() => {
@@ -71,6 +79,16 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
                 
                 const data = Array.isArray(response.data.data) ? response.data.data : response.data;
                 setComentarios(data);
+
+                // Pre-popular los likes y dislikes del usuario actual según lo devuelto por el backend
+                const initialLikes = new Set<number>();
+                const initialDislikes = new Set<number>();
+                data.forEach((c: Comentario) => {
+                    if (c.user_interaction === 'like') initialLikes.add(c.id);
+                    if (c.user_interaction === 'dislike') initialDislikes.add(c.id);
+                });
+                setLikedComments(initialLikes);
+                setDislikedComments(initialDislikes);
             } catch (err) {
                 console.error("Error al obtener los comentarios:", err);
             } finally {
@@ -84,8 +102,9 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
     }, [proyectoId]);
 
     // Función para crear un nuevo comentario
-    const handleEnviarComentario = async () => {
-        if (!nuevoComentario.trim()) {
+    const handleEnviarComentario = async (parentId?: number) => {
+        const contentToSubmit = parentId ? replyContent.trim() : nuevoComentario.trim();
+        if (!contentToSubmit) {
             setErrorMensaje("El comentario no puede estar vacío");
             return;
         }
@@ -94,15 +113,28 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
             setSubmitting(true);
             setErrorMensaje("");
             
-            const response = await api.post(`/proyectos/${proyectoId}/comentarios`, {
-                contenido: nuevoComentario.trim()
-            });
+            const payload: any = { contenido: contentToSubmit };
+            if (parentId) {
+                payload.parent_id = parentId;
+            }
 
+            const response = await api.post(`/proyectos/${proyectoId}/comentarios`, payload);
             const comentarioCreado = response.data.data || response.data;
             
-            // Añadimos el nuevo comentario a la vista y limpiamos la caja de texto
-            setComentarios(prev => [comentarioCreado, ...prev]);
-            setNuevoComentario("");
+            if (parentId) {
+                // Agregar la respuesta al comentario padre en el estado
+                setComentarios(prev => prev.map(c => {
+                    if (c.id === parentId) {
+                        return { ...c, respuestas: [...(c.respuestas || []), comentarioCreado] };
+                    }
+                    return c;
+                }));
+                setReplyingTo(null);
+                setReplyContent("");
+            } else {
+                setComentarios(prev => [comentarioCreado, ...prev]);
+                setNuevoComentario("");
+            }
             
         } catch (err: any) {
             console.error("Error al publicar el comentario:", err);
@@ -135,7 +167,7 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
             {/* Muestra la caja de comentarios si el usuario inició sesión */}
             {isAuthenticated ? (
                 !isAdmin ? (
-                    <div className="flex gap-4 mb-10">
+                    <div className="flex gap-4 mb-10" id="caja-comentarios">
                         <div className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">
                             Tú
                         </div>
@@ -201,7 +233,7 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
                                         <span className="text-xs text-slate-400 font-medium">{c.fecha}</span>
                                     </div>
                                     
-                                    {/* Botón de basurero: Solo se renderiza si el ID del autor coincide con el ID del usuario en sesión */}
+                                    {/* Botón de basurero */}
                                     {c.autor?.id === currentUserId && (
                                         <button 
                                             onClick={() => handleEliminarComentario(c.id)}
@@ -212,7 +244,185 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
                                         </button>
                                     )}
                                 </div>
-                                <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">{c.contenido}</p>
+                                <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap mb-2">{c.contenido}</p>
+                                
+                                {/* Lógica de exclusividad para el autor del proyecto */}
+                                {(() => {
+                                    const isOwner = proyectoAutorId === currentUserId;
+                                    const ownerHasReplied = c.respuestas?.some(r => r.autor?.id === currentUserId);
+                                    const userHasLiked = likedComments.has(c.id);
+                                    const userHasDisliked = dislikedComments.has(c.id);
+
+                                    // El autor solo puede dar Like/Dislike si no ha respondido. Los demás siempre pueden.
+                                    const showLikeDislike = isOwner ? !ownerHasReplied : true;
+                                    // El autor solo puede responder si no ha dado Like ni Dislike.
+                                    const showReply = isOwner ? !(userHasLiked || userHasDisliked) : false;
+
+                                    return (
+                                        <div className="flex items-center gap-4 mt-2">
+                                            {showLikeDislike && (
+                                                <div className="flex items-center gap-2">
+                                                    <button 
+                                                        onClick={async () => {
+                                                            if (!isAuthenticated) return navigate('/login');
+                                                            try {
+                                                                const res = await api.post(`/comentarios/${c.id}/like`);
+                                                                const { likes, dislikes, user_interaction } = res.data.data || res.data;
+                                                                
+                                                                setComentarios(prev => prev.map(comp => 
+                                                                    comp.id === c.id ? { ...comp, likes, dislikes, user_interaction } : comp
+                                                                ));
+
+                                                                const newLikes = new Set(likedComments);
+                                                                const newDislikes = new Set(dislikedComments);
+                                                                
+                                                                if (user_interaction === 'like') {
+                                                                    newLikes.add(c.id);
+                                                                    newDislikes.delete(c.id);
+                                                                } else {
+                                                                    newLikes.delete(c.id);
+                                                                }
+                                                                
+                                                                setLikedComments(newLikes);
+                                                                setDislikedComments(newDislikes);
+
+                                                            } catch (e) {
+                                                                console.error("Error al dar like");
+                                                            }
+                                                        }}
+                                                        className={`flex items-center gap-1.5 text-xs font-semibold transition-colors ${userHasLiked ? 'text-slate-800' : 'text-slate-500 hover:text-slate-800'}`}
+                                                        title="Me gusta"
+                                                    >
+                                                        <ThumbsUp size={16} className={userHasLiked ? "fill-current" : ""} />
+                                                        {c.likes || 0}
+                                                    </button>
+                                                    <button 
+                                                        onClick={async () => {
+                                                            if (!isAuthenticated) return navigate('/login');
+                                                            try {
+                                                                const res = await api.post(`/comentarios/${c.id}/dislike`);
+                                                                const { likes, dislikes, user_interaction } = res.data.data || res.data;
+                                                                
+                                                                setComentarios(prev => prev.map(comp => 
+                                                                    comp.id === c.id ? { ...comp, likes, dislikes, user_interaction } : comp
+                                                                ));
+
+                                                                const newLikes = new Set(likedComments);
+                                                                const newDislikes = new Set(dislikedComments);
+                                                                
+                                                                if (user_interaction === 'dislike') {
+                                                                    newDislikes.add(c.id);
+                                                                    newLikes.delete(c.id);
+                                                                } else {
+                                                                    newDislikes.delete(c.id);
+                                                                }
+                                                                
+                                                                setLikedComments(newLikes);
+                                                                setDislikedComments(newDislikes);
+
+                                                            } catch (e) {
+                                                                console.error("Error al dar dislike");
+                                                            }
+                                                        }}
+                                                        className={`flex items-center gap-1 text-xs font-semibold transition-colors ml-1 ${userHasDisliked ? 'text-slate-800' : 'text-slate-500 hover:text-slate-800'}`}
+                                                        title="No me gusta"
+                                                    >
+                                                        <ThumbsDown size={16} className={userHasDisliked ? "fill-current" : ""} />
+                                                    </button>
+                                                </div>
+                                            )}
+
+                                            {showReply && (
+                                                <button 
+                                                    onClick={() => {
+                                                        setReplyingTo(replyingTo === c.id ? null : c.id);
+                                                        setReplyContent(`@${c.autor?.username || c.autor?.nombre} `);
+                                                    }}
+                                                    className="text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors ml-2"
+                                                >
+                                                    Responder
+                                                </button>
+                                            )}
+                                        </div>
+                                    );
+                                })()}
+
+                                {/* Caja de respuesta (solo si este es el comentario activo) */}
+                                {replyingTo === c.id && (
+                                    <div className="mt-4 flex gap-3">
+                                        <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">
+                                            Tú
+                                        </div>
+                                        <div className="flex-grow">
+                                            <textarea
+                                                value={replyContent}
+                                                onChange={(e) => setReplyContent(e.target.value)}
+                                                placeholder="Escribe tu respuesta..."
+                                                className="w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50 resize-y"
+                                                rows={2}
+                                                disabled={submitting}
+                                            />
+                                            <div className="flex justify-end gap-2 mt-2">
+                                                <button 
+                                                    onClick={() => setReplyingTo(null)}
+                                                    className="text-xs font-bold text-slate-500 hover:text-slate-700 px-3 py-1.5"
+                                                    disabled={submitting}
+                                                >
+                                                    Cancelar
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleEnviarComentario(c.id)}
+                                                    disabled={submitting || !replyContent.trim()}
+                                                    className="bg-[#3B82F6] text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-600 disabled:opacity-50"
+                                                >
+                                                    {submitting ? 'Enviando...' : 'Responder'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Renderizar Respuestas Anidadas */}
+                                {c.respuestas && c.respuestas.length > 0 && (
+                                    <div className="mt-4 space-y-4 pl-4 sm:pl-10 border-l-2 border-slate-100">
+                                        {c.respuestas.map((r) => (
+                                            <div key={r.id} className="flex gap-3 relative group">
+                                                <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">
+                                                    {r.autor?.nombre ? r.autor.nombre.substring(0, 2).toUpperCase() : 'U'}
+                                                </div>
+                                                <div className="flex-grow">
+                                                    <div className="flex items-center justify-between mb-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="font-bold text-sm text-slate-800 flex items-center gap-1.5">
+                                                                {r.autor?.nombre || 'Usuario Desconocido'}
+                                                                {r.autor?.id === proyectoAutorId && (
+                                                                    <span className="bg-slate-200 text-slate-600 text-[10px] uppercase px-1.5 py-0.5 rounded-full">Autor</span>
+                                                                )}
+                                                            </span>
+                                                            <span className="text-xs text-slate-400 font-medium">{r.fecha}</span>
+                                                        </div>
+                                                        {r.autor?.id === currentUserId && (
+                                                            <button 
+                                                                onClick={() => {
+                                                                    api.delete(`/comentarios/${r.id}`).then(() => {
+                                                                        setComentarios(prev => prev.map(comp => 
+                                                                            comp.id === c.id ? { ...comp, respuestas: comp.respuestas?.filter(resp => resp.id !== r.id) } : comp
+                                                                        ));
+                                                                    });
+                                                                }}
+                                                                className="text-slate-400 hover:text-red-500 transition-colors p-1 rounded-md opacity-0 group-hover:opacity-100 focus:opacity-100"
+                                                                title="Eliminar mi respuesta"
+                                                            >
+                                                                <Trash2 size={14} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap">{r.contenido}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))

@@ -28,6 +28,7 @@ class ExploreRepository
             ])
             ->where('activo', true)
             ->where('rol', '!=', 'admin')
+            ->with(['experiencias'])
             ->withCount(['proyectos' => fn($q) => $q->where('estado', 'aprobado')]);
 
         if (!empty($filters['search'])) {
@@ -47,10 +48,25 @@ class ExploreRepository
 
         if (!empty($filters['filter'])) {
             match ($filters['filter']) {
-                'profesionales' => $query->whereNotNull('profesion')
-                                         ->where('profesion', '!=', ''),
-                'estudiantes'   => $query->whereNotNull('universidad')
-                                         ->where('universidad', '!=', ''),
+                'profesional' => $query->where(function ($q) {
+                    $q->whereHas('experiencias', function ($expQ) {
+                        $expQ->where('tipo', 'laboral')
+                             ->orWhere(function ($subQ) {
+                                 $subQ->where('tipo', 'academica')->where('actual', false);
+                             });
+                    })->orWhere(function ($fallbackQ) {
+                        // Fallback por si acaso alguien no llenó experiencias pero sí el perfil
+                        $fallbackQ->whereNotNull('profesion')->where('profesion', '!=', '');
+                    });
+                }),
+                'estudiante'   => $query->where(function ($q) {
+                    $q->whereHas('experiencias', function ($expQ) {
+                        $expQ->where('tipo', 'academica')->where('actual', true);
+                    })->orWhere(function ($fallbackQ) {
+                        // Fallback por si acaso alguien no llenó experiencias pero sí el perfil
+                        $fallbackQ->whereNotNull('universidad')->where('universidad', '!=', '');
+                    });
+                }),
                 default         => null,
             };
         }
@@ -71,7 +87,7 @@ class ExploreRepository
                 'estado',
             ])
             ->where('estado', 'aprobado')
-            ->with(['categoria:id,nombre,icono,color', 'usuario:id,nombre,username,foto']);
+            ->with(['categoria:id,nombre,icono,color', 'usuario:id,nombre,username,foto,profesion,universidad', 'usuario.experiencias']);
 
         // 1. Filtro de categoría (INDEPENDIENTE)
         if (!empty($filters['categoria_id'])) {
@@ -91,11 +107,26 @@ class ExploreRepository
         // 3. Filtro por perfil (profesionales/estudiantes)
         if (!empty($filters['filter'])) {
             match ($filters['filter']) {
-                'profesionales' => $query->whereHas('usuario', function ($q) {
-                    $q->whereNotNull('profesion')->where('profesion', '!=', '');
+                'profesional' => $query->whereHas('usuario', function ($userQ) {
+                    $userQ->where(function ($q) {
+                        $q->whereHas('experiencias', function ($expQ) {
+                            $expQ->where('tipo', 'laboral')
+                                 ->orWhere(function ($subQ) {
+                                     $subQ->where('tipo', 'academica')->where('actual', false);
+                                 });
+                        })->orWhere(function ($fallbackQ) {
+                            $fallbackQ->whereNotNull('profesion')->where('profesion', '!=', '');
+                        });
+                    });
                 }),
-                'estudiantes'   => $query->whereHas('usuario', function ($q) {
-                    $q->whereNotNull('universidad')->where('universidad', '!=', '');
+                'estudiante'   => $query->whereHas('usuario', function ($userQ) {
+                    $userQ->where(function ($q) {
+                        $q->whereHas('experiencias', function ($expQ) {
+                            $expQ->where('tipo', 'academica')->where('actual', true);
+                        })->orWhere(function ($fallbackQ) {
+                            $fallbackQ->whereNotNull('universidad')->where('universidad', '!=', '');
+                        });
+                    });
                 }),
                 default         => null,
             };

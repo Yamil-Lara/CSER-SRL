@@ -46,6 +46,7 @@ Route::middleware('throttle:10,1')->post('/portafolio/{username}/visita', [Porta
 Route::get('/portafolio/{username}/proyectos', [PortafolioController::class, 'proyectos']);
 Route::get('/portafolio/{username}/experiencias', [PortafolioController::class, 'experiencias']);
 Route::get('/portafolio/{username}/habilidades', [PortafolioController::class, 'habilidades']);
+Route::post('/portafolio/{username}/oferta', [\App\Http\Controllers\RecruiterOfferController::class, 'store']);
 
 // HU-09: Explorador público
 Route::prefix('explore')->group(function () {
@@ -73,6 +74,12 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
         Route::get('/comentarios-recientes', [ProfileController::class, 'getComentariosRecientes']);
     });
 
+    // RUTAS PARA DASHBOARD DE USUARIO Y RECLUTADORES
+    Route::get('/user/dashboard/stats', [\App\Http\Controllers\UserOffersController::class, 'getDashboardStats']);
+    Route::get('/user/ofertas', [\App\Http\Controllers\UserOffersController::class, 'index']);
+    Route::get('/user/ofertas/{id}', [\App\Http\Controllers\UserOffersController::class, 'show']);
+    Route::put('/user/ofertas/{id}/estado', [\App\Http\Controllers\UserOffersController::class, 'updateStatus']);
+
     // HU-08: Control de visibilidad
     Route::get('/visibilidad', [VisibilidadController::class, 'show']);
     Route::put('/visibilidad', [VisibilidadController::class, 'update']);
@@ -95,6 +102,8 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
     Route::get('/proyectos/{id}/comentarios/admin', [ComentarioController::class, 'adminIndex']);
     Route::put('/comentarios/{id}/estado', [ComentarioController::class, 'updateEstado']);
     Route::delete('/comentarios/{id}', [ComentarioController::class, 'destroy']);
+    Route::post('/comentarios/{id}/like', [ComentarioController::class, 'like']);
+    Route::post('/comentarios/{id}/dislike', [ComentarioController::class, 'dislike']);
 
     Route::middleware(['admin'])->prefix('gestion')->group(function () {
         Route::apiResource('usuarios', AdminUserController::class);

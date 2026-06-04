@@ -1,5 +1,6 @@
 // src/App.tsx
 import React, { useState, useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ExperiencePage } from "./pages/ExperiencePage";
@@ -33,6 +34,7 @@ import AdminCommentPage from "./pages/AdminCommentPage";
 import LoginPage from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { UserOffersPage } from "./pages/UserOffersPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 
@@ -88,6 +90,7 @@ function App(): JSX.Element {
 
   return (
     <BrowserRouter>
+      <Toaster position="top-right" />
       <AuthProvider>
         <Routes>
           {/* Ruta principal */}
@@ -141,6 +144,7 @@ function App(): JSX.Element {
                     <Routes>
                       <Route index element={<DashboardPage />} />
                       <Route path="perfil" element={<UserProfile />} />
+                      <Route path="reclutadores" element={<UserOffersPage />} />
                       <Route path="proyectos" element={<ProjectsPage />} />
                       <Route path="habilidades" element={<SkillsPage />} />                  
                       <Route path="experiencia" element={<Navigate to="/dashboard/experiencia-laboral" replace />} />

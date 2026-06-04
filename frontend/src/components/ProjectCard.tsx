@@ -1,16 +1,15 @@
 import { Calendar, Tag, GitBranch, ExternalLink, Edit, Trash2, FolderOpen, MessageSquare, Image as ImageIcon } from 'lucide-react';
 import { Project } from '../pages/ProjectsPage';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { buildUrl } from '../utils/api';
 
 interface ProjectCardProps {
   project: Project;
   onDelete: (id: string) => void;
   onEdit: (project: Project) => void;
-  onManageComments: (project: Project) => void;
 }
 
-export default function ProjectCard({ project, onDelete, onEdit, onManageComments }: ProjectCardProps) {
+export default function ProjectCard({ project, onDelete, onEdit }: ProjectCardProps) {
   const navigate = useNavigate();
   const { username } = useParams();
 
@@ -113,13 +112,18 @@ export default function ProjectCard({ project, onDelete, onEdit, onManageComment
         </div>
 
         <div className="project-actions flex flex-wrap gap-2 pt-3 border-t border-slate-100">
-          <button 
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors flex-1 justify-center" 
-            onClick={() => onManageComments(project)}
+          <Link 
+            to={`/proyecto/${project.id}`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex-1 justify-center relative ${project.comentariosNuevos && project.comentariosNuevos > 0 ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 border border-blue-300' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'}`}
           >
             <MessageSquare size={16} />
             Comentarios
-          </button>
+            {project.comentariosNuevos && project.comentariosNuevos > 0 ? (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center shadow-sm">
+                {project.comentariosNuevos}
+              </span>
+            ) : null}
+          </Link>
           <button 
             className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors" 
             onClick={() => onEdit(project)}

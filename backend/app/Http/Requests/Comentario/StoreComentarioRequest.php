@@ -15,6 +15,7 @@ class StoreComentarioRequest extends FormRequest
     {
         return [
             'contenido' => 'required|string|min:1|max:1000',
+            'parent_id' => 'nullable|integer|exists:comentarios,id',
         ];
     }
 

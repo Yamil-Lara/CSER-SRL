@@ -17,9 +17,15 @@ class ProyectoController extends Controller
     // === TOMA LA VERSIÓN DE ÉL (Visibilidad) ===
     public function index(\Illuminate\Http\Request $request): JsonResponse
     {
-        $query = Proyecto::with(['categoria', 'usuario:id,nombre,email,foto']);
-
         $user = auth('sanctum')->user();
+
+        $query = Proyecto::with(['categoria', 'usuario:id,nombre,email,foto'])
+            ->withCount(['comentarios as comentarios_nuevos' => function ($q) use ($user) {
+                $q->where('aprobado', 1);
+                if ($user) {
+                    $q->where('usuario_id', '!=', $user->id);
+                }
+            }]);
 
         if ($user) {
             if ($user->rol !== 'admin') {

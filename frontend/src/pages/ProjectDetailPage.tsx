@@ -168,7 +168,7 @@ const ProjectDetailPage: React.FC = () => {
                         </section>
 
                         {/* --- LLAMADA AL NUEVO COMPONENTE DE COMENTARIOS --- */}
-                        <ProjectComments proyectoId={id} />
+                        <ProjectComments proyectoId={id} proyectoAutorId={proyecto.usuario?.id} />
 
                     </div>
 

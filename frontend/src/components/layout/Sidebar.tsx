@@ -25,6 +25,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { Badge } from '../ui/Badge';
 import api from '../../utils/api';
+import { useUserDashboardStats } from '../../hooks/useUserDashboardStats';
 
 type MenuItem = {
   icon: LucideIcon;
@@ -48,7 +49,6 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
   const [pendingProjects, setPendingProjects] = useState<number>(0);
   const [pendingComments, setPendingComments] = useState<number>(0);
 
-  // Función de consulta unificada a la API de Stats
   const fetchDashboardStats = () => {
     if (isAdmin) {
       api.get('/gestion/dashboard/stats')
@@ -63,6 +63,8 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
         .catch(err => console.error("Error al cargar notificaciones del dashboard:", err));
     }
   };
+
+  const { stats: userStats } = useUserDashboardStats();
 
   // Efecto para inicializar contadores y escuchar actualizaciones "en vivo"
   useEffect(() => {
@@ -88,6 +90,12 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
   // Configuración de Menús según Rol
   const userMenuItems: MenuItem[] = [
     { icon: LayoutDashboard, label: 'Mi Resumen', path: '/dashboard' },
+    { 
+      icon: Briefcase, 
+      label: 'Reclutadores', 
+      path: '/dashboard/reclutadores', 
+      badge: userStats?.mensajes_reclutadores_nuevos > 0 ? userStats.mensajes_reclutadores_nuevos : undefined 
+    },
     { icon: User, label: 'Editar Perfil', path: '/dashboard/perfil' },
     { icon: FolderGit2, label: 'Mis Proyectos', path: '/dashboard/proyectos' },
     { icon: Code, label: 'Mis Habilidades', path: '/dashboard/habilidades' },

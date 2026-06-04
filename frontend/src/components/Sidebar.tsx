@@ -44,6 +44,7 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
 
       <nav className="sidebar-nav">
         <SidebarItem to="/dashboard/resumen" icon={<LayoutDashboard size={18} />} text="Mi Resumen" isCollapsed={isCollapsed} />
+        <SidebarItem to="/dashboard/reclutadores" icon={<Briefcase size={18} />} text="Reclutadores" isCollapsed={isCollapsed} />
         <SidebarItem to="/dashboard/perfil" icon={<User size={18} />} text="Editar Perfil" isCollapsed={isCollapsed} />
         <SidebarItem to="/dashboard/proyectos" icon={<FolderGit2 size={18} />} text="Mis Proyectos" isCollapsed={isCollapsed} />
         <SidebarItem to="/dashboard/habilidades" icon={<Wrench size={18} />} text="Mis Habilidades" isCollapsed={isCollapsed} />

@@ -97,6 +97,11 @@ class ProfileController extends Controller
             ->whereHas('proyecto', function ($q) use ($user) {
                 $q->where('usuario_id', $user->id);
             })
+            ->whereNull('parent_id') // Solo comentarios principales
+            ->where('usuario_id', '!=', $user->id) // Que no sean míos
+            ->whereHas('usuario', function ($q) {
+                $q->where('rol', '!=', 'admin'); // Que no sean del admin
+            })
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get()

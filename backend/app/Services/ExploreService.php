@@ -20,6 +20,12 @@ class ExploreService
 
         $paginator = $this->exploreRepository->searchUsers($filters, $perPage);
 
+        // Incrementar apariciones en búsqueda
+        $userIds = $paginator->getCollection()->pluck('id')->toArray();
+        if (!empty($userIds)) {
+            \App\Models\User::whereIn('id', $userIds)->increment('apariciones_busqueda');
+        }
+
         $paginator->getCollection()->transform(function ($user) {
             return $this->formatUserCard($user);
         });
@@ -49,6 +55,19 @@ class ExploreService
 
     private function resolveTipoPerfil($user): string
     {
+        if ($user->relationLoaded('experiencias') && $user->experiencias->isNotEmpty()) {
+            $isProfesional = $user->experiencias->contains(function ($exp) {
+                return $exp->tipo === 'laboral' || ($exp->tipo === 'academica' && !$exp->actual);
+            });
+            if ($isProfesional) return 'profesional';
+
+            $isEstudiante = $user->experiencias->contains(function ($exp) {
+                return $exp->tipo === 'academica' && $exp->actual;
+            });
+            if ($isEstudiante) return 'estudiante';
+        }
+
+        // Fallback si no tiene experiencias cargadas o está vacío
         if (!empty($user->profesion)) {
             return 'profesional';
         }
@@ -65,6 +84,12 @@ class ExploreService
         $perPage = isset($filters['per_page']) ? (int) $filters['per_page'] : 12;
 
         $paginator = $this->exploreRepository->searchProjects($filters, $perPage);
+
+        // Incrementar apariciones en búsqueda
+        $userIds = $paginator->getCollection()->pluck('usuario_id')->filter()->unique()->toArray();
+        if (!empty($userIds)) {
+            \App\Models\User::whereIn('id', $userIds)->increment('apariciones_busqueda');
+        }
 
         $paginator->getCollection()->transform(function ($proyecto) {
             return $this->formatProjectCard($proyecto);

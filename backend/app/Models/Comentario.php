@@ -14,6 +14,9 @@ class Comentario extends Model
         'usuario_id',
         'contenido',
         'aprobado',
+        'parent_id',
+        'likes',
+        'dislikes',
     ];
 
     protected $casts = [
@@ -35,5 +38,15 @@ class Comentario extends Model
     public function autorEliminado(): bool
     {
         return is_null($this->usuario_id);
+    }
+
+    public function respuestas()
+    {
+        return $this->hasMany(Comentario::class, 'parent_id');
+    }
+
+    public function interacciones()
+    {
+        return $this->hasMany(ComentarioInteraccion::class, 'comentario_id');
     }
 }
