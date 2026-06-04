@@ -14,7 +14,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [dbUsername, setDbUsername] = useState<string | null>(null);
 
   useEffect(() => {
@@ -32,6 +32,12 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
       .catch(err => console.error('Error fetching real DB username in sidebar:', err));
     }
   }, []);
+
+  // Función de logout seguro
+  const handleLogout = async () => {
+    await logout();
+    // La redirección se maneja automáticamente en AuthContext con window.location.replace
+  };
 
   return (
     <aside className={`sidebar-container ${isCollapsed ? 'collapsed' : ''}`}>
@@ -70,7 +76,16 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
           {!isCollapsed && <span>Colapsar</span>}
         </div>
         
-        <SidebarItem to="/" icon={<LogOut size={18} />} text="Cerrar sesión" isCollapsed={isCollapsed} danger />
+        {/* CORREGIDO: Botón de logout ahora limpia sesión correctamente */}
+        <div 
+          className="sidebar-item danger" 
+          onClick={handleLogout}
+          style={{ justifyContent: isCollapsed ? 'center' : 'flex-start', padding: isCollapsed ? '0.75rem 0' : '0.75rem 1rem', cursor: 'pointer' }}
+          title={isCollapsed ? 'Cerrar sesión' : ''}
+        >
+          <LogOut size={18} />
+          {!isCollapsed && <span>Cerrar sesión</span>}
+        </div>
       </div>
     </aside>
   );

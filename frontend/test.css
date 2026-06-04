@@ -1,0 +1,1805 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* Tailwind */
+
+*, ::before, ::after{
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+  --tw-contain-size:  ;
+  --tw-contain-layout:  ;
+  --tw-contain-paint:  ;
+  --tw-contain-style:  ;
+}
+
+::backdrop{
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+  --tw-contain-size:  ;
+  --tw-contain-layout:  ;
+  --tw-contain-paint:  ;
+  --tw-contain-style:  ;
+}
+
+/* ! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com */
+
+/*
+1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
+*/
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  /* 1 */
+  border-width: 0;
+  /* 2 */
+  border-style: solid;
+  /* 2 */
+  border-color: #e5e7eb;
+  /* 2 */
+}
+
+::before,
+::after {
+  --tw-content: '';
+}
+
+/*
+1. Use a consistent sensible line-height in all browsers.
+2. Prevent adjustments of font size after orientation changes in iOS.
+3. Use a more readable tab size.
+4. Use the user's configured `sans` font-family by default.
+5. Use the user's configured `sans` font-feature-settings by default.
+6. Use the user's configured `sans` font-variation-settings by default.
+7. Disable tap highlights on iOS
+*/
+
+html,
+:host {
+  line-height: 1.5;
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+  -moz-tab-size: 4;
+  /* 3 */
+  -o-tab-size: 4;
+     tab-size: 4;
+  /* 3 */
+  font-family: Inter, sans-serif;
+  /* 4 */
+  font-feature-settings: normal;
+  /* 5 */
+  font-variation-settings: normal;
+  /* 6 */
+  -webkit-tap-highlight-color: transparent;
+  /* 7 */
+}
+
+/*
+1. Remove the margin in all browsers.
+2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
+*/
+
+body {
+  margin: 0;
+  /* 1 */
+  line-height: inherit;
+  /* 2 */
+}
+
+/*
+1. Add the correct height in Firefox.
+2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+3. Ensure horizontal rules are visible by default.
+*/
+
+hr {
+  height: 0;
+  /* 1 */
+  color: inherit;
+  /* 2 */
+  border-top-width: 1px;
+  /* 3 */
+}
+
+/*
+Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+
+abbr:where([title]) {
+  -webkit-text-decoration: underline dotted;
+          text-decoration: underline dotted;
+}
+
+/*
+Remove the default font size and weight for headings.
+*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/*
+Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/*
+Add the correct font weight in Edge and Safari.
+*/
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+/*
+1. Use the user's configured `mono` font-family by default.
+2. Use the user's configured `mono` font-feature-settings by default.
+3. Use the user's configured `mono` font-variation-settings by default.
+4. Correct the odd `em` font sizing in all browsers.
+*/
+
+code,
+kbd,
+samp,
+pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  /* 1 */
+  font-feature-settings: normal;
+  /* 2 */
+  font-variation-settings: normal;
+  /* 3 */
+  font-size: 1em;
+  /* 4 */
+}
+
+/*
+Add the correct font size in all browsers.
+*/
+
+small {
+  font-size: 80%;
+}
+
+/*
+Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+*/
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/*
+1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+3. Remove gaps between table borders by default.
+*/
+
+table {
+  text-indent: 0;
+  /* 1 */
+  border-color: inherit;
+  /* 2 */
+  border-collapse: collapse;
+  /* 3 */
+}
+
+/*
+1. Change the font styles in all browsers.
+2. Remove the margin in Firefox and Safari.
+3. Remove default padding in all browsers.
+*/
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+  /* 1 */
+  font-feature-settings: inherit;
+  /* 1 */
+  font-variation-settings: inherit;
+  /* 1 */
+  font-size: 100%;
+  /* 1 */
+  font-weight: inherit;
+  /* 1 */
+  line-height: inherit;
+  /* 1 */
+  letter-spacing: inherit;
+  /* 1 */
+  color: inherit;
+  /* 1 */
+  margin: 0;
+  /* 2 */
+  padding: 0;
+  /* 3 */
+}
+
+/*
+Remove the inheritance of text transform in Edge and Firefox.
+*/
+
+button,
+select {
+  text-transform: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Remove default button styles.
+*/
+
+button,
+input:where([type='button']),
+input:where([type='reset']),
+input:where([type='submit']) {
+  -webkit-appearance: button;
+  /* 1 */
+  background-color: transparent;
+  /* 2 */
+  background-image: none;
+  /* 2 */
+}
+
+/*
+Use the modern Firefox focus style for all focusable elements.
+*/
+
+:-moz-focusring {
+  outline: auto;
+}
+
+/*
+Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/*
+Add the correct vertical alignment in Chrome and Firefox.
+*/
+
+progress {
+  vertical-align: baseline;
+}
+
+/*
+Correct the cursor style of increment and decrement buttons in Safari.
+*/
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/*
+1. Correct the odd appearance in Chrome and Safari.
+2. Correct the outline style in Safari.
+*/
+
+[type='search'] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  outline-offset: -2px;
+  /* 2 */
+}
+
+/*
+Remove the inner padding in Chrome and Safari on macOS.
+*/
+
+::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Change font properties to `inherit` in Safari.
+*/
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  /* 1 */
+  font: inherit;
+  /* 2 */
+}
+
+/*
+Add the correct display in Chrome and Safari.
+*/
+
+summary {
+  display: list-item;
+}
+
+/*
+Removes the default spacing and border for appropriate elements.
+*/
+
+blockquote,
+dl,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+figure,
+p,
+pre {
+  margin: 0;
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+ol,
+ul,
+menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+Reset default styling for dialogs.
+*/
+
+dialog {
+  padding: 0;
+}
+
+/*
+Prevent resizing textareas horizontally by default.
+*/
+
+textarea {
+  resize: vertical;
+}
+
+/*
+1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+2. Set the default placeholder color to the user's configured gray 400 color.
+*/
+
+input::-moz-placeholder, textarea::-moz-placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+/*
+Set the default cursor for buttons.
+*/
+
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+/*
+Make sure disabled buttons don't get the pointer cursor.
+*/
+
+:disabled {
+  cursor: default;
+}
+
+/*
+1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+   This can trigger a poorly considered lint error in some tools but is included by design.
+*/
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block;
+  /* 1 */
+  vertical-align: middle;
+  /* 2 */
+}
+
+/*
+Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make elements with the HTML hidden attribute stay hidden by default */
+
+[hidden]:where(:not([hidden="until-found"])) {
+  display: none;
+}
+
+:root {
+  /* Tema Claro Unificado */
+  --bg-color: #F2F6F9;
+  --primary: #3B82F6;
+  --accent: #10BD83;
+  --muted: #F0F4F8;
+  --card: #FFFFFF;
+  --destructive: #F63B3B;
+  --sidebar: #0F172A;
+  /* Colores de texto y bordes */
+  --text-main: #0F172A;
+  --text-muted: #64748B;
+  --border-color: #E2E8F0;
+  --sidebar-bg: #0F172A;
+}
+
+/* Soporte para clase dark y atributo data-theme='dark' */
+
+html.dark,
+[data-theme='dark'] {
+  /* Tema Obscuro Unificado */
+  --bg-color: #080C17;
+  --primary: #3B82F6;
+  --accent: #10BD83;
+  --muted: #1B212F;
+  --card: #0C1222;
+  --destructive: #7C1D1D;
+  --sidebar: #080C17;
+  /* Colores de texto y bordes */
+  --text-main: #F2F6F9;
+  --text-muted: #94A3B8;
+  --border-color: #1E293B;
+  --sidebar-bg: #080C17;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ==========================================================================
+   ESTILOS GLOBALES Y OVERRIDES
+   ========================================================================== */
+
+.text-dark,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-main) !important;
+}
+
+.card {
+  background-color: var(--card) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+input[type="range"] {
+  height: 6px;
+  background: var(--muted);
+  border-radius: 5px;
+  accent-color: var(--primary);
+}
+
+[data-theme='dark'] .btn-close,
+html.dark .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* ==========================================================================
+   ESTILOS DE LA LANDING PAGE
+   ========================================================================== */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 1rem;
+  background-color: var(--card);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-main);
+  opacity: 0.7;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.nav-links a:hover {
+  opacity: 1;
+  color: var(--text-main);
+}
+
+.nav-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--primary);
+}
+
+.theme-toggle-btn {
+  background-color: var(--muted);
+  color: var(--text-main);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+  transform: scale(1.05);
+}
+
+.hero-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 6rem 0rem;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto 2.5rem auto;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1.2rem;
+  border-radius: 9999px;
+  background-color: rgba(59, 130, 246, 0.1);
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+.text-gradient {
+  background: linear-gradient(to right, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section {
+  padding: 6rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.section-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.feature-card {
+  padding: 2rem;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  text-align: left;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.feature-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.icon-primary {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: var(--primary);
+}
+
+.icon-accent {
+  background-color: rgba(16, 189, 131, 0.1);
+  color: var(--accent);
+}
+
+.mockup-container {
+  margin-top: 5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background-color: var(--card);
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mockup-header {
+  height: 3rem;
+  background-color: var(--muted);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  gap: 0.5rem;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.dot.red {
+  background-color: var(--destructive);
+}
+
+.dot.yellow {
+  background-color: #FACC15;
+}
+
+.dot.green {
+  background-color: var(--accent);
+}
+
+.mockup-body {
+  padding: 6rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--text-muted);
+}
+
+.step-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.step-number {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: var(--card);
+  border: 4px solid var(--bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.step-number.c-primary {
+  color: var(--primary);
+}
+
+.step-number.c-accent {
+  color: var(--accent);
+}
+
+.cta-section {
+  text-align: center;
+}
+
+.cta-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.cta-text {
+  font-size: 1.25rem;
+  opacity: 0.8;
+  margin-bottom: 2.5rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ==========================================================================
+   ESTILOS DEL DASHBOARD (Layout y Componentes)
+   ========================================================================== */
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  margin-left: 250px;
+  padding: 40px;
+  /* Unificado con el padding de App.css */
+  flex: 1;
+  min-height: 100vh;
+  overflow-y: auto;
+  background-color: var(--bg-color);
+  transition: margin-left 0.3s ease, background-color 0.3s ease;
+}
+
+.app-layout.sidebar-collapsed .main-content {
+  margin-left: 80px;
+}
+
+/* Sidebar Compartida */
+
+.sidebar-container {
+  background-color: var(--sidebar-bg);
+  color: #94A3B8;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  z-index: 50;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  overflow: hidden;
+}
+
+.sidebar-container.collapsed {
+  width: 80px;
+}
+
+.sidebar-container span {
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.sidebar-container.collapsed span {
+  display: none;
+}
+
+.sidebar-logo {
+  color: white;
+  font-weight: 700;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  padding: 0 0.5rem;
+}
+
+.sidebar-logo-icon {
+  background-color: var(--primary);
+  border-radius: 6px;
+  padding: 0.25rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.sidebar-item.active {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: var(--primary);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1rem;
+}
+
+.sidebar-item.danger {
+  color: var(--destructive);
+}
+
+/* Header de Página */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+}
+
+.page-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* Botones Unificados */
+
+.btn-primary,
+.btn-primary-small {
+  background-color: var(--primary);
+  color: #FFFFFF;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover,
+.btn-primary-small:hover {
+  background-color: #2563EB;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-ghost:hover {
+  background-color: var(--text-muted);
+}
+
+/* Empty State */
+
+.empty-state {
+  background-color: var(--card);
+  border-radius: 12px;
+  padding: 4rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  background-color: var(--muted);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  color: var(--text-muted);
+}
+
+.empty-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.empty-text {
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  max-width: 400px;
+}
+
+/* Modal */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(2px);
+}
+
+.modal-content {
+  background-color: var(--card);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 1rem;
+  border: 1px solid var(--border-color);
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* Formularios */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.form-label span {
+  color: var(--destructive);
+}
+
+.form-input,
+.form-select,
+.form-textarea,
+.form-control {
+  width: 100%;
+  padding: 0.625rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus,
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Project Cards */
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.project-card {
+  background-color: var(--card);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.project-image-placeholder {
+  width: 100%;
+  height: 160px;
+  background-color: var(--muted);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  color: #CBD5E1;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.project-title {
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.status-badge {
+  background-color: #D1FAE5;
+  color: #065F46;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.project-desc {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.project-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tag {
+  background-color: var(--muted);
+  color: var(--primary);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+.project-links {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-muted);
+}
+
+.project-links a {
+  color: inherit;
+  transition: color 0.2s;
+}
+
+.project-links a:hover {
+  color: var(--primary);
+}
+
+.project-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+  margin-top: auto;
+}
+
+.btn-icon-text {
+  background: none;
+  border: none;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-icon-text:hover {
+  color: var(--primary);
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.btn-icon:hover {
+  color: var(--destructive);
+}
+
+/* ==========================================================================
+   RESPONSIVIDAD (Móviles y Tablets)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .sidebar-container {
+    width: 80px;
+    padding: 1rem 0.5rem;
+  }
+
+  .sidebar-container span {
+    display: none;
+  }
+
+  .sidebar-logo {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .sidebar-item {
+    justify-content: center;
+    padding: 0.75rem 0;
+  }
+
+  .main-content,
+  .app-layout.sidebar-collapsed .main-content {
+    margin-left: 80px;
+    padding: 15px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .modal-content {
+    margin: 0.5rem;
+    max-height: 95vh;
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+/* ==========================================================================
+   FORZAR MODO OSCURO EN COMPONENTES DE BOOTSTRAP (DASHBOARD)
+   ========================================================================== */
+
+html.dark .bg-white,
+html.dark .bg-light {
+  background-color: var(--card) !important;
+}
+
+html.dark .text-dark {
+  color: var(--text-main) !important;
+}
+
+html.dark .modal-content {
+  background-color: var(--card) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+
+html.dark .modal-header,
+html.dark .modal-footer {
+  border-color: var(--border-color) !important;
+}
+
+html.dark .form-control,
+html.dark .form-select {
+  background-color: var(--bg-color) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+
+html.dark .form-control:focus,
+html.dark .form-select:focus {
+  background-color: var(--bg-color) !important;
+  color: var(--text-main) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
+}
+
+/* Tablas de la sección de Experiencia o Proyectos */
+
+html.dark .table {
+  color: var(--text-main) !important;
+  --bs-table-bg: transparent;
+}
+
+html.dark .table-striped>tbody>tr:nth-of-type(odd)>* {
+  --bs-table-accent-bg: rgba(255, 255, 255, 0.02);
+  color: var(--text-main) !important;
+}
+
+/* TABS */
+
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  border-bottom: 1px solid #ddd;
+  margin-top: 2rem;
+}
+
+.tab {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #6c757d;
+  padding-bottom: 0.5rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.tab.active {
+  color: #0d6efd;
+  font-weight: 500;
+}
+
+.tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #0d6efd;
+}
+
+/* ==========================================================================
+   ESTILOS CUSTOM PARA EL TOUR (Driver.js)
+   ========================================================================== */
+
+/* Popover principal — esquinas redondeadas, glassmorphism, sombras modernas */
+
+.driver-popover.tour-popover-custom {
+  background: var(--card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 16px !important;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.08) !important;
+  padding: 0 !important;
+  max-width: 420px !important;
+  width: 90vw !important;
+  overflow: hidden;
+  color: var(--text-main) !important;
+}
+
+/* Áreas de enfoque del tour — padding para que el highlight no quede pegado */
+
+#tour-hero-content {
+  text-align: center;
+  padding: 1rem;
+  border-radius: 16px;
+}
+
+#tour-features-header {
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+#tour-cta-section {
+  padding: 1.5rem;
+  border-radius: 16px;
+  text-align: center;
+}
+
+/* Flecha del popover */
+
+.driver-popover.tour-popover-custom .driver-popover-arrow {
+  border-color: var(--card) !important;
+}
+
+.driver-popover.tour-popover-custom .driver-popover-arrow-side-top {
+  border-top-color: var(--card) !important;
+}
+
+.driver-popover.tour-popover-custom .driver-popover-arrow-side-bottom {
+  border-bottom-color: var(--card) !important;
+}
+
+.driver-popover.tour-popover-custom .driver-popover-arrow-side-left {
+  border-left-color: var(--card) !important;
+}
+
+.driver-popover.tour-popover-custom .driver-popover-arrow-side-right {
+  border-right-color: var(--card) !important;
+}
+
+/* Título del popover */
+
+.driver-popover.tour-popover-custom .driver-popover-title {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  color: var(--text-main) !important;
+  text-align: center !important;
+  padding: 1.5rem 1.5rem 0.5rem !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+}
+
+/* Descripción del popover */
+
+.driver-popover.tour-popover-custom .driver-popover-description {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+  color: var(--text-muted) !important;
+  text-align: center !important;
+  padding: 0 1.5rem 1rem !important;
+  line-height: 1.6 !important;
+  margin: 0 !important;
+}
+
+/* Footer del popover (contiene dots y botones) */
+
+.driver-popover.tour-popover-custom .driver-popover-footer {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  padding: 0 1.5rem 1.25rem !important;
+  gap: 0.75rem !important;
+  border-top: none !important;
+}
+
+/* Wrapper de puntitos de progreso */
+
+.tour-dots-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  order: -1;
+}
+
+/* Contenedor de puntitos */
+
+.tour-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Puntito individual */
+
+.tour-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--border-color);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Puntito activo */
+
+.tour-dot-active {
+  width: 24px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+}
+
+/* Botones de navegación del tour */
+
+.driver-popover.tour-popover-custom .driver-popover-navigation-btns {
+  display: flex !important;
+  gap: 0.5rem !important;
+  width: 100% !important;
+  justify-content: center !important;
+}
+
+/* Estilo base para todos los botones del tour */
+
+.driver-popover.tour-popover-custom .driver-popover-prev-btn,
+.driver-popover.tour-popover-custom .driver-popover-next-btn {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 0.6rem 1.5rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  text-shadow: none !important;
+  flex: 1 !important;
+  text-align: center !important;
+}
+
+/* Botón anterior */
+
+.driver-popover.tour-popover-custom .driver-popover-prev-btn {
+  background-color: var(--muted) !important;
+  color: var(--text-main) !important;
+}
+
+.driver-popover.tour-popover-custom .driver-popover-prev-btn:hover {
+  background-color: var(--border-color) !important;
+}
+
+/* Botón siguiente / Entendido */
+
+.driver-popover.tour-popover-custom .driver-popover-next-btn {
+  background: linear-gradient(135deg, var(--primary), #2563EB) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+.driver-popover.tour-popover-custom .driver-popover-next-btn:hover {
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Botón de cerrar (X) del popover */
+
+.driver-popover.tour-popover-custom .driver-popover-close-btn {
+  color: var(--text-muted) !important;
+  font-size: 1.25rem !important;
+  top: 0.75rem !important;
+  right: 0.75rem !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+}
+
+.driver-popover.tour-popover-custom .driver-popover-close-btn:hover {
+  background-color: var(--muted) !important;
+  color: var(--text-main) !important;
+}
+
+/* Overlay oscuro del tour */
+
+.driver-overlay {
+  transition: opacity 0.3s ease !important;
+}
+
+/* ─── RESPONSIVIDAD DEL TOUR ─── */
+
+@media (max-width: 480px) {
+  .driver-popover.tour-popover-custom {
+    max-width: 92vw !important;
+    width: 92vw !important;
+    border-radius: 14px !important;
+  }
+
+  .driver-popover.tour-popover-custom .driver-popover-title {
+    font-size: 1.05rem !important;
+    padding: 1.25rem 1.25rem 0.4rem !important;
+  }
+
+  .driver-popover.tour-popover-custom .driver-popover-description {
+    font-size: 0.825rem !important;
+    padding: 0 1.25rem 0.75rem !important;
+  }
+
+  .driver-popover.tour-popover-custom .driver-popover-footer {
+    padding: 0 1.25rem 1rem !important;
+  }
+
+  .driver-popover.tour-popover-custom .driver-popover-prev-btn,
+  .driver-popover.tour-popover-custom .driver-popover-next-btn {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .tour-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .tour-dot-active {
+    width: 18px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .driver-popover.tour-popover-custom {
+    max-width: 85vw !important;
+  }
+
+  .driver-popover.tour-popover-custom .driver-popover-title {
+    font-size: 1.1rem !important;
+  }
+}

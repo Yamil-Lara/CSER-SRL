@@ -19,6 +19,7 @@
   --text-main: #0F172A;
   --text-muted: #64748B;
   --border-color: #E2E8F0;
+  --sidebar-bg: #0F172A;
 }
 
 /* Soporte para clase dark y atributo data-theme='dark' */
@@ -37,6 +38,7 @@ html.dark,
   --text-main: #F2F6F9;
   --text-muted: #94A3B8;
   --border-color: #1E293B;
+  --sidebar-bg: #080C17;
 }
 
 * {
@@ -382,7 +384,7 @@ html.dark .btn-close {
 
 /* Sidebar Compartida */
 .sidebar-container {
-  background-color: var(--sidebar);
+  background-color: var(--sidebar-bg);
   color: #94A3B8;
   display: flex;
   flex-direction: column;
