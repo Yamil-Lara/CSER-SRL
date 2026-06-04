@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Plus, X } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 import ProjectModal from '../components/ProjectModal';
@@ -12,6 +13,7 @@ export interface Project {
   description: string;
   category: string;
   categoryId?: string;
+  categoria_personalizada?: string | null;
   date: string;
   technologies: string[];
   tools?: string;
@@ -29,9 +31,31 @@ export default function ProjectsPage() {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [commentsProject, setCommentsProject] = useState<Project | null>(null);
 
+  const location = useLocation();
+  const editModalHandled = useRef(false);
+
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  useEffect(() => {
+    if (location.state?.openCreateModal) {
+      setEditingProject(null);
+      setIsModalOpen(true);
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    if (editModalHandled.current) return;
+    if (location.state?.openEditModal && location.state?.editProjectId && projects.length > 0) {
+      const project = projects.find(p => p.id === String(location.state.editProjectId));
+      if (project) {
+        editModalHandled.current = true;
+        setEditingProject(project);
+        setIsModalOpen(true);
+      }
+    }
+  }, [projects]);
 
   const fetchProjects = async () => {
     try {
@@ -45,6 +69,7 @@ export default function ProjectsPage() {
         description: item.descripcion,
         category: item.categoria?.nombre || 'Sin categoría',
         categoryId: item.categoria_id?.toString(),
+        categoria_personalizada: item.categoria_personalizada || null,
         date: item.fecha_proyecto || item.created_at,
         technologies: typeof item.tecnologias === 'string' 
             ? item.tecnologias.split(',').map((t: string) => t.trim()) 

@@ -6,6 +6,7 @@ import {
   FolderGit2,
   Code,
   Briefcase,
+  GraduationCap,
   Link as LinkIcon,
   EyeOff,
   LogOut,
@@ -81,8 +82,7 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
 
   const handleLogout = async () => {
     await logout();
-    // Redirección limpia al login para cumplir con la HU-14
-    navigate('/login', { replace: true });
+    // La redirección se maneja automáticamente en AuthContext con window.location.replace
   };
 
   // Configuración de Menús según Rol
@@ -91,7 +91,8 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
     { icon: User, label: 'Editar Perfil', path: '/dashboard/perfil' },
     { icon: FolderGit2, label: 'Mis Proyectos', path: '/dashboard/proyectos' },
     { icon: Code, label: 'Mis Habilidades', path: '/dashboard/habilidades' },
-    { icon: Briefcase, label: 'Experiencia', path: '/dashboard/experiencia' },
+    { icon: Briefcase, label: 'Experiencia', path: '/dashboard/experiencia-laboral' },
+    { icon: GraduationCap, label: 'Formación', path: '/dashboard/formacion-academica' },
     { icon: LinkIcon, label: 'Enlaces', path: '/dashboard/enlaces' },
     { icon: EyeOff, label: 'Visibilidad', path: '/dashboard/visibilidad' }
   ];
@@ -145,7 +146,7 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
       )}
 
       {/* Navegación Principal */}
-      <nav className="flex-1 py-6 px-3 overflow-y-auto scrollbar-hide">
+      <nav id="tour-sidebar-nav" className="flex-1 py-6 px-3 overflow-y-auto scrollbar-hide">
         <div className="space-y-1">
           {menuItems.map((item) => {
             const Icon = item.icon;
@@ -183,18 +184,19 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
       {/* Acciones de Cuenta y Sistema */}
       <div className="border-t border-sidebar/10 p-3 space-y-1">
         {!isAdmin && (
-          <Link to={`/portfolio/${user?.username}`} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/5 hover:text-white transition-all" title={isCollapsed ? 'Ver Portafolio' : undefined}>
+          <Link id="tour-user-portfolio" to={`/portfolio/${user?.username}`} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/5 hover:text-white transition-all" title={isCollapsed ? 'Ver Portafolio' : undefined}>
             <Eye className="w-5 h-5 flex-shrink-0" />
             {!isCollapsed && <span className="text-sm font-medium">Ver mi Portafolio</span>}
           </Link>
         )}
 
-        <button onClick={toggleSidebar} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/5 hover:text-white transition-all">
+        <button id="tour-sidebar-collapse" onClick={toggleSidebar} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/5 hover:text-white transition-all">
           {isCollapsed ? <ChevronRight className="w-5 h-5 flex-shrink-0" /> : <><ChevronLeft className="w-5 h-5 flex-shrink-0" /><span className="text-sm font-medium">Colapsar menú</span></>}
         </button>
 
         {/* Botón Salir: HU-14 (Diferenciado en color #F63B3B) */}
         <button 
+          id="tour-sidebar-logout"
           onClick={handleLogout} 
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-[#F63B3B] hover:bg-[#F63B3B]/10 group" 
           title={isCollapsed ? 'Cerrar sesión' : undefined}

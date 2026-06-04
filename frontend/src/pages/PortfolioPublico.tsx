@@ -9,7 +9,6 @@ export default function PortfolioPublico() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // LLamar a las múltiples rutas que el nuevo backend definió
     const fetchData = async () => {
       try {
         const [userRes, projectsRes, experienceRes, skillsRes] = await Promise.all([
@@ -19,7 +18,6 @@ export default function PortfolioPublico() {
           api.get(`/portafolio/${username}/habilidades`)
         ]);
 
-        // Adaptado al ApiResponseTrait (res.data.data)
         const user = userRes.data.data.usuario;
         const redes = userRes.data.data.redes_sociales || {};
         const proyectos = projectsRes.data.data || [];
@@ -55,6 +53,8 @@ export default function PortfolioPublico() {
                 company: e.institucion_empresa || 'Empresa',
                 date: `${e.fecha_inicio?.split('T')[0]} - ${e.fecha_fin ? e.fecha_fin.split('T')[0] : 'Presente'}`,
                 description: e.descripcion || '',
+                isAcademic: e.tipo === 'academica',
+                rawDate: e.fecha_inicio || ''
           })),
           projects: proyectos.map((p: any) => {
                 let parsedTags: string[] = [];
@@ -65,15 +65,21 @@ export default function PortfolioPublico() {
                        parsedTags = [];
                    }
                 }
+                
+                let parsedTools: string[] = [];
+                if (p.herramientas) {
+                   parsedTools = p.herramientas.split(',');
+                }
+
                 return {
                     id: p.id,
                     title: p.titulo,
                     description: p.descripcion,
-                    tags: parsedTags,
+                    tags: parsedTags.map((t: string) => t.trim()).filter(Boolean),
+                    tools: parsedTools.map((t: string) => t.trim()).filter(Boolean),
                     image: buildUrl(p.imagen)
                 };
           }),
-          // Por defecto todo visible ya que el backend no lo incluyó en la respuesta del nuevo endpoint
           visibilidad: {
              proyectos_visible: true, habilidades_visible: true,
              experiencia_visible: true, redes_visible: true
@@ -89,6 +95,9 @@ export default function PortfolioPublico() {
     };
 
     fetchData();
+    api.post(`/portafolio/${username}/visita`).catch((err) => {
+      console.warn('[visita]', err?.response?.data?.message ?? err?.message);
+    });
   }, [username]);
 
   if (loading) {

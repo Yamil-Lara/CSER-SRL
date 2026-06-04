@@ -34,7 +34,7 @@ export default function LoginPage() {
         if (result.user?.rol === 'admin') {
           navigate('/gestion/dashboard');
         } else {
-          navigate('/dashboard/perfil');
+          navigate('/dashboard');
         }
       } else {
         setError(result.message);
@@ -157,8 +157,11 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <div className="text-center">
-            <Link to="/register" className="text-sm text-primary hover:text-primary-hover">
+          <div className="text-center space-y-2">
+            <Link to="/forgot-password" className="block text-sm text-primary hover:text-primary-hover">
+              ¿Olvidaste tu contraseña?
+            </Link>
+            <Link to="/register" className="block text-sm text-primary hover:text-primary-hover">
               ¿No tienes una cuenta? Regístrate gratis
             </Link>
           </div>

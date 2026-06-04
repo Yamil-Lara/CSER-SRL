@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\ExperienceController;
@@ -27,14 +29,20 @@ Route::get('/status', function () {
 Route::post('/register', RegisterController::class);
 Route::post('/login', LoginController::class);
 
+// Recuperación de contraseñas (públicas, con rate limiting)
+Route::middleware('throttle:6,1')->group(function () {
+    Route::post('/forgot-password', ForgotPasswordController::class);
+    Route::post('/reset-password', ResetPasswordController::class);
+});
+
 Route::get('/proyectos', [ProyectoController::class, 'index']);
 Route::get('/proyectos/{id}', [ProyectoController::class, 'show']);
 Route::get('/categorias', [CategoriaController::class, 'index']);
-Route::get('/usuarios/{id}', [AdminUserController::class, 'show']);
+
 
 // HU-06: Portafolio público
 Route::get('/portafolio/{username}', [PortafolioController::class, 'show']);
-Route::post('/portafolio/{username}/visita', [PortafolioController::class, 'registrarVisita']);
+Route::middleware('throttle:10,1')->post('/portafolio/{username}/visita', [PortafolioController::class, 'registrarVisita']);
 Route::get('/portafolio/{username}/proyectos', [PortafolioController::class, 'proyectos']);
 Route::get('/portafolio/{username}/experiencias', [PortafolioController::class, 'experiencias']);
 Route::get('/portafolio/{username}/habilidades', [PortafolioController::class, 'habilidades']);
@@ -61,6 +69,8 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
         Route::get('/', [ProfileController::class, 'show']);
         Route::put('/', [ProfileController::class, 'update']);
         Route::delete('/', [ProfileController::class, 'destroy']);
+        Route::get('/visitas', [ProfileController::class, 'getVisitas']);
+        Route::get('/comentarios-recientes', [ProfileController::class, 'getComentariosRecientes']);
     });
 
     // HU-08: Control de visibilidad
@@ -106,16 +116,23 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
         // Logs
         Route::get('/logs', [AdminSystemController::class, 'getLogs']);
 
-        // PDF Reportes
+        // Reportes - Datos JSON para previsualización en pantalla
+        Route::get('/reportes/datos/usuarios', [\App\Http\Controllers\ReporteController::class, 'datosUsuarios']);
+        Route::get('/reportes/datos/proyectos', [\App\Http\Controllers\ReporteController::class, 'datosProyectos']);
+        Route::get('/reportes/datos/comentarios', [\App\Http\Controllers\ReporteController::class, 'datosComentarios']);
+        Route::get('/reportes/datos/general', [\App\Http\Controllers\ReporteController::class, 'datosGeneral']);
+
+        // Reportes - PDF
         Route::get('/reportes/usuarios', [\App\Http\Controllers\ReporteController::class, 'usuariosPDF']);
         Route::get('/reportes/proyectos', [\App\Http\Controllers\ReporteController::class, 'proyectosPDF']);
         Route::get('/reportes/comentarios', [\App\Http\Controllers\ReporteController::class, 'comentariosPDF']);
+        Route::get('/reportes/general', [\App\Http\Controllers\ReporteController::class, 'generalPDF']);
+
+        // Reportes - Excel
+        Route::get('/reportes/excel/usuarios', [\App\Http\Controllers\ReporteController::class, 'usuariosExcel']);
+        Route::get('/reportes/excel/proyectos', [\App\Http\Controllers\ReporteController::class, 'proyectosExcel']);
+        Route::get('/reportes/excel/comentarios', [\App\Http\Controllers\ReporteController::class, 'comentariosExcel']);
+        Route::get('/reportes/excel/general', [\App\Http\Controllers\ReporteController::class, 'generalExcel']);
     });
-
-    // En la sección de RUTAS PÚBLICAS (fuera del middleware auth:sanctum)
-    Route::get('/proyectos/{proyectoId}/comentarios', [\App\Http\Controllers\ComentarioController::class, 'index']);
-
-    // En la sección de RUTAS PROTEGIDAS (dentro del middleware auth:sanctum)
-    Route::post('/proyectos/{proyectoId}/comentarios', [\App\Http\Controllers\ComentarioController::class, 'store']);
 
 });

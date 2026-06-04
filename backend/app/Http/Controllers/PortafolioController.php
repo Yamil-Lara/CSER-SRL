@@ -40,6 +40,10 @@ class PortafolioController extends Controller
                 'id' => $user->id,
                 'nombre' => $user->nombre,
                 'username' => $user->username,
+                'email' => $user->email,
+                'universidad' => $user->universidad,
+                'carrera' => $user->carrera,
+                'telefono' => $user->telefono,
                 'profesion' => $user->profesion,
                 'especialidad' => $user->especialidad,
                 'biografia' => $user->biografia,
@@ -73,18 +77,30 @@ class PortafolioController extends Controller
             return $this->errorResponse('Usuario no encontrado', 404);
         }
 
+        // Si el visitante es el propio dueño del portafolio, no registramos la visita
+        $visitor = auth('sanctum')->user();
+        if ($visitor && $visitor->id === $user->id) {
+            return $this->successResponse(null, 'Autovisita no registrada');
+        }
+
         $ip = $request->ip();
         $now = now();
 
-        // Verificar si ya hubo visita en las últimas 24 horas
-        $visitaReciente = VisitaPortafolio::where('usuario_id', $user->id)
-            ->where('ip_address', $ip)
-            ->where('visitado_en', '>=', $now->copy()->subHours(24))
-            ->exists();
+        // Si el visitante está autenticado, buscamos una visita suya en las últimas 24 horas.
+        // Si no está autenticado, buscamos por IP.
+        $query = VisitaPortafolio::where('usuario_id', $user->id);
+        if ($visitor) {
+            $query->where('visitante_id', $visitor->id);
+        } else {
+            $query->where('ip_address', $ip)->whereNull('visitante_id');
+        }
+
+        $visitaReciente = $query->where('visitado_en', '>=', $now->copy()->subHours(24))->exists();
 
         if (!$visitaReciente) {
             VisitaPortafolio::create([
                 'usuario_id' => $user->id,
+                'visitante_id' => $visitor ? $visitor->id : null,
                 'ip_address' => $ip,
                 'visitado_en' => $now,
             ]);

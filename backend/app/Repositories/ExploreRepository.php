@@ -88,6 +88,19 @@ class ExploreRepository
             });
         }
 
+        // 3. Filtro por perfil (profesionales/estudiantes)
+        if (!empty($filters['filter'])) {
+            match ($filters['filter']) {
+                'profesionales' => $query->whereHas('usuario', function ($q) {
+                    $q->whereNotNull('profesion')->where('profesion', '!=', '');
+                }),
+                'estudiantes'   => $query->whereHas('usuario', function ($q) {
+                    $q->whereNotNull('universidad')->where('universidad', '!=', '');
+                }),
+                default         => null,
+            };
+        }
+
         return $query->latest('id')->paginate($perPage);
     }
 }

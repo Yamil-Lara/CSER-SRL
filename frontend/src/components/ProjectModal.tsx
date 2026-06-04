@@ -2,7 +2,7 @@ import { useState, useEffect, FormEvent, useRef } from 'react';
 import { X, AlertCircle, Upload } from 'lucide-react';
 import axios from 'axios';
 import { Project } from '../pages/ProjectsPage';
-import { buildUrl } from '../utils/api';
+import api, { buildUrl } from '../utils/api';
 
 interface Category {
   id: number;
@@ -32,7 +32,8 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
     herramientas: '',
     cliente: '',
     github: '',
-    demo: ''
+    demo: '',
+    categoria_personalizada: ''
   });
 
   // Cargar categorías
@@ -41,14 +42,11 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
 
     const fetchCategorias = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/categorias');
+        const response = await api.get('/categorias');
         const data = response.data.data || response.data;
         
         if (isMounted) {
           setCategories(data);
-          if (!projectToEdit && data.length > 0) {
-            setFormData(prev => ({ ...prev, categoria_id: data[0].id.toString() }));
-          }
         }
       } catch (err) {
         console.error("Error al cargar categorías", err);
@@ -75,7 +73,8 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
         herramientas: projectToEdit.tools || '',
         cliente: projectToEdit.client || '',
         github: projectToEdit.githubUrl || '',
-        demo: projectToEdit.demoUrl || ''
+        demo: projectToEdit.demoUrl || '',
+        categoria_personalizada: projectToEdit.categoria_personalizada || ''
       });
       
       if (projectToEdit.image) {
@@ -178,6 +177,11 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
       setError('Debe seleccionar una categoría.');
       return false;
     }
+    const selectedCategory = categories.find(c => c.id.toString() === formData.categoria_id);
+    if (selectedCategory?.nombre === 'Otro' && !formData.categoria_personalizada.trim()) {
+      setError('Debe especificar la nueva categoría.');
+      return false;
+    }
     if (!formData.tecnologias.trim()) {
       setError('Debe agregar al menos una tecnología.');
       return false;
@@ -205,6 +209,11 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
     if (formData.cliente) submitData.append('cliente', formData.cliente);
     if (formData.github) submitData.append('github', formData.github);
     if (formData.demo) submitData.append('demo', formData.demo);
+    
+    const selectedCategory = categories.find(c => c.id.toString() === formData.categoria_id);
+    if (selectedCategory?.nombre === 'Otro' && formData.categoria_personalizada) {
+      submitData.append('categoria_personalizada', formData.categoria_personalizada);
+    }
     
     if (imageFile) {
       submitData.append('imagen', imageFile);
@@ -246,12 +255,23 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="form-group">
+              <div className="form-group flex flex-col justify-start">
                 <label className="form-label">Categoría <span className="text-red-500">*</span></label>
                 <select name="categoria_id" className="form-select" value={formData.categoria_id} onChange={handleChange}>
                   <option value="" disabled>Seleccione una categoría</option>
                   {categories.map(cat => (<option key={cat.id} value={cat.id}>{cat.nombre}</option>))}
                 </select>
+                {categories.find(c => c.id.toString() === formData.categoria_id)?.nombre === 'Otro' && (
+                  <input 
+                    type="text" 
+                    name="categoria_personalizada" 
+                    className="form-input mt-2" 
+                    value={formData.categoria_personalizada} 
+                    onChange={handleChange} 
+                    maxLength={30}
+                    placeholder="Especifique la categoría (Max. 30 car.)" 
+                  />
+                )}
               </div>
               <div className="form-group">
                 <label className="form-label">Fecha de Realización</label>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MessageSquare, Send, Trash2 } from "lucide-react";
 import api from "../utils/api";
+import { useAuth } from "../context/AuthContext";
 
 // Interfaz que coincide con la respuesta de tu backend
 interface Comentario {
@@ -22,6 +23,7 @@ interface ProjectCommentsProps {
 
 const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
     const navigate = useNavigate();
+    const { isAdmin } = useAuth();
     
     // Estados de autenticación y usuario
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -132,32 +134,38 @@ const ProjectComments: React.FC<ProjectCommentsProps> = ({ proyectoId }) => {
 
             {/* Muestra la caja de comentarios si el usuario inició sesión */}
             {isAuthenticated ? (
-                <div className="flex gap-4 mb-10">
-                    <div className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">
-                        Tú
+                !isAdmin ? (
+                    <div className="flex gap-4 mb-10">
+                        <div className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">
+                            Tú
+                        </div>
+                        <div className="flex-grow">
+                            <textarea
+                                value={nuevoComentario}
+                                onChange={(e) => {
+                                    setNuevoComentario(e.target.value);
+                                    setErrorMensaje("");
+                                }}
+                                placeholder="Escribe un comentario o pregunta sobre el proyecto..."
+                                className={`w-full border ${errorMensaje ? 'border-red-500' : 'border-slate-200'} rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50 resize-y`}
+                                rows={3}
+                                disabled={submitting}
+                            />
+                            {errorMensaje && <p className="text-red-500 text-xs mt-2 ml-1">{errorMensaje}</p>}
+                            <button 
+                                onClick={handleEnviarComentario}
+                                disabled={submitting}
+                                className="mt-3 bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 ml-auto hover:bg-slate-800 transition-colors disabled:opacity-50"
+                            >
+                                <Send size={16} /> {submitting ? 'Publicando...' : 'Publicar'}
+                            </button>
+                        </div>
                     </div>
-                    <div className="flex-grow">
-                        <textarea
-                            value={nuevoComentario}
-                            onChange={(e) => {
-                                setNuevoComentario(e.target.value);
-                                setErrorMensaje("");
-                            }}
-                            placeholder="Escribe un comentario o pregunta sobre el proyecto..."
-                            className={`w-full border ${errorMensaje ? 'border-red-500' : 'border-slate-200'} rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50 resize-y`}
-                            rows={3}
-                            disabled={submitting}
-                        />
-                        {errorMensaje && <p className="text-red-500 text-xs mt-2 ml-1">{errorMensaje}</p>}
-                        <button 
-                            onClick={handleEnviarComentario}
-                            disabled={submitting}
-                            className="mt-3 bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 ml-auto hover:bg-slate-800 transition-colors disabled:opacity-50"
-                        >
-                            <Send size={16} /> {submitting ? 'Publicando...' : 'Publicar'}
-                        </button>
+                ) : (
+                    <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 text-center mb-10 flex flex-col items-center justify-center">
+                        <p className="text-slate-600 font-medium">Como administrador, no puedes comentar en los proyectos.</p>
                     </div>
-                </div>
+                )
             ) : (
                 <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 text-center mb-10 flex flex-col items-center justify-center">
                     <p className="text-slate-600 mb-4 font-medium">Inicia sesión para dejar tu opinión o realizar preguntas sobre este trabajo.</p>

@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ExperiencePage } from "./pages/ExperiencePage";
+import { ExperienceLaboralPage } from "./pages/ExperienceLaboralPage";
+import { FormacionAcademicaPage } from "./pages/FormacionAcademicaPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import AdminAprobacionesPage from "./pages/AdminAprobacionesPage";
@@ -30,6 +32,9 @@ import ProjectDetailPage from "./pages/ProjectDetailPage";
 import AdminCommentPage from "./pages/AdminCommentPage";
 import LoginPage from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
+import { DashboardPage } from "./pages/DashboardPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 // Componentes temporales para las rutas de admin que faltan
 const AdminDashboard = () => (
@@ -94,6 +99,8 @@ function App(): JSX.Element {
           <Route path="/proyecto/:id" element={<ProjectDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/portfolio/:username" element={<PortfolioPublico />} />
 
           {/* ============================================================ */}
@@ -132,10 +139,13 @@ function App(): JSX.Element {
                   <Sidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
                   <main className="main-content">
                     <Routes>
+                      <Route index element={<DashboardPage />} />
                       <Route path="perfil" element={<UserProfile />} />
                       <Route path="proyectos" element={<ProjectsPage />} />
                       <Route path="habilidades" element={<SkillsPage />} />                  
-                      <Route path="experiencia" element={<ExperiencePage />} />
+                      <Route path="experiencia" element={<Navigate to="/dashboard/experiencia-laboral" replace />} />
+                      <Route path="experiencia-laboral" element={<ExperienceLaboralPage />} />
+                      <Route path="formacion-academica" element={<FormacionAcademicaPage />} />
                       <Route path="enlaces" element={<LinksPage />} />
                       <Route path="visibilidad" element={<VisibilitySettingsPage />} />
                       <Route path="moderacion" element={<AdminCommentPage />} />

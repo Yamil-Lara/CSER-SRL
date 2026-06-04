@@ -133,9 +133,9 @@ export const PublicHeader = () => {
         }`}
       >
         <div className="nav-links flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 md:mx-auto w-full md:w-auto">
-          <a href="/#features" onClick={() => setIsMobileMenuOpen(false)}>Características</a>
+          <a href="/#tour-features" onClick={() => setIsMobileMenuOpen(false)}>Características</a>
           <a onClick={() => handleNavigation('/explorar')} style={{ cursor: 'pointer' }}>Explorar</a>
-          <a href="/#how-it-works" onClick={() => setIsMobileMenuOpen(false)}>Cómo Funciona</a>
+          <a href="/#tour-how-it-works" onClick={() => setIsMobileMenuOpen(false)}>Cómo Funciona</a>
           <a href="/#About-Us" onClick={() => setIsMobileMenuOpen(false)}>Nosotros</a>
         </div>
 
@@ -143,7 +143,7 @@ export const PublicHeader = () => {
           {isAuthenticated ? (
             <>
               {isAdmin ? (
-                <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/admin/dashboard')}>
+                <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/dashboard')}>
                   Vista Global
                 </button>
               ) : (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -13,6 +13,24 @@ export function ProtectedRoute({
 }: ProtectedRouteProps) {
   const { isAuthenticated, isAdmin, loading } = useAuth();
   const location = useLocation();
+
+  // Protección contra bfcache: si el navegador restaura una página cacheada
+  // después de logout, verificamos si el token existe y forzamos recarga si no
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        // La página fue restaurada desde bfcache
+        const token = localStorage.getItem('token');
+        if (!token) {
+          // No hay sesión activa → forzar recarga para redirigir al login
+          window.location.replace('/login');
+        }
+      }
+    };
+
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, []);
 
   // Esperar a que termine de validar el token antes de redirigir
   if (loading) {
