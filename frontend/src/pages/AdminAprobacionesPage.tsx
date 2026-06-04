@@ -193,11 +193,11 @@ export default function AdminAprobacionesPage() {
 
             <header className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-sidebar flex items-center gap-3">
+                    <h1 className="text-3xl font-bold  flex items-center gap-3">
                         <CheckCircle className="w-8 h-8 text-primary" />
                         Aprobaciones del Sistema
                     </h1>
-                    <p className="text-sidebar/70 mt-2">Gestiona, revisa y analiza detalladamente proyectos y usuarios.</p>
+                    <p className="opacity-70 mt-2">Gestiona, revisa y analiza detalladamente proyectos y usuarios.</p>
                 </div>
             </header>
 
@@ -205,13 +205,13 @@ export default function AdminAprobacionesPage() {
             <div className="flex gap-4 border-b border-muted mb-6">
                 <button
                     onClick={() => { setActiveTab('proyectos'); setFilter('todos'); setSearchTerm(''); }}
-                    className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'proyectos' ? 'border-primary text-primary' : 'border-transparent text-sidebar/60 hover:text-sidebar'}`}
+                    className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'proyectos' ? 'border-primary text-primary' : 'border-transparent opacity-60 hover:'}`}
                 >
                     <FolderGit2 className="w-4 h-4" /> Proyectos
                 </button>
                 <button
                     onClick={() => { setActiveTab('usuarios'); setFilter('todos'); setSearchTerm(''); }}
-                    className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'usuarios' ? 'border-primary text-primary' : 'border-transparent text-sidebar/60 hover:text-sidebar'}`}
+                    className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'usuarios' ? 'border-primary text-primary' : 'border-transparent opacity-60 hover:'}`}
                 >
                     <User className="w-4 h-4" /> Usuarios
                 </button>
@@ -220,20 +220,20 @@ export default function AdminAprobacionesPage() {
             {/* DASHBOARD DE ESTADÍSTICAS */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 <Card className="p-4 flex items-center gap-4 border-l-4 border-l-sidebar">
-                    <div className="bg-sidebar/10 p-3 rounded-lg text-sidebar"><LayoutGrid /></div>
-                    <div><p className="text-xs text-sidebar/60">Total {activeTab === 'proyectos' ? 'Proyectos' : 'Usuarios'}</p><p className="text-xl font-bold">{displayStats.total}</p></div>
+                    <div className="bg-sidebar/10 p-3 rounded-lg "><LayoutGrid /></div>
+                    <div><p className="text-xs opacity-60">Total {activeTab === 'proyectos' ? 'Proyectos' : 'Usuarios'}</p><p className="text-xl font-bold">{displayStats.total}</p></div>
                 </Card>
                 <Card className="p-4 flex items-center gap-4 border-l-4 border-l-yellow-500 shadow-sm">
                     <div className="bg-yellow-100 p-3 rounded-lg text-yellow-600"><Clock /></div>
-                    <div><p className="text-xs text-sidebar/60">Pendientes</p><p className="text-xl font-bold">{displayStats.pendientes}</p></div>
+                    <div><p className="text-xs opacity-60">Pendientes</p><p className="text-xl font-bold">{displayStats.pendientes}</p></div>
                 </Card>
                 <Card className="p-4 flex items-center gap-4 border-l-4 border-l-green-500 shadow-sm opacity-80">
                     <div className="bg-green-100 p-3 rounded-lg text-green-600"><CheckCircle /></div>
-                    <div><p className="text-xs text-sidebar/60">Aprobados</p><p className="text-xl font-bold">{displayStats.aprobados}</p></div>
+                    <div><p className="text-xs opacity-60">Aprobados</p><p className="text-xl font-bold">{displayStats.aprobados}</p></div>
                 </Card>
                 <Card className="p-4 flex items-center gap-4 border-l-4 border-l-red-500 shadow-sm opacity-80">
                     <div className="bg-red-100 p-3 rounded-lg text-red-600"><XCircle /></div>
-                    <div><p className="text-xs text-sidebar/60">Rechazados</p><p className="text-xl font-bold">{displayStats.rechazados}</p></div>
+                    <div><p className="text-xs opacity-60">Rechazados</p><p className="text-xl font-bold">{displayStats.rechazados}</p></div>
                 </Card>
             </div>
 
@@ -244,7 +244,7 @@ export default function AdminAprobacionesPage() {
                         <button
                             key={opt}
                             onClick={() => setFilter(opt)}
-                            className={`px-4 md:px-6 py-3 text-sm font-medium transition-all border-b-2 capitalize flex-shrink-0 ${filter === opt ? 'border-primary text-primary' : 'border-transparent text-sidebar/60 hover:text-sidebar'}`}
+                            className={`px-4 md:px-6 py-3 text-sm font-medium transition-all border-b-2 capitalize flex-shrink-0 ${filter === opt ? 'border-primary text-primary' : 'border-transparent opacity-60 hover:'}`}
                         >
                             {opt === 'todos' ? 'Ver Todos' : opt + 's'}
                         </button>
@@ -253,7 +253,7 @@ export default function AdminAprobacionesPage() {
 
                 <div className="bg-card border border-muted rounded-xl p-2 shadow-sm">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-sidebar/40 w-5 h-5" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 opacity-40 w-5 h-5" />
                         <input 
                             type="text" 
                             placeholder={activeTab === 'proyectos' ? "Buscar por título, descripción, usuario, cliente o categoría..." : "Buscar por nombre, email, profesión o username..."}
@@ -271,7 +271,7 @@ export default function AdminAprobacionesPage() {
             ) : activeTab === 'proyectos' ? (
                 // === VISTA DE PROYECTOS ===
                 proyectosFiltrados.length === 0 ? (
-                    <div className="text-center py-12 text-sidebar/50 bg-muted/20 rounded-xl border border-dashed border-muted">
+                    <div className="text-center py-12 opacity-50 bg-muted/20 rounded-xl border border-dashed border-muted">
                         {filter === 'pendiente' ? 'Sin pendientes de revisión' : 'No se encontraron proyectos.'}
                     </div>
                 ) : (
@@ -287,8 +287,8 @@ export default function AdminAprobacionesPage() {
                                     <div className="p-4 md:p-6 flex-1 space-y-4 min-w-0">
                                         <div className="flex flex-wrap items-start justify-between gap-4">
                                             <div>
-                                                <h3 className="text-2xl font-bold text-sidebar">{p.titulo}</h3>
-                                                <div className="flex flex-wrap gap-x-4 gap-y-2 mt-2 text-sm text-sidebar/60">
+                                                <h3 className="text-2xl font-bold ">{p.titulo}</h3>
+                                                <div className="flex flex-wrap gap-x-4 gap-y-2 mt-2 text-sm opacity-60">
                                                     <span className="flex items-center gap-1"><User className="w-4 h-4"/> {p.usuario?.nombre}</span>
                                                     <span className="flex items-center gap-1"><Tag className="w-4 h-4"/> {p.categoria?.nombre}</span>
                                                     {p.cliente && <span className="flex items-center gap-1"><Briefcase className="w-4 h-4"/> Cliente: {p.cliente}</span>}
@@ -303,14 +303,14 @@ export default function AdminAprobacionesPage() {
                                             </Badge>
                                         </div>
 
-                                        <p className="text-sidebar/80 leading-relaxed text-sm">
+                                        <p className="opacity-80 leading-relaxed text-sm">
                                             {p.descripcion}
                                         </p>
 
                                         {p.tecnologias && (
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                                                 <div>
-                                                    <p className="text-xs font-bold text-sidebar/40 uppercase mb-2 flex items-center gap-1"><Code className="w-3 h-3"/> Tecnologías</p>
+                                                    <p className="text-xs font-bold opacity-40 uppercase mb-2 flex items-center gap-1"><Code className="w-3 h-3"/> Tecnologías</p>
                                                     <div className="flex flex-wrap gap-2">
                                                         {p.tecnologias.split(',').map((t: string, i: number) => (
                                                             <Badge key={i} variant="default" className="bg-primary/5 text-primary border-primary/10 text-[10px]">{t.trim()}</Badge>
@@ -319,10 +319,10 @@ export default function AdminAprobacionesPage() {
                                                 </div>
                                                 {p.herramientas && (
                                                     <div>
-                                                        <p className="text-xs font-bold text-sidebar/40 uppercase mb-2 flex items-center gap-1"><Wrench className="w-3 h-3"/> Herramientas</p>
+                                                        <p className="text-xs font-bold opacity-40 uppercase mb-2 flex items-center gap-1"><Wrench className="w-3 h-3"/> Herramientas</p>
                                                         <div className="flex flex-wrap gap-2">
                                                             {p.herramientas.split(',').map((h: string, i: number) => (
-                                                                <Badge key={i} variant="default" className="bg-sidebar/5 text-sidebar border-sidebar/10 text-[10px]">{h.trim()}</Badge>
+                                                                <Badge key={i} variant="default" className="bg-sidebar/5  border-sidebar/10 text-[10px]">{h.trim()}</Badge>
                                                             ))}
                                                         </div>
                                                     </div>
@@ -335,8 +335,8 @@ export default function AdminAprobacionesPage() {
                                                 <button onClick={() => window.open(`/proyecto/${p.id}`, '_blank')} className="flex items-center gap-1 text-primary font-medium hover:underline">
                                                     <Eye className="w-4 h-4"/> Previsualizar Proyecto
                                                 </button>
-                                                {p.github && <a href={p.github} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sidebar/60 hover:text-primary transition-colors"><Code className="w-4 h-4"/> GitHub</a>}
-                                                {p.demo && <a href={p.demo} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sidebar/60 hover:text-primary transition-colors"><ExternalLink className="w-4 h-4"/> Demo</a>}
+                                                {p.github && <a href={p.github} target="_blank" rel="noreferrer" className="flex items-center gap-1 opacity-60 hover:text-primary transition-colors"><Code className="w-4 h-4"/> GitHub</a>}
+                                                {p.demo && <a href={p.demo} target="_blank" rel="noreferrer" className="flex items-center gap-1 opacity-60 hover:text-primary transition-colors"><ExternalLink className="w-4 h-4"/> Demo</a>}
                                             </div>
 
                                             <div className="flex gap-2 w-full sm:w-auto">
@@ -368,7 +368,7 @@ export default function AdminAprobacionesPage() {
             ) : (
                 // === VISTA DE USUARIOS ===
                 usuariosFiltrados.length === 0 ? (
-                    <div className="text-center py-12 text-sidebar/50 bg-muted/20 rounded-xl border border-dashed border-muted">
+                    <div className="text-center py-12 opacity-50 bg-muted/20 rounded-xl border border-dashed border-muted">
                         {filter === 'pendiente' ? 'Sin pendientes de revisión' : 'No se encontraron usuarios.'}
                     </div>
                 ) : (
@@ -382,7 +382,7 @@ export default function AdminAprobacionesPage() {
                                             <img src={buildUrl(u.foto)} alt={u.nombre} className="w-32 h-32 rounded-full object-cover shadow-sm border-4 border-white" />
                                         ) : (
                                             <div className="w-32 h-32 rounded-full bg-white flex items-center justify-center shadow-sm border-4 border-muted">
-                                                <User className="w-12 h-12 text-sidebar/30" />
+                                                <User className="w-12 h-12 opacity-30" />
                                             </div>
                                         )}
                                     </div>
@@ -390,8 +390,8 @@ export default function AdminAprobacionesPage() {
                                     <div className="p-4 md:p-6 flex-1 space-y-4 min-w-0 flex flex-col">
                                         <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4">
                                             <div>
-                                                <h3 className="text-2xl font-bold text-sidebar">{u.nombre}</h3>
-                                                <div className="flex flex-wrap gap-x-4 gap-y-2 mt-2 text-sm text-sidebar/60">
+                                                <h3 className="text-2xl font-bold ">{u.nombre}</h3>
+                                                <div className="flex flex-wrap gap-x-4 gap-y-2 mt-2 text-sm opacity-60">
                                                     <span className="flex items-center gap-1 font-medium text-primary break-all">@{u.username}</span>
                                                     <span className="flex items-center gap-1"><Briefcase className="w-4 h-4 flex-shrink-0"/> <span className="truncate">{u.profesion || 'Sin profesión'}</span></span>
                                                     <span className="flex items-center gap-1 break-all"><ExternalLink className="w-4 h-4 flex-shrink-0"/> {u.email}</span>
@@ -405,13 +405,13 @@ export default function AdminAprobacionesPage() {
                                             </Badge>
                                         </div>
 
-                                        <p className="text-sidebar/80 leading-relaxed text-sm flex-grow">
+                                        <p className="opacity-80 leading-relaxed text-sm flex-grow">
                                             {u.biografia || 'Sin biografía.'}
                                         </p>
 
                                         {u.especialidad && (
                                             <div className="pt-2">
-                                                <p className="text-xs font-bold text-sidebar/40 uppercase mb-2 flex items-center gap-1"><Code className="w-3 h-3"/> Especialidad</p>
+                                                <p className="text-xs font-bold opacity-40 uppercase mb-2 flex items-center gap-1"><Code className="w-3 h-3"/> Especialidad</p>
                                                 <div className="flex flex-wrap gap-2">
                                                     {u.especialidad.split(',').map((esp: string, i: number) => (
                                                         <Badge key={i} variant="default" className="bg-primary/5 text-primary border-primary/10 text-[10px]">{esp.trim()}</Badge>
@@ -450,8 +450,8 @@ export default function AdminAprobacionesPage() {
 
             {/* Controles de Paginación */}
             {!loading && totalItems > 0 && (
-                                                <div className="mt-8 flex flex-col md:flex-row justify-between items-center text-sm text-sidebar/70 bg-card p-4 rounded-xl border border-muted shadow-sm gap-4">
-                                                    <span>Total de registros: <strong className="text-sidebar">{totalItems}</strong></span>
+                                                <div className="mt-8 flex flex-col md:flex-row justify-between items-center text-sm opacity-70 bg-card p-4 rounded-xl border border-muted shadow-sm gap-4">
+                                                    <span>Total de registros: <strong className="">{totalItems}</strong></span>
                                                     
                                                     {lastPage > 1 && (
                                                         <div className="flex items-center gap-4">
@@ -462,7 +462,7 @@ export default function AdminAprobacionesPage() {
                                                             >
                                                                 <ChevronLeft className="w-5 h-5" />
                                                             </button>
-                                                            <span className="font-medium text-sidebar">
+                                                            <span className="font-medium ">
                                                                 Página {currentPage} de {lastPage}
                                                             </span>
                                                             <button 
