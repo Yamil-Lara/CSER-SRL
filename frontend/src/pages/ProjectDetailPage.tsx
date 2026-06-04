@@ -65,17 +65,17 @@ const ProjectDetailPage: React.FC = () => {
     }, [id]);
 
     const Badge = ({ children }: { children: React.ReactNode }) => (
-        <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold border border-slate-200">
+        <span className="px-3 py-1 bg-[var(--muted)] text-[var(--text-main)] rounded-full text-xs font-bold border border-[var(--border-color)]">
             {children}
         </span>
     );
 
     if (loading) {
-        return <div className="min-h-screen bg-[#F1F5F9] flex items-center justify-center">Cargando...</div>;
+        return <div className="min-h-screen bg-[var(--bg-main)] flex items-center justify-center text-[var(--text-main)]">Cargando...</div>;
     }
 
     if (error || !proyecto) {
-        return <div className="min-h-screen bg-[#F1F5F9] flex items-center justify-center text-red-500">{error || "Proyecto no encontrado"}</div>;
+        return <div className="min-h-screen bg-[var(--bg-main)] flex items-center justify-center text-red-500">{error || "Proyecto no encontrado"}</div>;
     }
 
     let tecnologiasArray: string[] = [];
@@ -91,13 +91,13 @@ const ProjectDetailPage: React.FC = () => {
 
 
     return (
-        <div className="min-h-screen bg-[#F1F5F9] font-sans">
+        <div className="min-h-screen bg-[var(--bg-main)] font-sans">
             <PublicHeader />
 
             <main className="max-w-5xl mx-auto py-12 px-6 pt-28">
                 <button
                     onClick={() => navigate('/explorar')}
-                    className="flex items-center gap-2 text-slate-500 hover:text-[#3B82F6] font-medium transition-colors mb-6"
+                    className="flex items-center gap-2 text-[var(--text-muted)] hover:text-primary font-medium transition-colors mb-6"
                 >
                     <ChevronLeft size={20} /> Volver al explorador
                 </button>
@@ -105,11 +105,11 @@ const ProjectDetailPage: React.FC = () => {
                 {/* --- SECCIÓN SUPERIOR: Info del proyecto --- */}
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-12">
                     <div className="md:col-span-7">
-                        <div className="aspect-video bg-slate-100 rounded-[32px] border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden">
+                        <div className="aspect-video bg-[var(--muted)] rounded-[32px] border border-[var(--border-color)] shadow-sm flex items-center justify-center overflow-hidden">
                             {proyecto.imagen ? (
                                 <img src={buildUrl(proyecto.imagen) || ""} alt={proyecto.titulo} className="w-full h-full object-cover" />
                             ) : (
-                                <div className="text-slate-400 flex flex-col items-center">
+                                <div className="text-[var(--text-muted)] flex flex-col items-center">
                                     <span className="text-sm font-bold uppercase">Sin imagen</span>
                                 </div>
                             )}
@@ -118,13 +118,13 @@ const ProjectDetailPage: React.FC = () => {
 
                     <div className="md:col-span-5 flex flex-col justify-center">
                         <Badge>{proyecto.categoria?.nombre || "Sin categoría"}</Badge>
-                        <h1 className="text-4xl font-black text-slate-900 mt-4 mb-6">{proyecto.titulo}</h1>
+                        <h1 className="text-4xl font-black text-[var(--text-main)] mt-4 mb-6">{proyecto.titulo}</h1>
 
                         <div className="space-y-4 mb-8">
                             {proyecto.fecha_proyecto && (
-                                <div className="flex justify-between border-b border-slate-200 pb-2">
-                                    <span className="text-slate-400 text-sm font-bold uppercase tracking-wider">Fecha de realización</span>
-                                    <span className="text-slate-700 font-medium">{new Date(proyecto.fecha_proyecto).toLocaleDateString()}</span>
+                                <div className="flex justify-between border-b border-[var(--border-color)] pb-2">
+                                    <span className="text-[var(--text-muted)] text-sm font-bold uppercase tracking-wider">Fecha de realización</span>
+                                    <span className="text-[var(--text-main)] font-medium">{new Date(proyecto.fecha_proyecto).toLocaleDateString()}</span>
                                 </div>
                             )}
                             <div className="flex items-center gap-3 mt-4">
@@ -136,20 +136,20 @@ const ProjectDetailPage: React.FC = () => {
                                     </div>
                                 )}
                                 <div>
-                                    <p className="text-xs text-slate-400 font-bold uppercase">Autor</p>
-                                    <p className="text-slate-800 font-bold">{proyecto.usuario?.nombre || "Desconocido"}</p>
+                                    <p className="text-xs text-[var(--text-muted)] font-bold uppercase">Autor</p>
+                                    <p className="text-[var(--text-main)] font-bold">{proyecto.usuario?.nombre || "Desconocido"}</p>
                                 </div>
                             </div>
                         </div>
 
                         <div className="flex gap-3">
                             {proyecto.demo && (
-                                <a href={proyecto.demo} target="_blank" rel="noopener noreferrer" className="flex-1 bg-[#3B82F6] text-white font-bold py-3 rounded-xl hover:bg-blue-600 shadow-lg flex items-center justify-center gap-2">
+                                <a href={proyecto.demo} target="_blank" rel="noopener noreferrer" className="flex-1 bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary-hover shadow-lg flex items-center justify-center gap-2">
                                     <ExternalLink size={18} /> Demo
                                 </a>
                             )}
                             {proyecto.github && (
-                                <a href={proyecto.github} target="_blank" rel="noopener noreferrer" className="flex-1 bg-white text-slate-700 border border-slate-200 font-bold py-3 rounded-xl hover:bg-slate-50 flex items-center justify-center gap-2">
+                                <a href={proyecto.github} target="_blank" rel="noopener noreferrer" className="flex-1 bg-[var(--card)] text-[var(--text-main)] border border-[var(--border-color)] font-bold py-3 rounded-xl hover:bg-[var(--muted)] flex items-center justify-center gap-2">
                                     <FiGithub size={18} /> Código
                                 </a>
                             )}
@@ -160,9 +160,9 @@ const ProjectDetailPage: React.FC = () => {
                 {/* --- SECCIÓN INFERIOR --- */}
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
                     <div className="md:col-span-8">
-                        <section className="bg-white rounded-[32px] p-8 border border-slate-200 shadow-sm mb-8">
-                            <h3 className="text-xl font-bold text-slate-800 mb-4">Sobre el proyecto</h3>
-                            <p className="text-slate-600 leading-relaxed whitespace-pre-wrap">
+                        <section className="bg-[var(--card)] rounded-[32px] p-8 border border-[var(--border-color)] shadow-sm mb-8">
+                            <h3 className="text-xl font-bold text-[var(--text-main)] mb-4">Sobre el proyecto</h3>
+                            <p className="text-[var(--text-muted)] leading-relaxed whitespace-pre-wrap">
                                 {proyecto.descripcion || "Sin descripción detallada."}
                             </p>
                         </section>
@@ -173,13 +173,13 @@ const ProjectDetailPage: React.FC = () => {
                     </div>
 
                     <div className="md:col-span-4">
-                        <div className="bg-white rounded-[32px] p-8 border border-slate-200 shadow-sm sticky top-8">
-                            <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-6">Tecnologías</h4>
+                        <div className="bg-[var(--card)] rounded-[32px] p-8 border border-[var(--border-color)] shadow-sm sticky top-8">
+                            <h4 className="text-sm font-black text-[var(--text-muted)] uppercase tracking-widest mb-6">Tecnologías</h4>
                             <div className="flex flex-wrap gap-2">
                                 {tecnologiasArray.length > 0 ? tecnologiasArray.map((tech: string, index: number) => (
                                     <Badge key={index}>{tech}</Badge>
                                 )) : (
-                                    <span className="text-slate-500 text-sm">No especificadas</span>
+                                    <span className="text-[var(--text-muted)] text-sm">No especificadas</span>
                                 )}
                             </div>
                         </div>

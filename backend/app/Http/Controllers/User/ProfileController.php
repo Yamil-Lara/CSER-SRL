@@ -95,12 +95,19 @@ class ProfileController extends Controller
 
         $comentarios = \App\Models\Comentario::with(['usuario', 'proyecto'])
             ->whereHas('proyecto', function ($q) use ($user) {
-                $q->where('usuario_id', $user->id);
+                $q->where('usuario_id', $user->id)->where('estado', 'aprobado');
             })
+            ->where('aprobado', 1)
             ->whereNull('parent_id') // Solo comentarios principales
             ->where('usuario_id', '!=', $user->id) // Que no sean míos
             ->whereHas('usuario', function ($q) {
                 $q->where('rol', '!=', 'admin'); // Que no sean del admin
+            })
+            ->whereDoesntHave('respuestas', function ($q) use ($user) {
+                $q->where('usuario_id', $user->id); // Que no tengan mi respuesta
+            })
+            ->whereDoesntHave('interacciones', function ($q) use ($user) {
+                $q->where('usuario_id', $user->id); // Que no tengan mi interacción
             })
             ->orderBy('created_at', 'desc')
             ->take(5)
