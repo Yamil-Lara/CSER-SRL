@@ -21,7 +21,7 @@ const SkillList: React.FC<Props> = ({ skills, onEdit, onDelete, onAddFirst }) =>
         <div className={`p-2 rounded-lg ${iconBgClass}`}>
           <Icon className={`w-6 h-6 ${iconTextClass}`} />
         </div>
-        <h2 className="text-xl font-bold text-sidebar m-0">{title}</h2>
+        <h2 className="text-xl font-bold  m-0">{title}</h2>
       </div>
 
       {data.length > 0 ? (
@@ -33,9 +33,9 @@ const SkillList: React.FC<Props> = ({ skills, onEdit, onDelete, onAddFirst }) =>
       ) : (
         <div className="text-center py-12">
           <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-            <Icon className="w-8 h-8 text-sidebar/30" />
+            <Icon className="w-8 h-8 opacity-30" />
           </div>
-          <p className="text-sidebar/60 mb-4">No tienes habilidades {typeLabel} registradas</p>
+          <p className="opacity-60 mb-4">No tienes habilidades {typeLabel} registradas</p>
           <Button variant="outline" size="sm" className="gap-2 mx-auto inline-flex" onClick={onAddFirst}>
             <Plus className="w-4 h-4" />
             Agregar Primera Habilidad
