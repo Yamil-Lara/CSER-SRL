@@ -16,14 +16,14 @@ const LogRow = ({ log }: { log: any }) => {
 
     return (
         <div className="p-4 border-b border-muted/50 hover:bg-muted/5 flex gap-4 items-start group transition-colors">
-            <span className="text-sidebar/40 whitespace-nowrap mt-1 font-mono">{log.date}</span>
+            <span className="opacity-40 whitespace-nowrap mt-1 font-mono">{log.date}</span>
             <Badge variant={log.level === 'ERROR' ? 'destructive' : log.level === 'WARNING' ? 'warning' : 'success'} className="w-20 flex justify-center py-0 mt-0.5">
                 {log.level}
             </Badge>
             
             {/* Contenedor del texto: Limitamos la altura visualmente, pero conservamos todo el texto */}
             <div className="flex-1 overflow-hidden">
-                <div className="text-sidebar/80 text-[13px] break-all whitespace-pre-wrap max-h-24 overflow-y-auto pr-2 scrollbar-thin">
+                <div className="opacity-80 text-[13px] break-all whitespace-pre-wrap max-h-24 overflow-y-auto pr-2 scrollbar-thin">
                     {log.message}
                 </div>
             </div>
@@ -31,7 +31,7 @@ const LogRow = ({ log }: { log: any }) => {
             {/* Botón de copiar: Aparece al pasar el cursor (group-hover) */}
             <button 
                 onClick={handleCopy} 
-                className={`p-2 flex-shrink-0 rounded-lg transition-all ${copied ? 'bg-green-100 text-green-600' : 'text-sidebar/40 hover:text-primary hover:bg-primary/10 opacity-0 group-hover:opacity-100'}`}
+                className={`p-2 flex-shrink-0 rounded-lg transition-all ${copied ? 'bg-green-100 text-green-600' : 'opacity-40 hover:text-primary hover:bg-primary/10 opacity-0 group-hover:opacity-100'}`}
                 title="Copiar error completo"
             >
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -67,16 +67,16 @@ export default function AdminLogsPage() {
     return (
         <div className="p-6 max-w-7xl mx-auto space-y-8">
             <div>
-                <h1 className="text-3xl font-bold text-sidebar flex items-center gap-3">
+                <h1 className="text-3xl font-bold  flex items-center gap-3">
                     <Activity className="w-8 h-8 text-primary" />
                     Registro de Actividad
                 </h1>
-                <p className="text-sidebar/70 mt-2">Auditoría del Sistema en Tiempo Real</p>
+                <p className="opacity-70 mt-2">Auditoría del Sistema en Tiempo Real</p>
             </div>
 
             <div className="bg-card border border-muted rounded-xl p-2 shadow-sm flex gap-2">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-sidebar/40 w-5 h-5" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 opacity-40 w-5 h-5" />
                     <input 
                         type="text" 
                         placeholder="Buscar en los registros de actividad..." 
@@ -100,7 +100,7 @@ export default function AdminLogsPage() {
                                 <LogRow key={i} log={log} />
                             ))
                         ) : (
-                            <div className="p-8 text-center text-sidebar/40 font-sans">
+                            <div className="p-8 text-center opacity-40 font-sans">
                                 No se encontraron registros de actividad.
                             </div>
                         )}
