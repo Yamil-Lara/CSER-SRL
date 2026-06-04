@@ -5,7 +5,7 @@ import {
     Search, Calendar, User, Tag, Briefcase, Wrench, Eye, FolderGit2,
     ChevronLeft, ChevronRight, Trash2
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom'; // ← AGREGAR useLocation
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,8 @@ import ConfirmModal from '../components/ConfirmModal';
 
 export default function AdminAprobacionesPage() {
     const navigate = useNavigate();
+    const location = useLocation(); // ← AGREGAR ESTO
+    
     const [activeTab, setActiveTab] = useState<'proyectos' | 'usuarios'>('proyectos');
     const [proyectos, setProyectos] = useState<any[]>([]);
     const [usuarios, setUsuarios] = useState<any[]>([]);
@@ -44,6 +46,17 @@ export default function AdminAprobacionesPage() {
         id: null,
         titulo: '',
     });
+
+    // ← NUEVO: Leer el estado de navegación para cambiar pestaña y filtro
+    useEffect(() => {
+        if (location.state) {
+            if (location.state.activeTab === 'usuarios') {
+                setActiveTab('usuarios');
+                setFilter('pendiente');
+                setSearchTerm('');
+            }
+        }
+    }, [location.state]);
 
     // Cuando cambian el filtro o la pestaña, reseteamos la página a 1
     useEffect(() => {

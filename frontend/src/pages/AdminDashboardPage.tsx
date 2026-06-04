@@ -290,24 +290,27 @@ export default function AdminDashboardPage() {
           )}
 
           {alertas.usuariosPendientes > 0 && (
-            <Link to="/gestion/usuarios" id="alert-usuarios"
-              className="group flex items-center justify-between gap-4 p-4 rounded-2xl
-                bg-violet-50 border border-violet-200 hover:border-violet-400
-                dark:bg-violet-500/10 dark:border-violet-500/25 dark:hover:border-violet-500/50 transition-all">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center flex-shrink-0">
-                  <UserX className="w-5 h-5 text-violet-600 dark:text-violet-400" />
-                </div>
-                <div>
-                  <p className="font-semibold text-violet-800 dark:text-violet-300 text-sm">Usuarios Pendientes</p>
-                  <p className="text-violet-600/80 dark:text-violet-400/70 text-xs">
-                    {alertas.usuariosPendientes} usuario{alertas.usuariosPendientes !== 1 ? 's' : ''} sin revisar
-                  </p>
-                </div>
-              </div>
-              <ArrowRight className="w-5 h-5 text-violet-500 group-hover:translate-x-1 transition-transform flex-shrink-0" />
-            </Link>
-          )}
+  <Link 
+    to="/gestion/aprobaciones" 
+    state={{ activeTab: 'usuarios', filter: 'pendiente' }}
+    id="alert-usuarios"
+    className="group flex items-center justify-between gap-4 p-4 rounded-2xl
+      bg-violet-50 border border-violet-200 hover:border-violet-400
+      dark:bg-violet-500/10 dark:border-violet-500/25 dark:hover:border-violet-500/50 transition-all">
+    <div className="flex items-center gap-3">
+      <div className="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center flex-shrink-0">
+        <UserX className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+      </div>
+      <div>
+        <p className="font-semibold text-violet-800 dark:text-violet-300 text-sm">Usuarios Pendientes</p>
+        <p className="text-violet-600/80 dark:text-violet-400/70 text-xs">
+          {alertas.usuariosPendientes} usuario{alertas.usuariosPendientes !== 1 ? 's' : ''} sin revisar
+        </p>
+      </div>
+    </div>
+    <ArrowRight className="w-5 h-5 text-violet-500 group-hover:translate-x-1 transition-transform flex-shrink-0" />
+  </Link>
+)}
         </div>
       ) : (
         /* CA4: Mensaje "Todo al día" */
