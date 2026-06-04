@@ -96,7 +96,7 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen  flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="mb-6">
           <Link
@@ -113,14 +113,14 @@ export function RegisterPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-4">
             <UserPlus className="w-8 h-8" />
           </div>
-          <h1 className="text-3xl font-bold text-sidebar mb-2">Crear Cuenta</h1>
-          <p className="text-sidebar/70">
+          <h1 className="text-3xl font-bold  mb-2">Crear Cuenta</h1>
+          <p className="opacity-70">
             Únete a DevFolio y comienza a construir tu portafolio profesional
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-card rounded-2xl shadow-soft p-8 border border-muted">
+        <div className="card rounded-2xl shadow-soft p-8 border border-muted">
           {generalError && (
             <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
               <p className="text-sm text-destructive">{generalError}</p>
@@ -167,7 +167,7 @@ export function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-[38px] text-sidebar/50 hover:text-sidebar transition-colors"
+                className="absolute right-3 top-[38px] opacity-50 hover: transition-colors"
                 tabIndex={-1}
               >
                 {showPassword ? (
@@ -193,7 +193,7 @@ export function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-[38px] text-sidebar/50 hover:text-sidebar transition-colors"
+                className="absolute right-3 top-[38px] opacity-50 hover: transition-colors"
                 tabIndex={-1}
               >
                 {showConfirmPassword ? (
@@ -224,7 +224,7 @@ export function RegisterPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-sidebar/70">
+            <p className="text-sm opacity-70">
               ¿Ya tienes una cuenta?{' '}
               <Link
                 to="/login"
@@ -239,3 +239,5 @@ export function RegisterPage() {
     </div>
   )
 }
+
+
