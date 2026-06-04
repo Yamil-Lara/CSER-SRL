@@ -159,7 +159,7 @@ export default function LoginPage() {
           </div>
 
           {/* Credenciales de prueba */}
-          <div className="mt-4 p-3 bg-muted rounded-lg">
+          <div className="mt-4 p-3 bg-muted dark:bg-slate-900/60 rounded-lg border border-muted dark:border-slate-700">
             <p className="text-xs opacity-60 text-center">
               <span className="font-semibold">Credenciales de prueba:</span><br />
               Admin: admin@cser.com / Admin@2026<br />
