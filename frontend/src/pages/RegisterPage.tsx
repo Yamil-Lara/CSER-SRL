@@ -100,7 +100,7 @@ export function RegisterPage() {
       <div className="w-full max-w-md">
         <div className="mb-6">
           <Link
-            to="/login"
+            to="/"
             className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary-hover transition-colors"
           >
             <ArrowLeft size={16} />
