@@ -10,6 +10,7 @@ use App\Services\ExperienceService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ExperienceController extends Controller
 {
@@ -39,51 +40,62 @@ class ExperienceController extends Controller
     public function store(StoreExperienceRequest $request): JsonResponse
     {
         try {
-            $experience = $this->experienceService->createExperience(Auth::user(), $request->validated());
+            $data = $request->validated();
+            
+            // GUARDAR LA IMAGEN SI EXISTE
+            if ($request->hasFile('imagen')) {
+                $data['imagen'] = $request->file('imagen')->store('formacion', 'public');
+            }
+
+            $experience = $this->experienceService->createExperience(Auth::user(), $data);
             return $this->successResponse($experience, 'Experiencia creada exitosamente', 201);
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), 400);
         }
     }
 
-    /**
-     * Ver una experiencia específica
-     */
-    public function show($id): JsonResponse
-    {
-        try {
-            $experience = $this->experienceRepository->findOrFail($id);
-            
-            // Verificar que pertenezca al usuario
-            if ($experience->usuario_id !== Auth::id()) {
-                return $this->errorResponse('No tienes permiso para ver esta experiencia', 403);
-            }
-            
-            return $this->successResponse($experience);
-        } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), 404);
-        }
-    }
-
-    /**
-     * Actualizar una experiencia
-     */
     public function update(UpdateExperienceRequest $request, $id): JsonResponse
     {
         try {
-            $experience = $this->experienceService->updateExperience(Auth::user(), $id, $request->validated());
+            $data = $request->validated();
+            // Necesitas el ExperienceRepository (asegúrate de que esté inyectado en el constructor, si no, usa el modelo Experience::findOrFail)
+            $experienceOld = $this->experienceRepository->findOrFail($id);
+            
+            // 1. SI SE ENVÍA UNA IMAGEN NUEVA
+            if ($request->hasFile('imagen')) {
+                if ($experienceOld->imagen && Storage::disk('public')->exists($experienceOld->imagen)) {
+                    Storage::disk('public')->delete($experienceOld->imagen);
+                }
+                $data['imagen'] = $request->file('imagen')->store('formacion', 'public');
+            } 
+            // 2. NUEVO: SI EL USUARIO HIZO CLIC EN LA 'X'
+            elseif (isset($data['eliminar_imagen']) && $data['eliminar_imagen']) {
+                if ($experienceOld->imagen && Storage::disk('public')->exists($experienceOld->imagen)) {
+                    Storage::disk('public')->delete($experienceOld->imagen);
+                }
+                $data['imagen'] = null; // Le indicamos a la base de datos que borre el registro
+            }
+
+            // Limpiamos la bandera del array de datos para que no intente guardarse en una columna de la base de datos
+            unset($data['eliminar_imagen']);
+
+            $experience = $this->experienceService->updateExperience(Auth::user(), $id, $data);
             return $this->successResponse($experience, 'Experiencia actualizada exitosamente');
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), 400);
         }
     }
 
-    /**
-     * Eliminar una experiencia
-     */
     public function destroy($id): JsonResponse
     {
         try {
+            $experience = $this->experienceRepository->findOrFail($id);
+            
+            // ELIMINAR LA IMAGEN ASOCIADA ANTES DE BORRAR LA EXPERIENCIA
+            if ($experience->imagen && Storage::disk('public')->exists($experience->imagen)) {
+                Storage::disk('public')->delete($experience->imagen);
+            }
+            
             $this->experienceService->deleteExperience(Auth::user(), $id);
             return $this->successResponse(null, 'Experiencia eliminada exitosamente');
         } catch (\Exception $e) {

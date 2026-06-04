@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Plus, GraduationCap, Edit, Trash2, Calendar, Building } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Plus, GraduationCap, Edit, Trash2, Calendar, Building, Upload, X, Eye } from 'lucide-react';
 import { useExperience } from '../hooks/useExperience';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
@@ -9,6 +9,8 @@ import { Textarea } from '../components/ui/Textarea';
 import { Alert } from '../components/ui/Alert';
 import { Badge } from '../components/ui/Badge';
 import ConfirmModal from '../components/ConfirmModal';
+// IMPORTAR buildUrl DESDE TU UTILERÍA DE API
+import { buildUrl } from '../utils/api'; // Necesario para cargar la imagen previa del servidor
 
 export function FormacionAcademicaPage() {
   const { experiences, createExperience, updateExperience, deleteExperience, loading } = useExperience();
@@ -18,6 +20,7 @@ export function FormacionAcademicaPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+  const [imagen, setImagen] = useState<File | null>(null);
 
   const [formData, setFormData] = useState({
     tipo: 'academica' as const,
@@ -27,19 +30,33 @@ export function FormacionAcademicaPage() {
     fecha_inicio: '',
     fecha_fin: '',
     actual: 0,
+    enlace_certificado: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // NUEVOS ESTADOS PARA LA IMAGEN (Drag & Drop)
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagenEliminada, setImagenEliminada] = useState(false); // <--- NUEVO ESTADO
+  const dragCounter = useRef(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const academicExperiences = experiences.filter((e) => e.tipo === 'academica');
 
   const resetForm = () => {
-    setFormData({ tipo: 'academica', cargo_titulo: '', institucion_empresa: '', descripcion: '', fecha_inicio: '', fecha_fin: '', actual: 0 });
+    setFormData({ tipo: 'academica', cargo_titulo: '', institucion_empresa: '', descripcion: '', fecha_inicio: '', fecha_fin: '', actual: 0, enlace_certificado: '' });    
     setErrors({});
     setEditingExp(null);
+    // Limpiar imagen
+    setImageFile(null);
+    setImagePreview(null);
+    setImagenEliminada(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleOpenModal = (expId?: number) => {
     if (expId) {
+      setImagenEliminada(false);
       const exp = academicExperiences.find((e) => e.id === expId);
       if (exp) {
         setFormData({
@@ -49,9 +66,22 @@ export function FormacionAcademicaPage() {
           descripcion: exp.descripcion || '',
           fecha_inicio: exp.fecha_inicio.split('T')[0],
           fecha_fin: exp.fecha_fin ? exp.fecha_fin.split('T')[0] : '',
-          actual: exp.actual,
+          actual: exp.actual ? 1 : 0,
+          enlace_certificado: exp.enlace_certificado || '', // <--- Añadir aquí
         });
         setEditingExp(expId);
+        
+        // Cargar vista previa si existe imagen en el servidor
+        if (exp.imagen) {
+          const imageUrl = buildUrl(exp.imagen);
+          if (imageUrl) {
+            setImagePreview(imageUrl);
+            setImageFile(null); // No hay archivo nuevo, solo vista previa
+          }
+        } else {
+          setImagePreview(null);
+          setImageFile(null);
+        }
       }
     } else {
       resetForm();
@@ -62,6 +92,67 @@ export function FormacionAcademicaPage() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     resetForm();
+  };
+
+  // --- MANEJADORES DE IMAGEN (Drag & Drop) ---
+  const processFile = (file: File) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      setErrorMessage('Solo se permiten imágenes JPG, PNG o WEBP');
+      setTimeout(() => setErrorMessage(''), 3000);
+      return false;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setErrorMessage('La imagen no puede superar los 10MB');
+      setTimeout(() => setErrorMessage(''), 3000);
+      return false;
+    }
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+    return true;
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processFile(file);
+    }
+  };
+
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current++;
+    if (dragCounter.current === 1) {
+      e.currentTarget.classList.add('border-primary', 'bg-primary/5'); // Adaptado a tus colores de tema
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current--;
+    if (dragCounter.current === 0) {
+      e.currentTarget.classList.remove('border-primary', 'bg-primary/5');
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current = 0;
+    e.currentTarget.classList.remove('border-primary', 'bg-primary/5');
+    
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      processFile(files[0]);
+    }
   };
 
   const validateForm = () => {
@@ -81,18 +172,52 @@ export function FormacionAcademicaPage() {
     if (!validateForm()) return;
     setIsSubmitting(true);
     setErrorMessage('');
+
+    // CREAR EL FORM DATA
+    const submitData = new FormData();
+    submitData.append('tipo', formData.tipo);
+    submitData.append('cargo_titulo', formData.cargo_titulo);
+    submitData.append('institucion_empresa', formData.institucion_empresa);
+    submitData.append('descripcion', formData.descripcion || ''); // Garantizar que exista
+    submitData.append('fecha_inicio', formData.fecha_inicio);
+    submitData.append('fecha_fin', formData.fecha_fin || '');
+    submitData.append('actual', formData.actual.toString());
+    submitData.append('enlace_certificado', formData.enlace_certificado || ''); // <--- NUEVO
+    
+    // Adjuntar archivo si el usuario seleccionó uno
+    if (imageFile) {
+      submitData.append('imagen', imageFile);
+    }
+    
+    // NUEVO: Enviar la bandera si el usuario borró la imagen
+    if (imagenEliminada) {
+      submitData.append('eliminar_imagen', '1');
+    }
+
     try {
       if (editingExp) {
-        await updateExperience(editingExp, formData);
+        await updateExperience(editingExp, submitData); // Enviar submitData en lugar de formData
         setSuccessMessage('Formación actualizada correctamente');
       } else {
-        await createExperience(formData);
+        await createExperience(submitData); // Enviar submitData en lugar de formData
         setSuccessMessage('Formación creada correctamente');
       }
       handleCloseModal();
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error: any) {
-      setErrorMessage(error.response?.data?.message || 'Hubo un error al guardar la formación.');
+      console.error('Error completo:', error);
+      let errorMsg = "Ocurrió un error al guardar la formación.";
+      
+      // Extraemos los errores específicos de los campos desde Laravel
+      if (error.response?.data?.errors) {
+        const firstError = Object.values(error.response.data.errors)[0];
+        // En Laravel, los errores vienen en arreglos por campo
+        errorMsg = Array.isArray(firstError) ? firstError[0] as string : "Revisa los campos del formulario";
+      } else if (error.response?.data?.message) {
+        errorMsg = error.response.data.message;
+      }
+      
+      setErrorMessage(errorMsg);
     } finally {
       setIsSubmitting(false);
     }
@@ -156,7 +281,7 @@ export function FormacionAcademicaPage() {
           <div className="space-y-6">
             {academicExperiences.map((exp) => (
               <div key={exp.id} className="relative pl-8 pb-6 border-l-2 border-accent/20 last:border-l-0 last:pb-0">
-                <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-accent border-4 border-background" />
+                <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-accent border-4 border-white dark:border-gray-800" />
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold text-sidebar">{exp.cargo_titulo}</h3>
@@ -166,7 +291,7 @@ export function FormacionAcademicaPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {exp.actual === 1 && <Badge variant="success" size="sm">En curso</Badge>}
+                    {exp.actual ? <Badge variant="success" size="sm">En curso</Badge> : null}
                     <Button variant="ghost" size="sm" onClick={() => handleOpenModal(exp.id)}>
                       <Edit className="w-4 h-4" />
                     </Button>
@@ -180,6 +305,40 @@ export function FormacionAcademicaPage() {
                   <span>{formatDate(exp.fecha_inicio)} - {exp.actual ? 'Presente' : formatDate(exp.fecha_fin!)}</span>
                 </div>
                 {exp.descripcion && <p className="text-sm text-sidebar/70">{exp.descripcion}</p>}
+
+                {/* BOTÓN DEL ENLACE AL CERTIFICADO */}
+                {exp.enlace_certificado && (
+                  <a 
+                    href={exp.enlace_certificado} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full transition-colors w-fit"
+                  >
+                    <Eye size={14} />
+                    Ver Certificado Digital
+                  </a>
+                )}
+
+                {/* VISUALIZACIÓN DE LA IMAGEN SUBIDA */}
+                {exp.imagen && (
+                  <div className="mt-3 group relative max-w-xs overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-1 transition-all hover:border-primary/40 hover:shadow-sm">
+                    <div className="relative h-24 w-full overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center">
+                      <img 
+                        src={buildUrl(exp.imagen)} 
+                        alt="Comprobante" 
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <a 
+                        href={buildUrl(exp.imagen)} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity text-xs font-semibold gap-1.5 backdrop-blur-[1px]"
+                      >
+                        <Eye size={14} /> Ver Comprobante
+                      </a>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -258,6 +417,74 @@ export function FormacionAcademicaPage() {
             <label htmlFor="actual_academica" className="text-sm text-sidebar">
               Actualmente estudio aquí
             </label>
+          </div>
+
+          {/* NUEVO CAMPO: ENLACE DEL CERTIFICADO */}
+          <div className="mt-4">
+            <Input
+              label="Enlace del Certificado Digital (Opcional)"
+              name="enlace_certificado"
+              type="url"
+              placeholder="Ej: https://www.google.com/certificados/mi-certificado"
+              value={formData.enlace_certificado}
+              onChange={(e) => setFormData({ ...formData, enlace_certificado: e.target.value })}
+              error={errors.enlace_certificado}
+            />
+          </div>
+
+          {/* CAMPO DE IMAGEN CON DRAG & DROP */}
+          <div className="space-y-2 mt-4">
+            <label className="text-sm font-medium text-sidebar">
+              Imagen de respaldo o comprobante {!imagePreview && '(Opcional)'}
+            </label>
+            <div
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-muted-foreground/30 dark:border-slate-600 rounded-lg transition-colors overflow-hidden relative bg-card dark:bg-slate-800/50 hover:bg-muted/50 dark:hover:bg-slate-700/50 cursor-pointer"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {imagePreview ? (
+                <div className="relative w-full h-full">
+                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                  <button 
+                    type="button" 
+                    onClick={(e) => { 
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setImageFile(null); 
+                      setImagePreview(null); 
+                      setImagenEliminada(true);
+                      if(fileInputRef.current) fileInputRef.current.value = '';
+                    }} 
+                    className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1.5 hover:bg-destructive/90 transition-colors z-10 shadow-sm"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center text-center p-4">
+                  <Upload className="w-8 h-8 text-muted-foreground dark:text-slate-500 mb-3" />
+                  <p className="text-sm font-medium text-sidebar dark:text-slate-300">
+                    Haz clic o arrastra un archivo aquí
+                  </p>
+                  <p className="text-xs text-muted-foreground dark:text-slate-500 mt-1">PNG, JPG, WEBP (MAX. 10MB)</p>
+                </div>
+              )}
+            </div>
+            <input 
+              ref={fileInputRef}
+              type="file" 
+              className="hidden" 
+              accept="image/jpeg,image/png,image/jpg,image/webp" 
+              onChange={handleImageChange} 
+            />
+            {imagePreview && (
+              <p className="text-xs text-primary mt-1">
+                ✓ Archivo listo. Haz clic en la X para cambiarlo.
+              </p>
+            )}
           </div>
         </form>
       </Modal>
