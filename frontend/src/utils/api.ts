@@ -1,10 +1,7 @@
 import axios from 'axios';
 
-// ✅ CORRECCIÓN: Leer variable de entorno (funciona en laptop y celular)
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-
 const api = axios.create({
-  baseURL: `${API_URL}/api`,
+  baseURL: 'http://localhost:8000/api', // CAMBIA ESTO A 'http://cser.tis.cs.umss.edu.bo/api' ANTES DE HACER BUILD
   headers: {
     'Accept': 'application/json'
   }
@@ -15,8 +12,9 @@ export const buildUrl = (path: string | null | undefined): string | undefined =>
   if (!path) return undefined;
   if (path.startsWith('http')) return path;
 
-  // ✅ CORRECCIÓN: Usar la misma variable de entorno
-  const domain = API_URL;
+  // Extraemos la base (ej: http://localhost:8000 o http://cser.tis.cs.umss.edu.bo)
+  const baseApiUrl = api.defaults.baseURL || 'http://localhost:8000/api';
+  const domain = baseApiUrl.replace(/\/api$/, '');
 
   const cleanPath = path.startsWith('/') ? path.substring(1) : path;
   if (cleanPath.startsWith('storage/')) {
@@ -27,12 +25,14 @@ export const buildUrl = (path: string | null | undefined): string | undefined =>
 
 // Interceptor de Peticiones: Inyecta el token en cada petición automáticamente
 api.interceptors.request.use((config) => {
+  // Buscamos el token usando 'token' o 'auth_token'
   const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   
   // IMPORTANTE: Si estamos enviando FormData, NO establecer Content-Type
+  // Deja que el navegador lo configure automáticamente con el boundary
   if (config.data instanceof FormData) {
     delete config.headers['Content-Type'];
   }
@@ -45,19 +45,28 @@ api.interceptors.request.use((config) => {
 // Interceptor de Respuestas: Maneja la expiración de sesión (401 Unauthorized)
 api.interceptors.response.use(
   (response) => {
+    // Si la respuesta es exitosa, la dejamos pasar tal cual
     return response;
   },
   (error) => {
+    // Si el backend responde con un error 401 (No Autorizado)
     if (error.response && error.response.status === 401) {
+
+      // 1. Destruimos completamente los datos de sesión locales
       localStorage.removeItem('token');
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user');
+
+      // Limpiamos el header de autorización por defecto
       delete api.defaults.headers.common['Authorization'];
-      
+
+      // 2. Redirigimos forzosamente al login
+      // Usamos window.location.replace para no dejar la página protegida en el historial
       if (window.location.pathname !== '/login' && !window.location.pathname.startsWith('/explore')) {
         window.location.replace('/login');
       }
     }
+
     return Promise.reject(error);
   }
 );
