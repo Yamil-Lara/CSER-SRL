@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import logoEmpresa from "../../assets/logo.png";
 import {
   LayoutDashboard,
   User,
@@ -66,11 +67,9 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
 
   const { stats: userStats } = useUserDashboardStats();
 
-  // Efecto para inicializar contadores y escuchar actualizaciones "en vivo"
   useEffect(() => {
     fetchDashboardStats();
 
-    // Escuchamos los eventos que disparan las páginas de moderación al aprobar/rechazar
     window.addEventListener('proyectoActualizado', fetchDashboardStats);
     window.addEventListener('usuarioActualizado', fetchDashboardStats);
     window.addEventListener('comentarioActualizado', fetchDashboardStats);
@@ -84,10 +83,8 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
 
   const handleLogout = async () => {
     await logout();
-    // La redirección se maneja automáticamente en AuthContext con window.location.replace
   };
 
-  // Configuración de Menús según Rol
   const userMenuItems: MenuItem[] = [
     { icon: LayoutDashboard, label: 'Mi Resumen', path: '/dashboard' },
     { 
@@ -133,12 +130,10 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
   return (
     <aside className={`fixed left-0 top-0 h-screen bg-sidebar-bg border-r border-black/20 transition-all duration-300 z-40 flex flex-col ${isCollapsed ? 'w-20' : 'w-64'}`}>
       
-      {/* Logo de la aplicación */}
+      {/* Logo de la aplicación - MISMO QUE PublicHeader */}
       <div className="h-16 flex items-center px-6 border-b border-black/20">
         <Link to="/" className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/20">
-            <span className="text-white font-bold text-sm">&lt;/&gt;</span>
-          </div>
+          <img src={logoEmpresa} alt="Logo de DevFolio" className="w-8 h-8 rounded-lg" />
           {!isCollapsed && <span className="text-white font-bold text-lg tracking-tight">DevFolio</span>}
         </Link>
       </div>
@@ -177,7 +172,6 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
                     )}
                   </>
                 )}
-                {/* Badge flotante para modo colapsado */}
                 {isCollapsed && item.badge !== undefined && (
                   <div className="absolute top-1 right-2 w-4 h-4 bg-destructive rounded-full flex items-center justify-center border-2 border-sidebar-bg">
                     <span className="text-[8px] text-white font-bold">{item.badge}</span>
@@ -202,7 +196,6 @@ export function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
           {isCollapsed ? <ChevronRight className="w-5 h-5 flex-shrink-0" /> : <><ChevronLeft className="w-5 h-5 flex-shrink-0" /><span className="text-sm font-medium">Colapsar menú</span></>}
         </button>
 
-        {/* Botón Salir: HU-14 (Diferenciado en color #F63B3B) */}
         <button 
           id="tour-sidebar-logout"
           onClick={handleLogout} 
