@@ -87,10 +87,10 @@ export const PublicHeader = () => {
 
   return (
     <header
-      className={`navbar fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${
+      className={`flex fixed top-0 left-0 py-0.5 px-2 w-full z-50 justify-between items-center shadow-md dark:shadow-slate-800 transition-all duration-300 ease-in-out ${
         isScrolled
-          ? 'py-3 dark:bg-white/0 backdrop-blur-md shadow-lg' 
-          : 'py-6 bg-transparent'
+          ? 'py-0 dark:bg-white/0 backdrop-blur-md shadow-lg dark:shadow-primary/20' 
+          : 'py-1.5 bg-transparent dark:shadow-none'
       }`}
     >
       {/* BARRA SUPERIOR PRINCIPAL */}
@@ -126,38 +126,42 @@ export const PublicHeader = () => {
 
       {/* MENÚ COLAPSABLE (Links y Acciones) */}
       <div 
+        ref={menuRef}
         className={`w-full md:w-auto md:flex-1 md:flex md:items-center md:justify-between transition-all duration-300 ease-in-out origin-top ${
           isMobileMenuOpen 
-            ? 'flex flex-col mt-2 bg-white backdrop-blur-md rounded-2xl shadow-xl p-6 absolute top-full left-0 right-0 mx-4 md:static md:mx-0 md:bg-transparent md:dark:bg-transparent md:p-0 md:shadow-none md:mt-0' 
+            ? 'flex flex-col mt-2 bg-white dark:bg-slate-900 backdrop-blur-md rounded-2xl shadow-xl p-6 absolute top-full left-0 right-0 mx-4 md:static md:mx-0 md:bg-transparent md:dark:bg-transparent md:p-0 md:shadow-none md:mt-0' 
             : 'hidden md:flex md:mt-0 bg-transparent'
         }`}
       >
         <div className="nav-links flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 md:mx-auto w-full md:w-auto">
-          <a href="/#features" onClick={() => setIsMobileMenuOpen(false)}>Características</a>
+          <a href="/#tour-features" onClick={() => setIsMobileMenuOpen(false)}>Características</a>
           <a onClick={() => handleNavigation('/explorar')} style={{ cursor: 'pointer' }}>Explorar</a>
-          <a href="/#how-it-works" onClick={() => setIsMobileMenuOpen(false)}>Cómo Funciona</a>
+          <a href="/#tour-how-it-works" onClick={() => setIsMobileMenuOpen(false)}>Cómo Funciona</a>
           <a href="/#About-Us" onClick={() => setIsMobileMenuOpen(false)}>Nosotros</a>
         </div>
 
         <div className="nav-actions flex flex-col md:flex-row items-center justify-center gap-4 mt-4 md:mt-0 pt-4 md:pt-0 border-t md:border-t-0 border-gray-200 dark:border-gray-700 w-full md:w-auto">
           {isAuthenticated ? (
             <>
-              {isAdmin ? (
-                <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/admin/dashboard')}>
-                  Vista Global
-                </button>
-              ) : (
-                <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/dashboard')}>
-                  Dashboard
-                </button>
-              )}
+                    {isAdmin ? (
+                      <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/dashboard')}>
+                        Panel de Control
+                      </button>
+                    ) : (
+                      <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/dashboard')}>
+                        Dashboard
+                      </button>
+                   )}
               <button className="btn-primary-small flex justify-center items-center" onClick={handleLogout}>
                 Cerrar Sesión
               </button>
             </>
           ) : (
             <>
-              <button className="btn-ghost flex justify-center items-center" onClick={() => handleNavigation('/login')}>
+              <button 
+                className="px-5 py-2 font-semibold text-slate-700 dark:text-slate-200 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl transition-all duration-200 flex justify-center items-center" 
+                onClick={() => handleNavigation('/login')}
+              >
                 Iniciar Sesión
               </button>
               <button className="btn-primary-small flex justify-center items-center" onClick={() => handleNavigation('/register')}>
@@ -176,7 +180,6 @@ export const PublicHeader = () => {
               )}
             </button>
           </div>
-
         </div>
       </div>
     </header>

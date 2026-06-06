@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Card } from '../components/ui/Card';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import api from '../utils/api';
 
 // ─── Interfaces ───────────────────────────────────────────────────────────────
@@ -56,7 +57,7 @@ interface KpiCardProps {
   valueColor?: string;
   loading: boolean;
 }
-function KpiCard({ label, value, icon: Icon, iconColor, valueColor = 'text-sidebar', loading }: KpiCardProps) {
+function KpiCard({ label, value, icon: Icon, iconColor, valueColor = '', loading }: KpiCardProps) {
   return (
     <Card className="flex flex-col gap-3 !p-5 hover:shadow-md transition-shadow duration-200">
       <div className="flex items-center gap-3">
@@ -68,7 +69,7 @@ function KpiCard({ label, value, icon: Icon, iconColor, valueColor = 'text-sideb
           : <span className={`text-4xl font-bold tabular-nums leading-none ${valueColor}`}>{value.toLocaleString('es-ES')}</span>
         }
       </div>
-      <p className="text-sm text-sidebar/60 leading-tight">{label}</p>
+      <p className="text-sm opacity-60 leading-tight">{label}</p>
     </Card>
   );
 }
@@ -89,9 +90,22 @@ function TableSkeleton({ rows = 5 }: { rows?: number }) {
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-function EstadoToggle({ activo }: { activo: number | boolean }) {
+interface EstadoToggleProps {
+  activo: number | boolean;
+  userId: number;
+  selfId?: number;
+  onToggle: (userId: number, currentStatus: number | boolean) => void;
+}
+function EstadoToggle({ activo, userId, selfId, onToggle }: EstadoToggleProps) {
+  const isSelf = selfId === userId;
   return (
-    <div className={`relative inline-flex items-center w-11 h-6 rounded-full transition-colors ${activo ? 'bg-green-500' : 'bg-gray-300'}`}>
+    <div
+      onClick={() => !isSelf && onToggle(userId, activo)}
+      className={`relative inline-flex items-center w-11 h-6 rounded-full transition-colors
+        ${isSelf ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
+        ${activo ? 'bg-green-500' : 'bg-gray-300'}`}
+      title={isSelf ? 'No puedes bloquearte a ti mismo' : (activo ? 'Desactivar usuario' : 'Activar usuario')}
+    >
       <span className={`inline-block w-4 h-4 bg-white rounded-full shadow transition-transform ${activo ? 'translate-x-6' : 'translate-x-1'}`} />
     </div>
   );
@@ -112,13 +126,14 @@ function EstadoBadge({ estado }: { estado: string }) {
 
 // ─── Componente Principal ─────────────────────────────────────────────────────
 export default function AdminDashboardPage() {
-  const { isAdmin, loading: authLoading } = useAuth();
+  const { isAdmin, loading: authLoading, user: authUser } = useAuth();
   const navigate = useNavigate();
 
   const [data, setData]               = useState<DashboardData | null>(null);
   const [loading, setLoading]         = useState(true);
   const [error, setError]             = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [pendingToggle, setPendingToggle] = useState<{ userId: number; currentStatus: number | boolean; userName: string } | null>(null);
 
   // CA7: doble verificación de rol
   useEffect(() => {
@@ -160,6 +175,29 @@ export default function AdminDashboardPage() {
     if (!authLoading && isAdmin) fetchDashboardData();
   }, [authLoading, isAdmin, fetchDashboardData]);
 
+  const handleToggleRequest = (userId: number, currentStatus: number | boolean) => {
+    const user = data?.recentUsers.find(u => u.id === userId);
+    if (!user) return;
+    setPendingToggle({ userId, currentStatus, userName: user.nombre });
+  };
+
+  const executeToggle = async () => {
+    if (!pendingToggle) return;
+    const { userId, currentStatus } = pendingToggle;
+    const newStatus = !currentStatus;
+    try {
+      await api.put(`/gestion/usuarios/${userId}`, { activo: newStatus });
+      setData(prev => prev ? {
+        ...prev,
+        recentUsers: prev.recentUsers.map(u => u.id === userId ? { ...u, activo: newStatus } : u),
+      } : prev);
+    } catch (err) {
+      console.error('Error al actualizar el estado:', err);
+    } finally {
+      setPendingToggle(null);
+    }
+  };
+
   if (authLoading) return (
     <div className="flex items-center justify-center h-64">
       <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -172,6 +210,7 @@ export default function AdminDashboardPage() {
   const hayAlertas = alertas.proyectosPendientes > 0 || alertas.comentariosPendientes > 0 || alertas.usuariosPendientes > 0;
 
   return (
+    <>
     <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-6">
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
@@ -181,8 +220,8 @@ export default function AdminDashboardPage() {
             <LayoutDashboard className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-sidebar leading-tight">Panel de Administración</h1>
-            <p className="text-sm text-sidebar/50 mt-0.5">Control y moderación de la plataforma CSER Portafolios</p>
+            <h1 className="text-2xl font-bold  leading-tight">Panel de Administración</h1>
+            <p className="text-sm opacity-50 mt-0.5">Control y moderación de la plataforma CSER Portafolios</p>
           </div>
         </div>
         <button
@@ -190,7 +229,7 @@ export default function AdminDashboardPage() {
           onClick={fetchDashboardData}
           disabled={loading}
           className="flex items-center gap-2 px-4 py-2 rounded-xl border border-muted
-            text-sidebar/60 hover:bg-muted/30 hover:text-sidebar transition-all text-sm font-medium
+            opacity-60 hover:bg-muted/30 hover: transition-all text-sm font-medium
             disabled:opacity-40 disabled:cursor-not-allowed self-start"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -290,24 +329,27 @@ export default function AdminDashboardPage() {
           )}
 
           {alertas.usuariosPendientes > 0 && (
-            <Link to="/gestion/usuarios" id="alert-usuarios"
-              className="group flex items-center justify-between gap-4 p-4 rounded-2xl
-                bg-violet-50 border border-violet-200 hover:border-violet-400
-                dark:bg-violet-500/10 dark:border-violet-500/25 dark:hover:border-violet-500/50 transition-all">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center flex-shrink-0">
-                  <UserX className="w-5 h-5 text-violet-600 dark:text-violet-400" />
-                </div>
-                <div>
-                  <p className="font-semibold text-violet-800 dark:text-violet-300 text-sm">Usuarios Pendientes</p>
-                  <p className="text-violet-600/80 dark:text-violet-400/70 text-xs">
-                    {alertas.usuariosPendientes} usuario{alertas.usuariosPendientes !== 1 ? 's' : ''} sin revisar
-                  </p>
-                </div>
-              </div>
-              <ArrowRight className="w-5 h-5 text-violet-500 group-hover:translate-x-1 transition-transform flex-shrink-0" />
-            </Link>
-          )}
+  <Link 
+    to="/gestion/aprobaciones" 
+    state={{ activeTab: 'usuarios', filter: 'pendiente' }}
+    id="alert-usuarios"
+    className="group flex items-center justify-between gap-4 p-4 rounded-2xl
+      bg-violet-50 border border-violet-200 hover:border-violet-400
+      dark:bg-violet-500/10 dark:border-violet-500/25 dark:hover:border-violet-500/50 transition-all">
+    <div className="flex items-center gap-3">
+      <div className="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center flex-shrink-0">
+        <UserX className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+      </div>
+      <div>
+        <p className="font-semibold text-violet-800 dark:text-violet-300 text-sm">Usuarios Pendientes</p>
+        <p className="text-violet-600/80 dark:text-violet-400/70 text-xs">
+          {alertas.usuariosPendientes} usuario{alertas.usuariosPendientes !== 1 ? 's' : ''} sin revisar
+        </p>
+      </div>
+    </div>
+    <ArrowRight className="w-5 h-5 text-violet-500 group-hover:translate-x-1 transition-transform flex-shrink-0" />
+  </Link>
+)}
         </div>
       ) : (
         /* CA4: Mensaje "Todo al día" */
@@ -325,7 +367,7 @@ export default function AdminDashboardPage() {
         {/* Últimas 5 altas de Usuarios */}
         <Card className="!p-0 overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-muted">
-            <h2 className="text-base font-semibold text-sidebar">Últimos Usuarios</h2>
+            <h2 className="text-base font-semibold ">Últimos Usuarios</h2>
             <Link to="/gestion/usuarios" id="link-todos-usuarios"
               className="flex items-center gap-1 text-xs text-primary hover:underline">
               Ver todos <ArrowRight className="w-3 h-3" />
@@ -335,25 +377,30 @@ export default function AdminDashboardPage() {
           {!loading && (data?.recentUsers.length ?? 0) > 0 && (
             <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-x-3 px-5 py-2 border-b border-muted bg-muted/20">
               {['Nombre', 'Correo', 'Profesión', 'Estado'].map(col => (
-                <span key={col} className="text-xs font-semibold text-sidebar/50 uppercase tracking-wide">{col}</span>
+                <span key={col} className="text-xs font-semibold opacity-50 uppercase tracking-wide">{col}</span>
               ))}
             </div>
           )}
 
           {loading ? <TableSkeleton rows={5} />
             : (data?.recentUsers.length ?? 0) === 0
-              ? <p className="text-center text-sidebar/40 text-sm py-10">Sin usuarios registrados.</p>
+              ? <p className="text-center opacity-40 text-sm py-10">Sin usuarios registrados.</p>
               : (
                 <ul className="divide-y divide-muted">
                   {data!.recentUsers.map(user => (
                     <li key={user.id}
                       className="grid grid-cols-[1fr_1fr_1fr_auto] gap-x-3 items-center px-5 py-3 hover:bg-muted/10 transition-colors">
-                      <span className="text-sm font-medium text-sidebar truncate">{user.nombre}</span>
-                      <span className="text-sm text-sidebar/60 truncate">{user.email}</span>
-                      <span className="text-sm text-sidebar/60 truncate">
+                      <span className="text-sm font-medium  truncate">{user.nombre}</span>
+                      <span className="text-sm opacity-60 truncate">{user.email}</span>
+                      <span className="text-sm opacity-60 truncate">
                         {user.profesion ?? user.especialidad ?? (user.rol === 'admin' ? 'Administrador' : '—')}
                       </span>
-                      <EstadoToggle activo={user.activo} />
+                      <EstadoToggle
+                        activo={user.activo}
+                        userId={user.id}
+                        selfId={authUser?.id}
+                        onToggle={handleToggleRequest}
+                      />
                     </li>
                   ))}
                 </ul>
@@ -363,7 +410,7 @@ export default function AdminDashboardPage() {
         {/* Últimas 5 altas de Proyectos (CA5: cualquier estado) */}
         <Card className="!p-0 overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-muted">
-            <h2 className="text-base font-semibold text-sidebar">Últimas Altas de Proyectos</h2>
+            <h2 className="text-base font-semibold ">Últimas Altas de Proyectos</h2>
             <Link to="/gestion/aprobaciones" id="link-todos-proyectos"
               className="flex items-center gap-1 text-xs text-primary hover:underline">
               Ver todos <ArrowRight className="w-3 h-3" />
@@ -373,7 +420,7 @@ export default function AdminDashboardPage() {
           {!loading && (data?.recentProjects.length ?? 0) > 0 && (
             <div className="grid grid-cols-[1fr_1fr_auto] gap-x-3 px-5 py-2 border-b border-muted bg-muted/20">
               {['Título', 'Autor', 'Estado'].map(col => (
-                <span key={col} className="text-xs font-semibold text-sidebar/50 uppercase tracking-wide">{col}</span>
+                <span key={col} className="text-xs font-semibold opacity-50 uppercase tracking-wide">{col}</span>
               ))}
             </div>
           )}
@@ -385,15 +432,15 @@ export default function AdminDashboardPage() {
                   <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
                     <CheckCircle2 className="w-6 h-6 text-emerald-500" />
                   </div>
-                  <p className="text-sm text-sidebar/50">Sin proyectos registrados aún.</p>
+                  <p className="text-sm opacity-50">Sin proyectos registrados aún.</p>
                 </div>
               ) : (
                 <ul className="divide-y divide-muted">
                   {data!.recentProjects.map(project => (
                     <li key={project.id}
                       className="grid grid-cols-[1fr_1fr_auto] gap-x-3 items-center px-5 py-3 hover:bg-muted/10 transition-colors">
-                      <span className="text-sm font-medium text-sidebar truncate">{project.titulo}</span>
-                      <span className="text-sm text-sidebar/60 truncate">{project.usuario?.nombre ?? '—'}</span>
+                      <span className="text-sm font-medium  truncate">{project.titulo}</span>
+                      <span className="text-sm opacity-60 truncate">{project.usuario?.nombre ?? '—'}</span>
                       <EstadoBadge estado={project.estado} />
                     </li>
                   ))}
@@ -404,7 +451,7 @@ export default function AdminDashboardPage() {
 
       {/* ── Accesos Rápidos (CA6) ───────────────────────────────────────────── */}
       <div>
-        <h2 className="text-sm font-semibold text-sidebar/50 uppercase tracking-widest mb-3">Accesos Rápidos</h2>
+        <h2 className="text-sm font-semibold opacity-50 uppercase tracking-widest mb-3">Accesos Rápidos</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { to: '/gestion/usuarios',     label: 'Usuarios',     icon: Users,        color: 'text-teal-600   bg-teal-50   border-teal-200   hover:border-teal-400   dark:bg-teal-500/10   dark:border-teal-500/25   dark:text-teal-400'   },
@@ -423,5 +470,20 @@ export default function AdminDashboardPage() {
       </div>
 
     </div>
+
+    {pendingToggle && (
+      <ConfirmDialog
+        isOpen={!!pendingToggle}
+        onClose={() => setPendingToggle(null)}
+        onConfirm={executeToggle}
+        title={pendingToggle.currentStatus ? `¿Desactivar a ${pendingToggle.userName}?` : `¿Activar a ${pendingToggle.userName}?`}
+        description={pendingToggle.currentStatus
+          ? `El usuario "${pendingToggle.userName}" perderá acceso a la plataforma de inmediato. Podrás reactivarlo en cualquier momento.`
+          : `El usuario "${pendingToggle.userName}" recuperará acceso a la plataforma de inmediato.`}
+        confirmLabel={pendingToggle.currentStatus ? 'Sí, desactivar' : 'Sí, activar'}
+        variant="warning"
+      />
+    )}
+    </>
   );
 }

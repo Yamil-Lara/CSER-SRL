@@ -19,6 +19,7 @@
   --text-main: #0F172A;
   --text-muted: #64748B;
   --border-color: #E2E8F0;
+  --sidebar-bg: #0F172A;
 }
 
 /* Soporte para clase dark y atributo data-theme='dark' */
@@ -37,6 +38,10 @@ html.dark,
   --text-main: #F2F6F9;
   --text-muted: #94A3B8;
   --border-color: #1E293B;
+  --sidebar-bg: #080C17;
+
+  /* Fuerza al browser a renderizar controles nativos en modo oscuro */
+  color-scheme: dark;
 }
 
 * {
@@ -382,7 +387,7 @@ html.dark .btn-close {
 
 /* Sidebar Compartida */
 .sidebar-container {
-  background-color: var(--sidebar);
+  background-color: var(--sidebar-bg);
   color: #94A3B8;
   display: flex;
   flex-direction: column;
@@ -934,6 +939,43 @@ html.dark .form-select:focus {
   box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
 }
 
+/* ── Inputs / Textareas / Selects nativos (componentes UI propios) ── */
+html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html.dark textarea,
+html.dark select {
+  background-color: var(--card) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Opciones de <select> (no heredan CSS vars en Firefox/Safari) */
+html.dark select option {
+  background-color: var(--card);
+  color: var(--text-main);
+}
+
+/* Autofill de Chrome: sobreescribe el fondo amarillo */
+html.dark input:-webkit-autofill,
+html.dark input:-webkit-autofill:hover,
+html.dark input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px var(--card) inset !important;
+  -webkit-text-fill-color: var(--text-main) !important;
+  caret-color: var(--text-main) !important;
+}
+
+/* Ícono del date-picker (invertido para que sea visible en fondo oscuro) */
+html.dark input[type="date"]::-webkit-calendar-picker-indicator,
+html.dark input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+}
+
+/* Placeholder en modo oscuro */
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 1;
+}
+
 /* Tablas de la sección de Experiencia o Proyectos */
 html.dark .table {
   color: var(--text-main) !important;
@@ -978,3 +1020,247 @@ html.dark .table-striped>tbody>tr:nth-of-type(odd)>* {
   height: 2px;
   background-color: #0d6efd;
 }
+
+/* ==========================================================================
+   ESTILOS CUSTOM PARA EL TOUR (Driver.js)
+   ========================================================================== */
+
+/* Popover principal — esquinas redondeadas, glassmorphism, sombras modernas */
+.driver-popover.tour-popover-custom {
+  background: var(--card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 16px !important;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.08) !important;
+  padding: 0 !important;
+  max-width: 420px !important;
+  width: 90vw !important;
+  overflow: hidden;
+  color: var(--text-main) !important;
+}
+
+/* Áreas de enfoque del tour — padding para que el highlight no quede pegado */
+#tour-hero-content {
+  text-align: center;
+  padding: 1rem;
+  border-radius: 16px;
+}
+
+#tour-features-header {
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+#tour-cta-section {
+  padding: 1.5rem;
+  border-radius: 16px;
+  text-align: center;
+}
+
+/* Flecha del popover */
+.driver-popover.tour-popover-custom .driver-popover-arrow {
+  border-color: var(--card) !important;
+}
+
+.driver-popover.tour-popover-custom .driver-popover-arrow-side-top {
+  border-top-color: var(--card) !important;
+}
+
+.driver-popover.tour-popover-custom .driver-popover-arrow-side-bottom {
+  border-bottom-color: var(--card) !important;
+}
+
+.driver-popover.tour-popover-custom .driver-popover-arrow-side-left {
+  border-left-color: var(--card) !important;
+}
+
+.driver-popover.tour-popover-custom .driver-popover-arrow-side-right {
+  border-right-color: var(--card) !important;
+}
+
+/* Título del popover */
+.driver-popover.tour-popover-custom .driver-popover-title {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  color: var(--text-main) !important;
+  text-align: center !important;
+  padding: 1.5rem 1.5rem 0.5rem !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+}
+
+/* Descripción del popover */
+.driver-popover.tour-popover-custom .driver-popover-description {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+  color: var(--text-muted) !important;
+  text-align: center !important;
+  padding: 0 1.5rem 1rem !important;
+  line-height: 1.6 !important;
+  margin: 0 !important;
+}
+
+/* Footer del popover (contiene dots y botones) */
+.driver-popover.tour-popover-custom .driver-popover-footer {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  padding: 0 1.5rem 1.25rem !important;
+  gap: 0.75rem !important;
+  border-top: none !important;
+}
+
+/* Wrapper de puntitos de progreso */
+.tour-dots-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  order: -1;
+}
+
+/* Contenedor de puntitos */
+.tour-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Puntito individual */
+.tour-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--border-color);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Puntito activo */
+.tour-dot-active {
+  width: 24px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+}
+
+/* Botones de navegación del tour */
+.driver-popover.tour-popover-custom .driver-popover-navigation-btns {
+  display: flex !important;
+  gap: 0.5rem !important;
+  width: 100% !important;
+  justify-content: center !important;
+}
+
+/* Estilo base para todos los botones del tour */
+.driver-popover.tour-popover-custom .driver-popover-prev-btn,
+.driver-popover.tour-popover-custom .driver-popover-next-btn {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 0.6rem 1.5rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  text-shadow: none !important;
+  flex: 1 !important;
+  text-align: center !important;
+}
+
+/* Botón anterior */
+.driver-popover.tour-popover-custom .driver-popover-prev-btn {
+  background-color: var(--muted) !important;
+  color: var(--text-main) !important;
+}
+
+.driver-popover.tour-popover-custom .driver-popover-prev-btn:hover {
+  background-color: var(--border-color) !important;
+}
+
+/* Botón siguiente / Entendido */
+.driver-popover.tour-popover-custom .driver-popover-next-btn {
+  background: linear-gradient(135deg, var(--primary), #2563EB) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+.driver-popover.tour-popover-custom .driver-popover-next-btn:hover {
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Botón de cerrar (X) del popover */
+.driver-popover.tour-popover-custom .driver-popover-close-btn {
+  color: var(--text-muted) !important;
+  font-size: 1.25rem !important;
+  top: 0.75rem !important;
+  right: 0.75rem !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+}
+
+.driver-popover.tour-popover-custom .driver-popover-close-btn:hover {
+  background-color: var(--muted) !important;
+  color: var(--text-main) !important;
+}
+
+/* Overlay oscuro del tour */
+.driver-overlay {
+  transition: opacity 0.3s ease !important;
+}
+
+/* ─── RESPONSIVIDAD DEL TOUR ─── */
+@media (max-width: 480px) {
+  .driver-popover.tour-popover-custom {
+    max-width: 92vw !important;
+    width: 92vw !important;
+    border-radius: 14px !important;
+  }
+
+  .driver-popover.tour-popover-custom .driver-popover-title {
+    font-size: 1.05rem !important;
+    padding: 1.25rem 1.25rem 0.4rem !important;
+  }
+
+  .driver-popover.tour-popover-custom .driver-popover-description {
+    font-size: 0.825rem !important;
+    padding: 0 1.25rem 0.75rem !important;
+  }
+
+  .driver-popover.tour-popover-custom .driver-popover-footer {
+    padding: 0 1.25rem 1rem !important;
+  }
+
+  .driver-popover.tour-popover-custom .driver-popover-prev-btn,
+  .driver-popover.tour-popover-custom .driver-popover-next-btn {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .tour-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .tour-dot-active {
+    width: 18px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .driver-popover.tour-popover-custom {
+    max-width: 85vw !important;
+  }
+
+  .driver-popover.tour-popover-custom .driver-popover-title {
+    font-size: 1.1rem !important;
+  }
+}

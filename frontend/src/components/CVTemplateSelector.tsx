@@ -114,7 +114,7 @@ export default function CVTemplateSelector({ userData, onClose }: CVTemplateSele
                 onClick={() => setSelectedTemplate(template.id)}
                 className={`border-2 rounded-xl p-4 cursor-pointer transition-all ${
                   selectedTemplate === template.id 
-                    ? 'border-blue-500 bg-blue-50' 
+                    ? 'border-primary bg-primary/10' 
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
@@ -131,7 +131,7 @@ export default function CVTemplateSelector({ userData, onClose }: CVTemplateSele
                       e.stopPropagation();
                       handlePreview(template.id);
                     }}
-                    className="p-2 text-gray-500 hover:text-blue-500 transition"
+                    className="p-2 text-gray-500 hover:text-primary transition"
                     title="Ver preview"
                   >
                     <Eye size={20} />
@@ -153,7 +153,7 @@ export default function CVTemplateSelector({ userData, onClose }: CVTemplateSele
           <button
             onClick={handleDownload}
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-white py-4 rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
@@ -191,7 +191,7 @@ export default function CVTemplateSelector({ userData, onClose }: CVTemplateSele
             <div className="flex-1 overflow-auto bg-gray-100 p-4">
               {previewLoading ? (
                 <div className="flex items-center justify-center h-full">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -228,7 +228,7 @@ export default function CVTemplateSelector({ userData, onClose }: CVTemplateSele
                   setPreviewTemplate(null);
                   setPreviewHtml('');
                 }}
-                className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-semibold"
+                className="flex-1 bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary/90 transition"
               >
                 Seleccionar esta plantilla
               </button>

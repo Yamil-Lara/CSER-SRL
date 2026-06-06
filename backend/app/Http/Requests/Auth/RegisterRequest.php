@@ -22,10 +22,10 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:usuarios,username',
-            'email' => 'required|string|email|max:255|unique:usuarios,email',
-            'password' => [
+            'nombre'    => 'required|string|max:255',
+            'username'  => 'required|string|max:255|unique:usuarios,username',
+            'email'     => 'required|string|email|max:255|unique:usuarios,email',
+            'password'  => [
                 'required',
                 'string',
                 'confirmed',
@@ -35,6 +35,11 @@ class RegisterRequest extends FormRequest
                     ->numbers()
                     ->symbols()
             ],
+            // Paso 2 — opcionales
+            'foto'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
+            'profesion' => 'nullable|string|max:255',
+            'ubicacion' => 'nullable|string|max:255',
+            'telefono'  => 'nullable|string|max:30',
         ];
     }
 

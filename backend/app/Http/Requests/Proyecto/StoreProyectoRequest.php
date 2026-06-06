@@ -21,6 +21,7 @@ class StoreProyectoRequest extends FormRequest
             'descripcion' => 'required|string|min:50|max:5000',
             'tecnologias' => 'required|string|min:3|max:1000',
             'herramientas' => 'nullable|string|max:1000',
+            'categoria_personalizada' => 'nullable|string|max:30',
             'imagen' => [
                 'nullable',
                 'file',

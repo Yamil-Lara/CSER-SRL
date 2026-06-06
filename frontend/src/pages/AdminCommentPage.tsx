@@ -86,31 +86,31 @@ export default function AdminCommentModeration() {
     <div className="p-6 max-w-7xl mx-auto space-y-2">
       <header>
         <div>
-          <h1 className="text-3xl font-bold text-sidebar flex items-center gap-3">
+          <h1 className="text-3xl font-bold  flex items-center gap-3">
             <CheckCircle className="w-8 h-8 text-primary" />
             Moderación de Comentarios
           </h1>
-          <p className="text-sidebar/70 mt-2">Gestiona y modera los comentarios de todos los proyectos del sistema</p>
+          <p className="opacity-70 mt-2">Gestiona y modera los comentarios de todos los proyectos del sistema</p>
         </div>
       </header>
 
       {/* DASHBOARD DE ESTADÍSTICAS */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="p-4 flex items-center gap-4 border-l-4 border-l-sidebar">
-              <div className="bg-sidebar/10 p-3 rounded-lg text-sidebar"><MessageSquare /></div>
-              <div><p className="text-xs text-sidebar/60">Total</p><p className="text-xl font-bold">{stats.total}</p></div>
+              <div className="bg-sidebar/10 p-3 rounded-lg "><MessageSquare /></div>
+              <div><p className="text-xs opacity-60">Total</p><p className="text-xl font-bold">{stats.total}</p></div>
           </Card>
           <Card className="p-4 flex items-center gap-4 border-l-4 border-l-yellow-500 shadow-sm">
               <div className="bg-yellow-100 p-3 rounded-lg text-yellow-600"><Clock /></div>
-              <div><p className="text-xs text-sidebar/60">Pendientes</p><p className="text-xl font-bold">{stats.pendientes}</p></div>
+              <div><p className="text-xs opacity-60">Pendientes</p><p className="text-xl font-bold">{stats.pendientes}</p></div>
           </Card>
           <Card className="p-4 flex items-center gap-4 border-l-4 border-l-green-500 shadow-sm">
               <div className="bg-green-100 p-3 rounded-lg text-green-600"><CheckCircle /></div>
-              <div><p className="text-xs text-sidebar/60">Aprobados</p><p className="text-xl font-bold">{stats.aprobados}</p></div>
+              <div><p className="text-xs opacity-60">Aprobados</p><p className="text-xl font-bold">{stats.aprobados}</p></div>
           </Card>
           <Card className="p-4 flex items-center gap-4 border-l-4 border-l-red-500 shadow-sm">
               <div className="bg-red-100 p-3 rounded-lg text-red-600"><XCircle /></div>
-              <div><p className="text-xs text-sidebar/60">Rechazados</p><p className="text-xl font-bold">{stats.rechazados}</p></div>
+              <div><p className="text-xs opacity-60">Rechazados</p><p className="text-xl font-bold">{stats.rechazados}</p></div>
           </Card>
       </div>
 
@@ -122,7 +122,7 @@ export default function AdminCommentModeration() {
                 <button
                     key={opt}
                     onClick={() => setFilter(opt)}
-                    className={`px-4 md:px-6 py-3 text-sm font-medium transition-all border-b-2 capitalize flex-shrink-0 ${filter === opt ? 'border-primary text-primary' : 'border-transparent text-sidebar/60 hover:text-sidebar'}`}
+                    className={`px-4 md:px-6 py-3 text-sm font-medium transition-all border-b-2 capitalize flex-shrink-0 ${filter === opt ? 'border-primary text-primary' : 'border-transparent opacity-60 hover:'}`}
                 >
                     {opt === 'todos' ? 'Ver Todos' : opt + 's'}
                 </button>
@@ -131,7 +131,7 @@ export default function AdminCommentModeration() {
 
           <div className="bg-card border border-muted rounded-xl p-2 shadow-sm">
               <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-sidebar/40 w-5 h-5" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 opacity-40 w-5 h-5" />
                   <input 
                       type="text" 
                       placeholder="Buscar por contenido del comentario, autor o proyecto..." 
@@ -147,7 +147,7 @@ export default function AdminCommentModeration() {
       {loading ? (
           <div className="flex justify-center py-12"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
       ) : comentariosFiltrados.length === 0 ? (
-          <div className="text-center py-12 text-sidebar/50 bg-muted/20 rounded-xl border border-dashed border-muted">No se encontraron comentarios.</div>
+          <div className="text-center py-12 opacity-50 bg-muted/20 rounded-xl border border-dashed border-muted">No se encontraron comentarios.</div>
       ) : (
           <div className="grid gap-4">
               {comentariosFiltrados.map((c) => {
@@ -168,8 +168,8 @@ export default function AdminCommentModeration() {
                                               </div>
                                           )}
                                           <div>
-                                              <p className="font-bold text-sidebar text-sm">{c.autor?.nombre}</p>
-                                              <p className="text-xs text-sidebar/60">@{c.autor?.username}</p>
+                                              <p className="font-bold  text-sm">{c.autor?.nombre}</p>
+                                              <p className="text-xs opacity-60">@{c.autor?.username}</p>
                                           </div>
                                       </div>
                                       <Badge variant={estado.variant}>{estado.label}</Badge>
@@ -177,12 +177,12 @@ export default function AdminCommentModeration() {
 
                                   {/* Contenido del comentario */}
                                   <div className="bg-muted/30 p-4 rounded-lg border border-muted">
-                                      <p className="text-sidebar/80 italic text-sm">"{c.contenido}"</p>
+                                      <p className="opacity-80 italic text-sm">"{c.contenido}"</p>
                                   </div>
 
                                   {/* Contexto del comentario (Proyecto y Fecha) */}
-                                  <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-sidebar/60 bg-primary/5 p-3 rounded-lg border border-primary/10">
-                                      <span className="flex items-center gap-1.5"><FolderGit2 className="w-4 h-4 text-primary"/> Proyecto: <strong className="text-sidebar">{c.proyecto?.titulo}</strong></span>
+                                  <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs opacity-60 bg-primary/5 p-3 rounded-lg border border-primary/10">
+                                      <span className="flex items-center gap-1.5"><FolderGit2 className="w-4 h-4 text-primary"/> Proyecto: <strong className="">{c.proyecto?.titulo}</strong></span>
                                       <span className="flex items-center gap-1.5"><User className="w-4 h-4 text-primary"/> Creador: {c.proyecto?.usuario?.nombre}</span>
                                       <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-primary"/> Fecha: {c.fecha}</span>
                                   </div>

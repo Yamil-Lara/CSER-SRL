@@ -9,6 +9,7 @@ use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
@@ -21,17 +22,26 @@ class AuthService
         $this->userRepository = $userRepository;
     }
 
-    public function register(array $data): array
+    public function register(array $data, $foto = null): array
     {
-        $user = $this->userRepository->create([
-            'nombre' => $data['nombre'],
-            'username' => $data['username'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'rol' => 'usuario',
-            'estado' => 'pendiente',
-            'activo' => false,
-        ]);
+        $userData = [
+            'nombre'    => $data['nombre'],
+            'username'  => $data['username'],
+            'email'     => $data['email'],
+            'password'  => Hash::make($data['password']),
+            'rol'       => 'usuario',
+            'estado'    => 'pendiente',
+            'activo'    => false,
+            'profesion' => $data['profesion'] ?? null,
+            'ubicacion' => $data['ubicacion'] ?? null,
+            'telefono'  => $data['telefono'] ?? null,
+        ];
+
+        if ($foto) {
+            $userData['foto'] = $foto->store('perfiles', 'public');
+        }
+
+        $user = $this->userRepository->create($userData);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -188,12 +198,30 @@ class AuthService
     private function formatUser(User $user): array
     {
         return [
-            'id' => $user->id,
-            'nombre' => $user->nombre,
-            'username' => $user->username,
-            'email' => $user->email,
-            'rol' => $user->rol,
-            'foto' => $user->foto ? asset('storage/' . $user->foto) : null,
+            'id'              => $user->id,
+            'nombre'          => $user->nombre,
+            'username'        => $user->username,
+            'email'           => $user->email,
+            'rol'             => $user->rol,
+            'activo'          => $user->activo,
+            'estado'          => $user->estado,
+            'foto'            => $user->foto ? asset('storage/' . $user->foto) : null,
+            'profesion'       => $user->profesion,
+            'especialidad'    => $user->especialidad,
+            'biografia'       => $user->biografia,
+            'ubicacion'       => $user->ubicacion,
+            'telefono'        => $user->telefono,
+            'linkedin'        => $user->linkedin,
+            'github_perfil'   => $user->github_perfil,
+            'sitio_web'       => $user->sitio_web,
+            'facebook'        => $user->facebook,
+            'instagram'       => $user->instagram,
+            'twitter'         => $user->twitter,
+            'tiktok'          => $user->tiktok,
+            'threads'         => $user->threads,
+            'universidad'     => $user->universidad,
+            'carrera'         => $user->carrera,
+            'nivel_estudios'  => $user->nivel_estudios,
         ];
     }
 }

@@ -18,7 +18,7 @@ export function Badge({
   className = ''
 }: BadgeProps) {
   const variants = {
-    default: 'bg-muted text-sidebar',
+    default: 'bg-muted ',
     primary: 'bg-primary/10 text-primary',
     accent: 'bg-accent/10 text-accent',
     destructive: 'bg-destructive/10 text-destructive',

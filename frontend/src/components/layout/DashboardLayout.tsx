@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Info } from 'lucide-react';
+import { startDashboardTour } from '../../utils/tour';
+import { useAuth } from '../../context/AuthContext';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -10,6 +12,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // Estados iniciales
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { isAdmin } = useAuth();
 
   // EFECTO PARA DETECTAR EL TAMAÑO DE PANTALLA
   useEffect(() => {
@@ -33,19 +36,37 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Lanzar el tour al cargar el dashboard
+  useEffect(() => {
+    // Si isAdmin no está definido aún (cargando), no hacer nada
+    if (isAdmin !== undefined && isAdmin !== null) {
+      startDashboardTour(isAdmin);
+    }
+  }, [isAdmin]);
+
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
   return (
     <div className="min-h-screen bg-background relative flex">
-      {/* Botón flotante para abrir el menú en móviles */}
-      <button 
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="md:hidden fixed top-4 right-4 z-50 p-2 bg-primary text-white rounded-lg shadow-lg"
-      >
-        {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-      </button>
+      {/* Botones flotantes (móvil menu + repetir tour) */}
+      <div className="fixed top-4 right-4 z-50 flex gap-2">
+        <button 
+          onClick={() => startDashboardTour(!!isAdmin, true)}
+          className="p-2 bg-card border border-muted opacity-70 hover:text-primary rounded-lg shadow-soft transition-colors"
+          title="Ver tour guiado"
+        >
+          <Info className="w-6 h-6" />
+        </button>
+
+        <button 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden p-2 bg-primary text-white rounded-lg shadow-lg"
+        >
+          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+      </div>
 
       {/* Contenedor del Sidebar */}
       <div className={`
@@ -68,7 +89,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       )}
 
       {/* Contenido Principal */}
-      <main className="flex-1 min-h-screen w-full transition-all duration-300 overflow-x-hidden">
+      <main className="flex-1 min-h-screen w-full transition-all duration-300 overflow-x-hidden relative">
         <div className="py-6 px-4 md:py-8 md:px-8 mt-12 md:mt-0">
           {children}
         </div>

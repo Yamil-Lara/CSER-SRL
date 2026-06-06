@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Plus, X } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 import ProjectModal from '../components/ProjectModal';
 import ProjectCard from '../components/ProjectCard';
-import ProjectCommentsManager from '../components/ProjectCommentsManager';
 import api from '../utils/api'; 
 
 export interface Project {
@@ -12,6 +12,7 @@ export interface Project {
   description: string;
   category: string;
   categoryId?: string;
+  categoria_personalizada?: string | null;
   date: string;
   technologies: string[];
   tools?: string;
@@ -20,6 +21,7 @@ export interface Project {
   demoUrl?: string;
   status: string;
   image?: string | null;
+  comentariosNuevos?: number;
 }
 
 export default function ProjectsPage() {
@@ -27,11 +29,32 @@ export default function ProjectsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
-  const [commentsProject, setCommentsProject] = useState<Project | null>(null);
+
+  const location = useLocation();
+  const editModalHandled = useRef(false);
 
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  useEffect(() => {
+    if (location.state?.openCreateModal) {
+      setEditingProject(null);
+      setIsModalOpen(true);
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    if (editModalHandled.current) return;
+    if (location.state?.openEditModal && location.state?.editProjectId && projects.length > 0) {
+      const project = projects.find(p => p.id === String(location.state.editProjectId));
+      if (project) {
+        editModalHandled.current = true;
+        setEditingProject(project);
+        setIsModalOpen(true);
+      }
+    }
+  }, [projects]);
 
   const fetchProjects = async () => {
     try {
@@ -45,6 +68,7 @@ export default function ProjectsPage() {
         description: item.descripcion,
         category: item.categoria?.nombre || 'Sin categoría',
         categoryId: item.categoria_id?.toString(),
+        categoria_personalizada: item.categoria_personalizada || null,
         date: item.fecha_proyecto || item.created_at,
         technologies: typeof item.tecnologias === 'string' 
             ? item.tecnologias.split(',').map((t: string) => t.trim()) 
@@ -54,7 +78,8 @@ export default function ProjectsPage() {
         githubUrl: item.github,
         demoUrl: item.demo,
         status: item.estado,
-        image: item.imagen || null
+        image: item.imagen || null,
+        comentariosNuevos: item.comentarios_nuevos || 0
       }));
 
       setProjects(formattedProjects);
@@ -111,10 +136,6 @@ export default function ProjectsPage() {
     setIsModalOpen(false);
   };
 
-  const openCommentsManager = (project: Project) => {
-    setCommentsProject(project);
-  };
-
   return (
     <div>
       <header className="page-header">
@@ -145,13 +166,11 @@ export default function ProjectsPage() {
                project={project} 
                onDelete={handleDeleteProject}
                onEdit={openEditModal} 
-               onManageComments={openCommentsManager}
              />
           ))}
         </div>
       )}
 
-      {/* Modal para Crear/Editar Proyecto */}
       {isModalOpen && (
         <ProjectModal 
           onClose={closeModal} 
@@ -160,31 +179,6 @@ export default function ProjectsPage() {
         />
       )}
 
-      {/* Modal para el Gestor de Comentarios */}
-      {commentsProject && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-          <div className="bg-white rounded-[24px] w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            {/* Header del Modal */}
-            <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-white">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900">Comentarios del Proyecto</h2>
-                <p className="text-sm text-slate-500 font-medium">{commentsProject.title}</p>
-              </div>
-              <button 
-                onClick={() => setCommentsProject(null)} 
-                className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-full transition-colors"
-              >
-                <X size={24} />
-              </button>
-            </div>
-            
-            {/* Cuerpo del Modal */}
-            <div className="overflow-y-auto p-6 bg-slate-50 flex-1">
-              <ProjectCommentsManager proyectoId={commentsProject.id} />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

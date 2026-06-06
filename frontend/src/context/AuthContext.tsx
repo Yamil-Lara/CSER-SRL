@@ -18,6 +18,11 @@ interface User {
   biografia?: string;
   ubicacion?: string;
   telefono?: string;
+  linkedin?: string | null;
+  github_perfil?: string | null;
+  sitio_web?: string | null;
+  universidad?: string | null;
+  carrera?: string | null;
 }
 
 interface AuthContextType {
@@ -27,7 +32,13 @@ interface AuthContextType {
     message: string;
     user?: User;
   }>;
-  register: (nombre: string, email: string, password: string, confirmPassword?: string) => Promise<{
+  register: (
+    nombre: string,
+    email: string,
+    password: string,
+    confirmPassword?: string,
+    stepTwo?: { profesion?: string; ubicacion?: string; telefono?: string; foto?: File | null }
+  ) => Promise<{
     success: boolean;
     message: string;
   }>;
@@ -108,9 +119,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (nombre: string, email: string, password: string, confirmPassword?: string) => {
+  const register = async (
+    nombre: string,
+    email: string,
+    password: string,
+    confirmPassword?: string,
+    stepTwo?: { profesion?: string; ubicacion?: string; telefono?: string; foto?: File | null }
+  ) => {
     try {
-      // Generar username automáticamente desde el nombre con sufijo aleatorio para unicidad
       const baseUsername = nombre
         .toLowerCase()
         .normalize('NFD')
@@ -120,13 +136,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const randomSuffix = Math.floor(1000 + Math.random() * 9000);
       const username = `${baseUsername}-${randomSuffix}`;
       
-      const response = await api.post('/register', {
-        nombre,
-        username,
-        email,
-        password,
-        password_confirmation: confirmPassword || password
-      });
+      const fd = new FormData();
+      fd.append('nombre',                nombre);
+      fd.append('username',              username);
+      fd.append('email',                 email);
+      fd.append('password',              password);
+      fd.append('password_confirmation', confirmPassword || password);
+      if (stepTwo?.profesion) fd.append('profesion', stepTwo.profesion);
+      if (stepTwo?.ubicacion) fd.append('ubicacion', stepTwo.ubicacion);
+      if (stepTwo?.telefono)  fd.append('telefono',  stepTwo.telefono);
+      if (stepTwo?.foto)      fd.append('foto',      stepTwo.foto);
+
+      const response = await api.post('/register', fd);
       
       return {
         success: true,
@@ -165,6 +186,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     // Limpiar el estado del usuario
     setUser(null);
+
+    // Forzar recarga completa para evitar que el botón "Atrás" muestre páginas protegidas
+    // window.location.replace reemplaza la entrada actual del historial
+    window.location.replace('/login');
   }
 };
 

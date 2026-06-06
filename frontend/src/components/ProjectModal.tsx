@@ -2,7 +2,7 @@ import { useState, useEffect, FormEvent, useRef } from 'react';
 import { X, AlertCircle, Upload } from 'lucide-react';
 import axios from 'axios';
 import { Project } from '../pages/ProjectsPage';
-import { buildUrl } from '../utils/api';
+import api, { buildUrl } from '../utils/api';
 
 interface Category {
   id: number;
@@ -32,7 +32,8 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
     herramientas: '',
     cliente: '',
     github: '',
-    demo: ''
+    demo: '',
+    categoria_personalizada: ''
   });
 
   // Cargar categorías
@@ -46,9 +47,6 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
         
         if (isMounted) {
           setCategories(data);
-          if (!projectToEdit && data.length > 0) {
-            setFormData(prev => ({ ...prev, categoria_id: data[0].id.toString() }));
-          }
         }
       } catch (err) {
         console.error("Error al cargar categorías", err);
@@ -75,7 +73,8 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
         herramientas: projectToEdit.tools || '',
         cliente: projectToEdit.client || '',
         github: projectToEdit.githubUrl || '',
-        demo: projectToEdit.demoUrl || ''
+        demo: projectToEdit.demoUrl || '',
+        categoria_personalizada: projectToEdit.categoria_personalizada || ''
       });
       
       if (projectToEdit.image) {
@@ -178,6 +177,11 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
       setError('Debe seleccionar una categoría.');
       return false;
     }
+    const selectedCategory = categories.find(c => c.id.toString() === formData.categoria_id);
+    if (selectedCategory?.nombre === 'Otro' && !formData.categoria_personalizada.trim()) {
+      setError('Debe especificar la nueva categoría.');
+      return false;
+    }
     if (!formData.tecnologias.trim()) {
       setError('Debe agregar al menos una tecnología.');
       return false;
@@ -206,6 +210,11 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
     if (formData.github) submitData.append('github', formData.github);
     if (formData.demo) submitData.append('demo', formData.demo);
     
+    const selectedCategory = categories.find(c => c.id.toString() === formData.categoria_id);
+    if (selectedCategory?.nombre === 'Otro' && formData.categoria_personalizada) {
+      submitData.append('categoria_personalizada', formData.categoria_personalizada);
+    }
+    
     if (imageFile) {
       submitData.append('imagen', imageFile);
     }
@@ -228,7 +237,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
         <form onSubmit={handleSubmit} className="modal-form flex flex-col overflow-hidden flex-1">
           <div className="modal-body flex-1 overflow-y-auto p-6 space-y-4">
             {error && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-md flex items-center gap-2 text-sm border border-red-200">
+              <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-md flex items-center gap-2 text-sm border border-red-200 dark:border-red-800">
                 <AlertCircle size={16} />
                 <span>{error}</span>
               </div>
@@ -246,12 +255,23 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="form-group">
+              <div className="form-group flex flex-col justify-start">
                 <label className="form-label">Categoría <span className="text-red-500">*</span></label>
                 <select name="categoria_id" className="form-select" value={formData.categoria_id} onChange={handleChange}>
                   <option value="" disabled>Seleccione una categoría</option>
                   {categories.map(cat => (<option key={cat.id} value={cat.id}>{cat.nombre}</option>))}
                 </select>
+                {categories.find(c => c.id.toString() === formData.categoria_id)?.nombre === 'Otro' && (
+                  <input 
+                    type="text" 
+                    name="categoria_personalizada" 
+                    className="form-input mt-2" 
+                    value={formData.categoria_personalizada} 
+                    onChange={handleChange} 
+                    maxLength={30}
+                    placeholder="Especifique la categoría (Max. 30 car.)" 
+                  />
+                )}
               </div>
               <div className="form-group">
                 <label className="form-label">Fecha de Realización</label>
@@ -295,7 +315,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
                   onDragLeave={handleDragLeave}
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
-                  className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg transition-colors overflow-hidden relative bg-gray-50 hover:bg-gray-100 cursor-pointer"
+                  className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-lg transition-colors overflow-hidden relative bg-gray-50 dark:bg-slate-800/50 hover:bg-gray-100 dark:hover:bg-slate-700/50 cursor-pointer"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   {imagePreview ? (
@@ -316,11 +336,11 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center">
-                      <Upload className="w-10 h-10 text-gray-400 mb-3" />
-                      <p className="text-sm text-gray-500">
+                      <Upload className="w-10 h-10 text-gray-400 dark:text-gray-500 mb-3" />
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         Haz clic o arrastra una imagen aquí
                       </p>
-                      <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP (MAX. 10MB)</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">PNG, JPG, WEBP (MAX. 10MB)</p>
                     </div>
                   )}
                 </div>

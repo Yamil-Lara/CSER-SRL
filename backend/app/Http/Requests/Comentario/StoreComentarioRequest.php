@@ -15,6 +15,7 @@ class StoreComentarioRequest extends FormRequest
     {
         return [
             'contenido' => 'required|string|min:1|max:1000',
+            'parent_id' => 'nullable|integer|exists:comentarios,id',
         ];
     }
 
@@ -31,7 +32,7 @@ class StoreComentarioRequest extends FormRequest
     {
         if ($this->has('contenido') && $this->contenido !== null) {
             $this->merge([
-                'contenido' => trim($this->contenido),
+                'contenido' => strip_tags(trim($this->contenido)),
             ]);
         }
     }
