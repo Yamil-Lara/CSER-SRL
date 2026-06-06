@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Card } from './ui/Card';
 import { 
-  Code2, MapPin, Mail, Code, Briefcase, FolderGit2, Image as ImageIcon, GraduationCap, Calendar 
+  Code2, MapPin, Mail, Code, Briefcase, FolderGit2, Image as ImageIcon, GraduationCap, Download
 } from 'lucide-react';
 import { PublicHeader } from './layout/PublicHeader';
 import { FaLinkedin, FaGithub, FaGlobe, FaFacebook, FaInstagram, FaXTwitter, FaTiktok, FaThreads } from 'react-icons/fa6';
@@ -68,18 +68,23 @@ export interface PortfolioData {
 
 interface PublicPortfolioProps {
   data: PortfolioData;
+  isOwner?: boolean;
 }
 
-export default function PublicPortfolio({ data }: PublicPortfolioProps) {
+export default function PublicPortfolio({ data, isOwner = false }: PublicPortfolioProps) {
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
   const { username } = useParams();
+  const [showCVModal, setShowCVModal] = React.useState(false);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   // Helper para sacar la inicial
   const getInitial = (name: string) => name ? name.charAt(0).toUpperCase() : 'U';
 
   const vis = data.visibilidad || {};
   const anyVisible = vis.proyectos_visible || vis.habilidades_visible || vis.experiencia_visible;
+  
+  // Importación dinámica para evitar dependencia circular
+  const CVTemplateSelector = React.lazy(() => import('./CVTemplateSelector'));
 
   // LÓGICA DE FILTRADO CORREGIDA
   const academicExperiences = data.experience?.filter(exp => exp.isAcademic) || [];
@@ -144,13 +149,24 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
                     <h1 className="text-2xl sm:text-3xl font-bold mb-1">{data.name}</h1>
                     <div className="text-primary text-base sm:text-lg font-medium">{data.profession}</div>
                   </div>
-                  <button 
-                    onClick={() => setIsModalOpen(true)}
-                    className="bg-primary text-white px-4 py-2 rounded-lg font-medium shadow-sm hover:bg-primary/90 flex items-center gap-2"
-                  >
-                    <Briefcase size={18} />
-                    Contactar para una oferta
-                  </button>
+                  <div className="flex flex-col gap-2 w-full sm:w-auto">
+                    <button 
+                      onClick={() => setIsModalOpen(true)}
+                      className="bg-primary text-white px-4 py-2 rounded-lg font-medium shadow-sm hover:bg-primary/90 flex items-center justify-center gap-2 w-full sm:w-auto"
+                    >
+                      <Briefcase size={18} />
+                      Contactar para una oferta
+                    </button>
+                    {isOwner && (
+                      <button
+                        onClick={() => setShowCVModal(true)}
+                        className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors shadow-sm w-full sm:w-auto"
+                      >
+                        <Download size={18} />
+                        <span className="text-sm font-medium">Descargar CV</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <p className="text-sm sm:text-base text-gray-500 mb-2">{data.technologies}</p>
                 
@@ -408,13 +424,21 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
         )}
       </main>
 
+      {/* Modal para descargar CV */}
+      {showCVModal && (
+        <React.Suspense fallback={<div className="fixed inset-0 flex items-center justify-center">Cargando...</div>}>
+          <CVTemplateSelector 
+            userData={data}
+            onClose={() => setShowCVModal(false)}
+          />
+        </React.Suspense>
+      )}
+
       {/* Modal de Contacto */}
       <ContactOfferModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        // We need the username, it's in the URL of PublicPortfolio page, or we can pass it
-        // Actually, the PublicPortfolio component doesn't have username in data, let's extract it from URL here
-        username={window.location.pathname.split('/').pop() || ''}
+        username={username || window.location.pathname.split('/').pop() || ''}
         fullName={data.name}
       />
     </div>
