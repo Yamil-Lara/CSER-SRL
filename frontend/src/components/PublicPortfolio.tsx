@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from './ui/Card';
 import { 
-  Code2, MapPin, Mail, Code, Briefcase, FolderGit2, Image as ImageIcon, GraduationCap 
+  Code2, MapPin, Mail, Code, Briefcase, FolderGit2, Image as ImageIcon, GraduationCap, Download
 } from 'lucide-react';
 import { PublicHeader } from './layout/PublicHeader';
 import { FaLinkedin, FaGithub, FaGlobe, FaFacebook, FaInstagram, FaXTwitter, FaTiktok, FaThreads } from 'react-icons/fa6';
@@ -65,16 +65,21 @@ export interface PortfolioData {
 
 interface PublicPortfolioProps {
   data: PortfolioData;
+  isOwner?: boolean;
 }
 
-export default function PublicPortfolio({ data }: PublicPortfolioProps) {
+export default function PublicPortfolio({ data, isOwner = false }: PublicPortfolioProps) {
   const navigate = useNavigate();
+  const [showCVModal, setShowCVModal] = useState(false);
 
   // Helper para sacar la inicial
   const getInitial = (name: string) => name ? name.charAt(0).toUpperCase() : 'U';
 
   const vis = data.visibilidad;
   const anyVisible = vis.proyectos_visible || vis.habilidades_visible || vis.experiencia_visible;
+  
+  // Importación dinámica para evitar dependencia circular
+  const CVTemplateSelector = React.lazy(() => import('./CVTemplateSelector'));
 
   return (
     <div className="min-h-screen font-sans" style={{ backgroundColor: 'var(--bg-color)' }}>
@@ -135,6 +140,16 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
                     <span>{data.email}</span>
                   </div>
                 </div>
+
+                {isOwner && (
+                  <button
+                    onClick={() => setShowCVModal(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+                  >
+                    <Download size={18} />
+                    <span className="text-sm font-medium">Descargar CV</span>
+                  </button>
+                )}
 
                 {vis.redes_visible && (
                   <div className="flex gap-3 flex-wrap">
@@ -311,6 +326,16 @@ export default function PublicPortfolio({ data }: PublicPortfolioProps) {
           </div>
         )}
       </main>
+
+      {/* Modal para descargar CV */}
+      {showCVModal && (
+        <React.Suspense fallback={<div className="fixed inset-0 flex items-center justify-center">Cargando...</div>}>
+          <CVTemplateSelector 
+            userData={data}
+            onClose={() => setShowCVModal(false)}
+          />
+        </React.Suspense>
+      )}
     </div>
   );
 }

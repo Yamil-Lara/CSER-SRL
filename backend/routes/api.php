@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\CVController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\ExperienceController;
@@ -74,6 +75,10 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
     // HU-08: Control de visibilidad
     Route::get('/visibilidad', [VisibilidadController::class, 'show']);
     Route::put('/visibilidad', [VisibilidadController::class, 'update']);
+
+    // Descargar CV en PDF
+    Route::post('/download-cv', [CVController::class, 'downloadCV']);
+    Route::post('/preview-cv', [CVController::class, 'previewCV']);
 
     // HU-03: Gestión de proyectos
     Route::post('/proyectos', [ProyectoController::class, 'store']);

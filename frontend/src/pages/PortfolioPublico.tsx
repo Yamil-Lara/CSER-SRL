@@ -2,11 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api, { buildUrl } from '../utils/api';
 import PublicPortfolio, { PortfolioData } from '../components/PublicPortfolio';
+import { useAuth } from '../context/AuthContext';
 
 export default function PortfolioPublico() {
   const { username } = useParams();
+  const { user } = useAuth();
   const [data, setData] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Verificar si el usuario autenticado es el propietario del portafolio
+  const isOwner = user?.username === username;
 
   useEffect(() => {
     // LLamar a las múltiples rutas que el nuevo backend definió
@@ -110,5 +115,5 @@ export default function PortfolioPublico() {
     );
   }
 
-  return <PublicPortfolio data={data} />;
+  return <PublicPortfolio data={data} isOwner={isOwner} />;
 }
