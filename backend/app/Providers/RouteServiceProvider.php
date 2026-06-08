@@ -44,5 +44,16 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+
+        // Rate limiting estricto para login: 5 intentos por minuto por combinación IP+Email
+        RateLimiter::for('login', function (Request $request) {
+            return Limit::perMinute(5)->by(
+                $request->input('email', '') . '|' . $request->ip()
+            )->response(function () {
+                return response()->json([
+                    'message' => 'Demasiados intentos de inicio de sesión. Intente de nuevo en un minuto.',
+                ], 429);
+            });
+        });
     }
 }

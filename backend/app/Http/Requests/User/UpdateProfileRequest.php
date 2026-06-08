@@ -43,14 +43,7 @@ class UpdateProfileRequest extends FormRequest
                 'nullable',
                 'file',
                 'max:10240',
-                function ($attribute, $value, $fail) {
-                    if ($value instanceof \Illuminate\Http\UploadedFile) {
-                        $extension = strtolower($value->getClientOriginalExtension());
-                        if (!in_array($extension, ['jpeg', 'png', 'jpg', 'webp'])) {
-                            $fail('La foto debe ser de tipo: jpeg, png, jpg, webp');
-                        }
-                    }
-                },
+                'mimes:jpeg,png,jpg,webp',
             ],
         ];
     }

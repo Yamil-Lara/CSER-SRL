@@ -111,9 +111,13 @@ class AdminSystemController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Error al generar el backup: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return response()->json([
                 'success' => false, 
-                'message' => 'Error al generar el backup: ' . $e->getMessage()
+                'message' => 'Se produjo un error al generar la copia de seguridad. Contacte con soporte técnico.'
             ], 500);
         }
     }

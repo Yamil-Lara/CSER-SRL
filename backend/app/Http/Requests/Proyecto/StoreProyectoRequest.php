@@ -26,14 +26,7 @@ class StoreProyectoRequest extends FormRequest
                 'nullable',
                 'file',
                 'max:10240',
-                function ($attribute, $value, $fail) {
-                    if ($value instanceof \Illuminate\Http\UploadedFile) {
-                        $extension = strtolower($value->getClientOriginalExtension());
-                        if (!in_array($extension, ['jpeg', 'png', 'jpg', 'webp'])) {
-                            $fail('La imagen debe ser de tipo: jpeg, png, jpg, webp');
-                        }
-                    }
-                },
+                'mimes:jpeg,png,jpg,webp',
             ],
             'github' => 'nullable|url|max:255',
             'demo' => 'nullable|url|max:255',
@@ -88,6 +81,20 @@ class StoreProyectoRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        // Sanitizar campos de texto libre contra XSS
+        $textFields = [
+            'titulo', 'descripcion', 'tecnologias',
+            'herramientas', 'categoria_personalizada', 'cliente'
+        ];
+
+        foreach ($textFields as $field) {
+            if ($this->has($field) && $this->$field !== null) {
+                $this->merge([
+                    $field => strip_tags(trim($this->$field)),
+                ]);
+            }
+        }
+
         // Sanitizar URLs
         if ($this->github) {
             $this->merge([

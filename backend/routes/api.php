@@ -28,7 +28,7 @@ Route::get('/status', function () {
 });
 
 Route::post('/register', RegisterController::class);
-Route::post('/login', LoginController::class);
+Route::middleware('throttle:login')->post('/login', LoginController::class);
 
 // Recuperación de contraseñas (públicas, con rate limiting)
 Route::middleware('throttle:6,1')->group(function () {

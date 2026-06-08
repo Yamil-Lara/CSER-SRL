@@ -109,7 +109,7 @@ class ComentarioService
         return $formatted;
     }
 
-    // Añade este método dentro de la clase ComentarioService
+    // Eliminación de comentario con autorización centralizada via ComentarioPolicy
     public function deleteComentario(int $comentarioId, int $usuarioId): void
     {
         $comentario = $this->comentarioRepository->findById($comentarioId);
@@ -118,13 +118,12 @@ class ComentarioService
             throw new \Exception('Comentario no encontrado');
         }
 
-        // Verificamos si es el autor del comentario
-        $isAuthor = $comentario->usuario_id === $usuarioId;
-        
-        // Verificamos si es el dueño del proyecto
-        $isProjectOwner = $comentario->proyecto && $comentario->proyecto->usuario_id === $usuarioId;
+        // Cargar relación proyecto para que la Policy pueda verificar si es dueño del proyecto
+        $comentario->load('proyecto');
 
-        if (!$isAuthor && !$isProjectOwner) {
+        // Autorización centralizada mediante ComentarioPolicy
+        $user = \App\Models\User::findOrFail($usuarioId);
+        if (!\Illuminate\Support\Facades\Gate::forUser($user)->allows('delete', $comentario)) {
             throw new \Exception('No tienes permiso para eliminar este comentario');
         }
 

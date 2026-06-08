@@ -34,14 +34,7 @@ class UpdateProyectoRequest extends FormRequest
                 'nullable',
                 'file',
                 'max:10240',
-                function ($attribute, $value, $fail) {
-                    if ($value instanceof \Illuminate\Http\UploadedFile) {
-                        $extension = strtolower($value->getClientOriginalExtension());
-                        if (!in_array($extension, ['jpeg', 'png', 'jpg', 'webp'])) {
-                            $fail('La imagen debe ser de tipo: jpeg, png, jpg, webp');
-                        }
-                    }
-                },
+                'mimes:jpeg,png,jpg,webp',
             ],
             'github' => 'nullable|url|max:255',
             'demo' => 'nullable|url|max:255',
@@ -63,5 +56,22 @@ class UpdateProyectoRequest extends FormRequest
             'imagen.max' => 'La imagen no puede superar los 10MB',
             'estado.in' => 'El estado debe ser: pendiente, aprobado o rechazado',
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        // Sanitizar campos de texto libre contra XSS
+        $textFields = [
+            'titulo', 'descripcion', 'tecnologias',
+            'herramientas', 'categoria_personalizada', 'cliente'
+        ];
+
+        foreach ($textFields as $field) {
+            if ($this->has($field) && $this->$field !== null) {
+                $this->merge([
+                    $field => strip_tags(trim($this->$field)),
+                ]);
+            }
+        }
     }
 }

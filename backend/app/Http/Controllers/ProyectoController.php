@@ -100,10 +100,7 @@ class ProyectoController extends Controller
             return $this->errorResponse('Proyecto no encontrado', 404);
         }
 
-        $user = auth()->user();
-        if ($user->id !== $proyecto->usuario_id && $user->rol !== 'admin') {
-            return $this->errorResponse('No tienes permiso para editar este proyecto', 403);
-        }
+        $this->authorize('update', $proyecto);
 
         $data = $request->validated();
 
@@ -130,10 +127,7 @@ class ProyectoController extends Controller
             return $this->errorResponse('Proyecto no encontrado', 404);
         }
 
-        $user = auth()->user();
-        if ($user->id !== $proyecto->usuario_id && $user->rol !== 'admin') {
-            return $this->errorResponse('No tienes permiso para eliminar este proyecto', 403);
-        }
+        $this->authorize('delete', $proyecto);
 
         if ($proyecto->imagen && Storage::disk('public')->exists($proyecto->imagen)) {
             Storage::disk('public')->delete($proyecto->imagen);
