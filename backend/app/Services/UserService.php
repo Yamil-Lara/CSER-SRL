@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\UserApprovedMail;
+use App\Mail\UserRejectedMail;
 
 class UserService
 {
@@ -94,7 +98,9 @@ class UserService
             return ['success' => false, 'message' => 'Usuario no encontrado'];
         }
 
+        $oldEstado = $user->estado;
         $this->userRepository->update($id, $data);
+        $user = $user->fresh(); // Reload user to get updated state
         
         // Revoke access immediately if rejected or deactivated
         if ((isset($data['estado']) && $data['estado'] === 'rechazado') || 
@@ -102,7 +108,25 @@ class UserService
             $user->tokens()->delete();
         }
 
-        return ['success' => true, 'data' => $user->fresh()];
+        // Send email notification if state changed from pendiente to aprobado/rechazado
+        if (isset($data['estado']) && $data['estado'] !== $oldEstado && $oldEstado === 'pendiente') {
+            try {
+                if ($data['estado'] === 'aprobado') {
+                    Mail::to($user->email)->send(new UserApprovedMail($user));
+                } elseif ($data['estado'] === 'rechazado') {
+                    Mail::to($user->email)->send(new UserRejectedMail($user));
+                }
+                
+                $this->userRepository->update($id, ['estado_notificacion' => 'notificado']);
+                $user = $user->fresh();
+            } catch (\Exception $e) {
+                Log::error('Error enviando notificación de estado de cuenta: ' . $e->getMessage());
+                $this->userRepository->update($id, ['estado_notificacion' => 'error']);
+                $user = $user->fresh();
+            }
+        }
+
+        return ['success' => true, 'data' => $user];
     }
 
     public function deleteUser(int $id): array

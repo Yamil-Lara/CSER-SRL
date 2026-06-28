@@ -17,7 +17,7 @@ class StoreProyectoRequest extends FormRequest
     {
         return [
             'categoria_id' => 'required|exists:categorias,id',
-            'titulo' => 'required|string|max:255|unique:proyectos,titulo',
+            'titulo' => 'required|string|max:255|unique:proyectos,titulo|regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 \-&]+$/',
             'descripcion' => 'required|string|min:50|max:5000',
             'tecnologias' => 'required|string|min:3|max:1000',
             'herramientas' => 'nullable|string|max:1000',
@@ -44,6 +44,7 @@ class StoreProyectoRequest extends FormRequest
             'titulo.required' => 'El título del proyecto es obligatorio',
             'titulo.unique' => 'Ya existe un proyecto con este título',
             'titulo.max' => 'El título no puede superar los 255 caracteres',
+            'titulo.regex' => 'El título solo puede contener letras, números, espacios, guiones y &',
             
             'descripcion.required' => 'La descripción es obligatoria',
             'descripcion.min' => 'La descripción debe tener al menos 50 caracteres',

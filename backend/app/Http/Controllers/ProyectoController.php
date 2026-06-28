@@ -47,7 +47,11 @@ class ProyectoController extends Controller
         $data['estado'] = 'pendiente';
 
         if ($request->hasFile('imagen')) {
-            $data['imagen'] = $request->file('imagen')->store('proyectos', 'public');
+            try {
+                $data['imagen'] = $request->file('imagen')->store('proyectos', 'public');
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Error al procesar la imagen'], 422);
+            }
         }
 
         $proyecto = Proyecto::create($data);
@@ -105,10 +109,14 @@ class ProyectoController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('imagen')) {
-            if ($proyecto->imagen && Storage::disk('public')->exists($proyecto->imagen)) {
-                Storage::disk('public')->delete($proyecto->imagen);
+            try {
+                if ($proyecto->imagen && Storage::disk('public')->exists($proyecto->imagen)) {
+                    Storage::disk('public')->delete($proyecto->imagen);
+                }
+                $data['imagen'] = $request->file('imagen')->store('proyectos', 'public');
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Error al procesar la imagen'], 422);
             }
-            $data['imagen'] = $request->file('imagen')->store('proyectos', 'public');
         }
 
         $proyecto->update($data);

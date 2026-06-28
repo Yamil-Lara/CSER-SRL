@@ -26,6 +26,7 @@ class User extends Authenticatable
         'rol',
         'activo',
         'estado',
+        'estado_notificacion',
         'profesion',
         'especialidad',
         'biografia',

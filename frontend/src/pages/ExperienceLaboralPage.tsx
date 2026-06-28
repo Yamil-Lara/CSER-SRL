@@ -164,8 +164,8 @@ export function ExperienceLaboralPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent | React.MouseEvent) => {
+    if (e && e.preventDefault) e.preventDefault();
     if (!validateForm()) return;
     setIsSubmitting(true);
     setErrorMessage('');
@@ -345,8 +345,8 @@ export function ExperienceLaboralPage() {
         footer={
           <>
             <Button variant="ghost" onClick={handleCloseModal} disabled={isSubmitting}>Cancelar</Button>
-            <Button variant="primary" onClick={handleSubmit} disabled={isSubmitting}>
-              {isSubmitting ? 'Guardando...' : editingExp ? 'Actualizar' : 'Crear'}
+            <Button variant="primary" onClick={handleSubmit} disabled={isSubmitting} className="flex items-center gap-2">
+              {isSubmitting ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> Guardando...</> : editingExp ? 'Actualizar' : 'Crear'}
             </Button>
           </>
         }

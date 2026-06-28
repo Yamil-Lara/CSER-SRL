@@ -3,7 +3,7 @@ import api, { buildUrl } from '../utils/api';
 import { 
     CheckCircle, XCircle, Clock, LayoutGrid, Code, ExternalLink, 
     Search, Calendar, User, Tag, Briefcase, Wrench, Eye, FolderGit2,
-    ChevronLeft, ChevronRight, Trash2
+    ChevronLeft, ChevronRight, Trash2, Mail
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom'; // ← AGREGAR useLocation
 import { Badge } from '../components/ui/Badge';
@@ -148,6 +148,16 @@ export default function AdminAprobacionesPage() {
             fetchData(); // Recargamos
         } catch (err) {
             alert("Error al actualizar el estado");
+        }
+    };
+
+    const handleResendEmail = async (id: number) => {
+        try {
+            await api.post(`/gestion/usuarios/${id}/reenviar-notificacion`);
+            alert("Notificación reenviada exitosamente");
+            fetchData(); // Recargamos
+        } catch (err) {
+            alert("Error al reenviar la notificación");
         }
     };
 
@@ -440,7 +450,7 @@ export default function AdminAprobacionesPage() {
                                                 </button>
                                             </div>
 
-                                            <div className="flex gap-2 w-full sm:w-auto">
+                                            <div className="flex gap-2 w-full sm:w-auto flex-wrap">
                                                 {u.estado !== 'aprobado' && (
                                                     <button onClick={() => handleUpdateStatus(u.id, 'aprobado', 'usuarios')} className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all text-xs font-bold">
                                                         <CheckCircle className="w-4 h-4" /> APROBAR
@@ -450,6 +460,38 @@ export default function AdminAprobacionesPage() {
                                                     <button onClick={() => handleUpdateStatus(u.id, 'rechazado', 'usuarios')} className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all text-xs font-bold">
                                                         <XCircle className="w-4 h-4" /> RECHAZAR
                                                     </button>
+                                                )}
+                                                
+                                                <div className="w-full h-0 sm:hidden"></div>
+                                                
+                                                {u.estado !== 'pendiente' && (
+                                                    <div className="flex items-center gap-2 px-2 py-1 bg-muted/20 border border-muted rounded-lg ml-auto sm:ml-4">
+                                                        <span className="text-xs font-medium opacity-60">Aviso:</span>
+                                                        {u.estado_notificacion === 'notificado' ? (
+                                                            <span className="flex items-center gap-1 text-green-600 text-xs font-bold" title="El usuario fue notificado exitosamente">
+                                                                <CheckCircle className="w-4 h-4" /> NOTIFICADO
+                                                            </span>
+                                                        ) : (
+                                                            <div className="flex items-center gap-2">
+                                                                {u.estado_notificacion === 'error' ? (
+                                                                    <span className="flex items-center gap-1 text-red-600 text-xs font-bold" title="Falló el envío del correo de notificación">
+                                                                        <XCircle className="w-4 h-4" /> ERROR
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className="flex items-center gap-1 text-yellow-600 text-xs font-bold">
+                                                                        <Clock className="w-4 h-4" /> PENDIENTE
+                                                                    </span>
+                                                                )}
+                                                                <button 
+                                                                    onClick={() => handleResendEmail(u.id)}
+                                                                    className="px-2 py-1 text-[10px] bg-primary hover:bg-primary-hover text-white rounded transition-colors font-bold uppercase flex items-center gap-1"
+                                                                    title="Reintentar enviar el aviso por correo"
+                                                                >
+                                                                    <Mail className="w-3 h-3" /> Reenviar
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 )}
                                             </div>
                                         </div>

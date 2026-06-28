@@ -104,4 +104,30 @@ class AdminUserController extends Controller
 
         return $this->successResponse(null, 'Usuario eliminado exitosamente');
     }
+
+    public function reenviarNotificacion($id): JsonResponse
+    {
+        $user = $this->userService->getUserById($id);
+        if (!$user) {
+            return $this->errorResponse('Usuario no encontrado', 404);
+        }
+
+        if ($user->estado === 'pendiente') {
+            return $this->errorResponse('El usuario aún está pendiente. Aprueba o rechaza primero.', 400);
+        }
+
+        try {
+            if ($user->estado === 'aprobado') {
+                \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\UserApprovedMail($user));
+            } elseif ($user->estado === 'rechazado') {
+                \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\UserRejectedMail($user));
+            }
+            
+            $this->userService->updateUser($id, ['estado_notificacion' => 'notificado']);
+            return $this->successResponse(null, 'Notificación reenviada exitosamente');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Error reenviando notificación: ' . $e->getMessage());
+            return $this->errorResponse('Error al reenviar notificación', 500);
+        }
+    }
 }

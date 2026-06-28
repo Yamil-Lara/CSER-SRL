@@ -9,7 +9,18 @@ import { Input } from '../components/ui/Input'
 
 export function RegisterPage() {
   const navigate = useNavigate()
-  const { register } = useAuth()
+  const { register, isAuthenticated, isAdmin, loading: authLoading } = useAuth()
+
+  // Si el usuario ya está autenticado, redirigir al dashboard
+  React.useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      if (isAdmin) {
+        navigate('/gestion/dashboard', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
+    }
+  }, [authLoading, isAuthenticated, isAdmin, navigate]);
 
   const [step, setStep] = useState<1 | 2>(1)
 
@@ -51,6 +62,9 @@ export function RegisterPage() {
   // ── Validación paso 2 ──────────────────────────────────────────────
   const validateStep2 = () => {
     const e: Record<string, string> = {}
+    if (step2.profesion && /[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g.test(step2.profesion)) {
+      e.profesion = 'La profesión solo debe contener letras y espacios.'
+    }
     if (step2.telefono && !isValidPhoneNumber(step2.telefono)) {
       e.telefono = 'El número de teléfono no es válido para el código de país seleccionado'
     }
@@ -292,7 +306,11 @@ export function RegisterPage() {
                   type="text"
                   placeholder="Ej: Desarrollador de Software"
                   value={step2.profesion}
-                  onChange={e => setStep2(p => ({ ...p, profesion: e.target.value }))}
+                  onChange={e => {
+                    setStep2(p => ({ ...p, profesion: e.target.value }))
+                    if (errors2.profesion) setErrors2(p => ({ ...p, profesion: '' }))
+                  }}
+                  error={errors2.profesion}
                   disabled={isLoading}
                 />
                 <Briefcase className="absolute right-3 top-[38px] w-4 h-4 text-sidebar/30 pointer-events-none" />

@@ -111,6 +111,7 @@ Route::middleware(['auth:sanctum', 'usuario.activo'])->group(function () {
     Route::post('/comentarios/{id}/dislike', [ComentarioController::class, 'dislike']);
 
     Route::middleware(['admin'])->prefix('gestion')->group(function () {
+        Route::post('usuarios/{id}/reenviar-notificacion', [AdminUserController::class, 'reenviarNotificacion']);
         Route::apiResource('usuarios', AdminUserController::class);
         Route::get('/comentarios/pendientes', [ComentarioController::class, 'adminIndexAll']);
         

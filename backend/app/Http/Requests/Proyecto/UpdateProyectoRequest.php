@@ -24,6 +24,7 @@ class UpdateProyectoRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
+                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 \-&]+$/',
                 Rule::unique('proyectos', 'titulo')->ignore($this->route('id'))
             ],
             'descripcion' => 'sometimes|required|string|min:50|max:5000',
@@ -52,6 +53,7 @@ class UpdateProyectoRequest extends FormRequest
         return [
             'categoria_id.exists' => 'La categoría seleccionada no existe',
             'titulo.unique' => 'Ya existe un proyecto con este título',
+            'titulo.regex' => 'El título solo puede contener letras, números, espacios, guiones y &',
             'descripcion.min' => 'La descripción debe tener al menos 50 caracteres',
             'imagen.max' => 'La imagen no puede superar los 10MB',
             'estado.in' => 'El estado debe ser: pendiente, aprobado o rechazado',

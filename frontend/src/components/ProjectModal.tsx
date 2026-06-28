@@ -183,7 +183,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
       return false;
     }
     if (!formData.tecnologias.trim()) {
-      setError('Debe agregar al menos una tecnología.');
+      setError('tecnologias_error'); // Custom key to show inline
       return false;
     }
     if (!formData.github && !formData.demo) {
@@ -236,7 +236,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
 
         <form onSubmit={handleSubmit} className="modal-form flex flex-col overflow-hidden flex-1">
           <div className="modal-body flex-1 overflow-y-auto p-6 space-y-4">
-            {error && (
+            {error && error !== 'tecnologias_error' && (
               <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-md flex items-center gap-2 text-sm border border-red-200 dark:border-red-800">
                 <AlertCircle size={16} />
                 <span>{error}</span>
@@ -245,7 +245,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
 
             <div className="form-group">
               <label className="form-label">Título del Proyecto <span className="text-red-500">*</span></label>
-              <input type="text" name="titulo" className="form-input" value={formData.titulo} onChange={handleChange} placeholder="Ej: Sistema de Gestión CSER-SRL" />
+              <input type="text" name="titulo" className="form-input" value={formData.titulo} onChange={handleChange} placeholder="Ej: Sistema de Gestión CSER-SRL" pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 \-&]+$" title="Solo letras, números, espacios, guiones y &" />
             </div>
 
             <div className="form-group">
@@ -275,14 +275,18 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
               </div>
               <div className="form-group">
                 <label className="form-label">Fecha de Realización</label>
-                <input type="date" name="fecha_proyecto" className="form-input" value={formData.fecha_proyecto} onChange={handleChange} />
+                <input type="date" name="fecha_proyecto" className="form-input" value={formData.fecha_proyecto} onChange={handleChange} max={new Date().toISOString().split("T")[0]} />
               </div>
             </div>
 
             <div className="form-group">
               <label className="form-label">Tecnologías <span className="text-red-500">*</span></label>
-              <input type="text" name="tecnologias" className="form-input" value={formData.tecnologias} onChange={handleChange} placeholder="Ej: React, Laravel, Tailwind CSS" />
-              <span className="form-hint text-xs text-gray-500">Separa las tecnologías con comas</span>
+              <input type="text" name="tecnologias" className={`form-input ${error === 'tecnologias_error' ? 'border-red-500 focus:ring-red-500' : ''}`} value={formData.tecnologias} onChange={handleChange} placeholder="Ej: React, Laravel, Tailwind CSS" />
+              {error === 'tecnologias_error' ? (
+                <span className="text-xs text-red-500 mt-1 inline-flex items-center gap-1"><AlertCircle size={12}/> Debe agregar al menos una tecnología</span>
+              ) : (
+                <span className="form-hint text-xs text-gray-500">Separa las tecnologías con comas</span>
+              )}
             </div>
 
             <div className="form-group">

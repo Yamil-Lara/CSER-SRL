@@ -22,9 +22,9 @@ class UpdateProfileRequest extends FormRequest
         'email' => ['sometimes', 'email', Rule::unique('usuarios')->ignore($this->user()->id)],
 
 
-           'password' => 'sometimes|string|min:8', 
-            'profesion' => 'nullable|string|max:255',
-            'especialidad' => 'nullable|string|max:255',
+            'password' => 'sometimes|string|min:8', 
+            'profesion' => 'nullable|string|max:255|regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/',
+            'especialidad' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ \.,\-&°#\'\/\(\)]*$/',
             'universidad' => 'nullable|string|max:255',
             'carrera' => 'nullable|string|max:255',
             'nivel_estudios' => 'nullable|string|max:255',
@@ -67,7 +67,9 @@ class UpdateProfileRequest extends FormRequest
 
 
             'profesion.max' => 'La profesión no puede superar los 255 caracteres',
+            'profesion.regex' => 'La profesión solo debe contener letras y espacios',
             'especialidad.max' => 'La especialidad no puede superar los 255 caracteres',
+            'especialidad.regex' => 'La especialidad contiene caracteres no permitidos',
             'universidad.max' => 'La universidad no puede superar los 255 caracteres',
             'carrera.max' => 'La carrera no puede superar los 255 caracteres',
             'nivel_estudios.max' => 'El nivel de estudios no puede superar los 255 caracteres',

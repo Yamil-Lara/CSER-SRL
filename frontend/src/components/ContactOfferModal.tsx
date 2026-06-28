@@ -64,15 +64,15 @@ export default function ContactOfferModal({ isOpen, onClose, username, fullName 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Tu Nombre <span className="text-red-500">*</span></label>
-              <input required type="text" name="nombre" value={formData.nombre} onChange={handleChange} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="Ej. Laura Méndez" />
+              <input required type="text" name="nombre" value={formData.nombre} onChange={handleChange} pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 \.]+$" title="Solo letras, números, espacios y puntos" maxLength={255} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="Ej. Laura Méndez" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Empresa <span className="text-red-500">*</span></label>
-              <input required type="text" name="empresa" value={formData.empresa} onChange={handleChange} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="Ej. TechCorp Solutions" />
+              <input required type="text" name="empresa" value={formData.empresa} onChange={handleChange} pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 \.\-&]+$" title="Solo letras, números, espacios, puntos, guiones y &" maxLength={255} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="Ej. TechCorp Solutions" />
             </div>
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">Email de contacto <span className="text-red-500">*</span></label>
-              <input required type="email" name="email_contacto" value={formData.email_contacto} onChange={handleChange} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="tu@empresa.com" />
+              <input required type="email" name="email_contacto" value={formData.email_contacto} onChange={handleChange} maxLength={255} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="tu@empresa.com" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Ciudad <span className="text-red-500">*</span></label>
@@ -117,8 +117,8 @@ export default function ContactOfferModal({ isOpen, onClose, username, fullName 
           </div>
 
           <div className="mb-4">
-             <label className="block text-sm font-medium text-gray-700 mb-1">Salario Ofrecido (Opcional)</label>
-             <input type="text" name="salario" value={formData.salario} onChange={handleChange} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="Ej. $1000 - $1500 USD" />
+             <label className="block text-sm font-medium text-gray-700 mb-1">Salario Ofrecido (Opcional) - Número decimal</label>
+             <input type="number" step="0.01" min="0" max="999999.99" name="salario" value={formData.salario} onChange={handleChange} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="Ej. 1500.00" />
           </div>
 
           <div className="mb-6">

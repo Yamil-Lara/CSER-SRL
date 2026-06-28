@@ -83,9 +83,14 @@ const UserProfile: React.FC = () => {
   const validateField = (name: string, value: string | undefined | null): string => {
     const val = value || '';
     let errorMsg = '';
-    if (['nombre', 'profesion', 'especialidad', 'ubicacion', 'carrera'].includes(name)) {
-      if (/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s\.,\-&]/g.test(val)) {
-        errorMsg = 'Solo se aceptan letras, puntos, comas, guiones y el símbolo &.';
+    if (['nombre', 'profesion'].includes(name)) {
+      if (/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g.test(val)) {
+        errorMsg = 'Solo se aceptan letras y espacios.';
+      }
+    }
+    if (['especialidad', 'ubicacion', 'carrera'].includes(name)) {
+      if (/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\.,\-&°#'/()]/g.test(val)) {
+        errorMsg = 'Solo se aceptan letras, números y los símbolos .,-&°#\'/()';
       }
     }
     if (name === 'universidad') {

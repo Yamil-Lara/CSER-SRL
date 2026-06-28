@@ -149,9 +149,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const response = await api.post('/register', fd);
       
+      // Limpiar cualquier sesión anterior que pudiera estar en caché
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      delete api.defaults.headers.common['Authorization'];
+      setUser(null);
+      
       return {
         success: true,
-        message: 'Registro exitoso. Ya puedes iniciar sesión.'
+        message: 'Tu cuenta se creó con éxito y está en revisión. Te enviaremos un correo cuando sea aprobada, pero también puedes intentar iniciar sesión más tarde para comprobar tu estado.'
       };
     } catch (error: any) {
       let message = 'Error en el registro';

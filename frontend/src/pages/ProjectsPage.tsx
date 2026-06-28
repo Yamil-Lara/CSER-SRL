@@ -111,7 +111,11 @@ export default function ProjectsPage() {
         errorMsg = error.response.data.message;
       }
       
-      alert("Error al guardar: " + errorMsg);
+      if (error.response?.status === 422 && error.response?.data?.error) {
+        alert(error.response.data.error);
+      } else {
+        alert("Error al guardar: " + errorMsg);
+      }
     }
   };
 

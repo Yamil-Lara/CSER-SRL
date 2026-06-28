@@ -150,13 +150,15 @@ export default function PublicPortfolio({ data, isOwner = false }: PublicPortfol
                     <div className="text-primary text-base sm:text-lg font-medium">{data.profession}</div>
                   </div>
                   <div className="flex flex-col gap-2 w-full sm:w-auto">
-                    <button 
-                      onClick={() => setIsModalOpen(true)}
-                      className="bg-primary text-white px-4 py-2 rounded-lg font-medium shadow-sm hover:bg-primary/90 flex items-center justify-center gap-2 w-full sm:w-auto"
-                    >
-                      <Briefcase size={18} />
-                      Contactar para una oferta
-                    </button>
+                    {!isOwner && (
+                      <button 
+                        onClick={() => setIsModalOpen(true)}
+                        className="bg-primary text-white px-4 py-2 rounded-lg font-medium shadow-sm hover:bg-primary/90 flex items-center justify-center gap-2 w-full sm:w-auto"
+                      >
+                        <Briefcase size={18} />
+                        Contactar para una oferta
+                      </button>
+                    )}
                     {isOwner && (
                       <button
                         onClick={() => setShowCVModal(true)}

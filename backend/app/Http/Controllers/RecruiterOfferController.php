@@ -7,6 +7,9 @@ use App\Models\OfertaReclutador;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\OfertaTrabajoMail;
 
 class RecruiterOfferController extends Controller
 {
@@ -21,15 +24,15 @@ class RecruiterOfferController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'nombre' => 'required|string|max:255',
-            'empresa' => 'required|string|max:255',
-            'email_contacto' => 'required|email|max:255',
+            'nombre' => 'required|string|max:255|regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 \.]+$/',
+            'empresa' => 'required|string|max:255|regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 \.\-&]+$/',
+            'email_contacto' => 'required|email:rfc,dns|max:255',
             'ciudad' => 'required|string|max:255',
             'pais' => 'required|string|max:255',
             'titulo_puesto' => 'required|string|max:255',
             'modalidad' => 'required|string|in:Remoto,Presencial,Híbrido,Hibrido',
             'tipo_contrato' => 'required|string',
-            'salario' => 'nullable|string',
+            'salario' => 'nullable|numeric|min:0|max:999999.99',
             'tecnologias' => 'required|string',
             'mensaje' => 'required|string',
         ]);
@@ -39,12 +42,17 @@ class RecruiterOfferController extends Controller
         }
 
         // Crear la oferta
-        // El match se calculará en vivo al visualizar la lista, por lo que aquí lo guardamos como 0 por defecto o no lo calculamos
         $oferta = OfertaReclutador::create(array_merge($validator->validated(), [
             'usuario_id' => $user->id,
             'estado' => 'nuevo',
-            'match_score' => 0 // Se calcula "en vivo" cuando el usuario lo visualiza
+            'match_score' => 0
         ]));
+
+        try {
+            Mail::to($user->email)->send(new OfertaTrabajoMail($oferta));
+        } catch (\Exception $e) {
+            Log::error('Error enviando correo de oferta SMTP: ' . $e->getMessage());
+        }
 
         return $this->successResponse($oferta, 'Oferta enviada con éxito', 201);
     }
