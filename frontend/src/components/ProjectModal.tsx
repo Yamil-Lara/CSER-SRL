@@ -196,7 +196,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
       scrollToError('categoria_personalizada');
       return false;
     }
-    const techRegex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\.\,\-\+\#]+$/;
+    const techRegex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\.\,\-\+\#\(\)]+$/;
     const clientRegex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\.\,\-\&]+$/;
 
     if (!formData.tecnologias.trim()) {

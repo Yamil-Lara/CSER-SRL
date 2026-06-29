@@ -19,12 +19,13 @@ export default function ContactOfferModal({ isOpen, onClose, username, fullName 
     ciudad: '',
     pais: '',
     titulo_puesto: '',
-    modalidad: 'Remoto',
-    tipo_contrato: 'Tiempo Completo',
+    modalidad: '',
+    tipo_contrato: '',
     salario: '',
     tecnologias: '',
     mensaje: ''
   });
+  const [isCustomSalary, setIsCustomSalary] = useState(false);
 
   if (!isOpen) return null;
 
@@ -63,12 +64,12 @@ export default function ContactOfferModal({ isOpen, onClose, username, fullName 
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tu Nombre <span className="text-red-500">*</span></label>
-              <input required type="text" name="nombre" value={formData.nombre} onChange={handleChange} pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 \.]+$" title="Solo letras, números, espacios y puntos" maxLength={255} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="Ej. Laura Méndez" />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nombre Completo <span className="text-red-500">*</span></label>
+              <input required type="text" name="nombre" value={formData.nombre} onChange={handleChange} pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$" title="Solo letras y espacios" maxLength={255} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="Ej. Laura Méndez" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Empresa <span className="text-red-500">*</span></label>
-              <input required type="text" name="empresa" value={formData.empresa} onChange={handleChange} pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 \.\-&]+$" title="Solo letras, números, espacios, puntos, guiones y &" maxLength={255} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="Ej. TechCorp Solutions" />
+              <input required type="text" name="empresa" value={formData.empresa} onChange={handleChange} pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\.\-&]+$" title="Solo letras, números, espacios, puntos, guiones y &" maxLength={255} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="Ej. TechCorp Solutions" />
             </div>
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">Email de contacto <span className="text-red-500">*</span></label>
@@ -92,16 +93,18 @@ export default function ContactOfferModal({ isOpen, onClose, username, fullName 
               <input required type="text" name="titulo_puesto" value={formData.titulo_puesto} onChange={handleChange} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="Ej. Frontend Developer" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Modalidad</label>
-              <select name="modalidad" value={formData.modalidad} onChange={handleChange} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Modalidad <span className="text-red-500">*</span></label>
+              <select required name="modalidad" value={formData.modalidad} onChange={handleChange} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary">
+                <option value="" disabled>Seleccione una opción</option>
                 <option value="Remoto">Remoto</option>
                 <option value="Presencial">Presencial</option>
                 <option value="Híbrido">Híbrido</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Contrato</label>
-              <select name="tipo_contrato" value={formData.tipo_contrato} onChange={handleChange} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Contrato <span className="text-red-500">*</span></label>
+              <select required name="tipo_contrato" value={formData.tipo_contrato} onChange={handleChange} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary">
+                <option value="" disabled>Seleccione una opción</option>
                 <option value="Tiempo Completo">Tiempo Completo</option>
                 <option value="Medio Tiempo">Medio Tiempo</option>
                 <option value="Freelance">Freelance</option>
@@ -112,13 +115,66 @@ export default function ContactOfferModal({ isOpen, onClose, username, fullName 
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">Tecnologías Buscadas (separadas por coma) <span className="text-red-500">*</span></label>
-            <input required type="text" name="tecnologias" value={formData.tecnologias} onChange={handleChange} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="Ej. React, Node.js, TypeScript" />
+            <input required type="text" name="tecnologias" value={formData.tecnologias} onChange={handleChange} pattern="^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\.\,\-\+\#\(\)]+$" title="Solo caracteres válidos para tecnologías (letras, números, espacios, comas, puntos, paréntesis y símbolos como +, -, #)" className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="Ej. React, Node.js, TypeScript" />
             <p className="text-xs text-gray-500 mt-1">Usaremos esto para calcular el % de compatibilidad con el perfil.</p>
           </div>
 
           <div className="mb-4">
-             <label className="block text-sm font-medium text-gray-700 mb-1">Salario Ofrecido (Opcional) - Número decimal</label>
-             <input type="number" step="0.01" min="0" max="999999.99" name="salario" value={formData.salario} onChange={handleChange} className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" placeholder="Ej. 1500.00" />
+             <label className="block text-sm font-medium text-gray-700 mb-1">Salario Ofrecido (USD) <span className="text-gray-500 text-xs font-normal">(Opcional)</span></label>
+             {!isCustomSalary ? (
+               <div className="flex gap-2">
+                 <select 
+                   name="salario" 
+                   value={formData.salario} 
+                   onChange={(e) => {
+                     if (e.target.value === 'custom') {
+                       setIsCustomSalary(true);
+                       setFormData({ ...formData, salario: '' });
+                     } else {
+                       handleChange(e);
+                     }
+                   }} 
+                   className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary"
+                 >
+                   <option value="">No especificar / A convenir</option>
+                   <option value="500 - 1000">500 USD - 1,000 USD</option>
+                   <option value="1000 - 2000">1,000 USD - 2,000 USD</option>
+                   <option value="2000 - 4000">2,000 USD - 4,000 USD</option>
+                   <option value="4000 - 6000">4,000 USD - 6,000 USD</option>
+                   <option value="6000+">Más de 6,000 USD</option>
+                   <option value="custom">Monto Personalizado...</option>
+                 </select>
+               </div>
+             ) : (
+               <div className="flex gap-2 items-center">
+                 <input 
+                   type="number" 
+                   step="1" 
+                   min="0" 
+                   max="100000" 
+                   name="salario" 
+                   value={formData.salario} 
+                   onChange={(e) => {
+                     if (e.target.value.length > 6) {
+                       e.target.value = e.target.value.slice(0, 6);
+                     }
+                     handleChange(e);
+                   }} 
+                   className="w-full rounded-lg border-gray-300 border p-2 focus:ring-primary focus:border-primary" 
+                   placeholder="Monto en USD (Máx. 100,000)" 
+                 />
+                 <button 
+                   type="button" 
+                   onClick={() => {
+                     setIsCustomSalary(false);
+                     setFormData({ ...formData, salario: '' });
+                   }}
+                   className="text-sm text-primary hover:underline whitespace-nowrap"
+                 >
+                   Volver a opciones
+                 </button>
+               </div>
+             )}
           </div>
 
           <div className="mb-6">

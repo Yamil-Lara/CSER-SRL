@@ -32,7 +32,7 @@ class RecruiterOfferController extends Controller
             'titulo_puesto' => 'required|string|max:255',
             'modalidad' => 'required|string|in:Remoto,Presencial,Híbrido,Hibrido',
             'tipo_contrato' => 'required|string',
-            'salario' => 'nullable|numeric|min:0|max:999999.99',
+            'salario' => 'nullable|string|max:50',
             'tecnologias' => 'required|string',
             'mensaje' => 'required|string',
         ]);
