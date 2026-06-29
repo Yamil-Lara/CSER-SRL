@@ -15,19 +15,15 @@ export function SkillsPage() {
   const [actionMessage, setActionMessage] = useState<{type: 'success'|'error', text: string} | null>(null);
 
   const saveSkill = async (skillData: any) => {
-    try {
-      if (editingSkill && editingSkill.id) {
-        await updateSkill(editingSkill.id, skillData);
-        setActionMessage({ type: 'success', text: 'Habilidad actualizada correctamente' });
-      } else {
-        await createSkill(skillData);
-        setActionMessage({ type: 'success', text: 'Habilidad agregada correctamente' });
-      }
-      setShowModal(false);
-      setTimeout(() => setActionMessage(null), 3000);
-    } catch (err: any) {
-      setActionMessage({ type: 'error', text: err.response?.data?.message || 'Error al guardar la habilidad' });
+    if (editingSkill && editingSkill.id) {
+      await updateSkill(editingSkill.id, skillData);
+      setActionMessage({ type: 'success', text: 'Habilidad actualizada correctamente' });
+    } else {
+      await createSkill(skillData);
+      setActionMessage({ type: 'success', text: 'Habilidad agregada correctamente' });
     }
+    setShowModal(false);
+    setTimeout(() => setActionMessage(null), 3000);
   };
 
   const handleEdit = (skill: Skill) => {

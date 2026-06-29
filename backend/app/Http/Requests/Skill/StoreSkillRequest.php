@@ -21,8 +21,12 @@ class StoreSkillRequest extends FormRequest
      */
     public function rules(): array
     {
+        $nameRegex = $this->input('type') === 'tecnica'
+            ? '/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\+\-\#\.]+$/'
+            : '/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/';
+
         return [
-            'name' => 'required|string|max:255|regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/',
+            'name' => ['required', 'string', 'max:255', 'regex:' . $nameRegex],
             'type' => 'required|in:tecnica,blanda',
             'level' => 'required|integer|min:1|max:100',
         ];
@@ -30,10 +34,14 @@ class StoreSkillRequest extends FormRequest
 
     public function messages(): array
     {
+        $nameMessage = $this->input('type') === 'tecnica'
+            ? 'El nombre de la habilidad técnica solo debe contener letras, números y caracteres como +, -, #, .'
+            : 'El nombre de la habilidad blanda solo debe contener letras, números y espacios';
+
         return [
             'name.required' => 'El nombre de la habilidad es obligatorio',
             'name.max' => 'El nombre no puede exceder 255 caracteres',
-            'name.regex' => 'El nombre de la habilidad solo debe contener letras y espacios',
+            'name.regex' => $nameMessage,
             'type.required' => 'El tipo de habilidad es obligatorio',
             'type.in' => 'El tipo debe ser: tecnica o blanda',
             'level.required' => 'El nivel de habilidad es obligatorio',

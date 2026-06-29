@@ -165,29 +165,65 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
   };
 
   const validateForm = (): boolean => {
+    const scrollToError = (elementName: string) => {
+      setTimeout(() => {
+        const element = document.querySelector(`[name="${elementName}"]`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          (element as HTMLElement).focus();
+        }
+      }, 50);
+    };
+
     if (!formData.titulo.trim()) {
       setError('El título es obligatorio.');
+      scrollToError('titulo');
       return false;
     }
     if (formData.descripcion.length < 50) {
       setError('La descripción debe tener al menos 50 caracteres.');
+      scrollToError('descripcion');
       return false;
     }
     if (!formData.categoria_id) {
-      setError('Debe seleccionar una categoría.');
+      setError('categoria_id_error');
+      scrollToError('categoria_id');
       return false;
     }
     const selectedCategory = categories.find(c => c.id.toString() === formData.categoria_id);
     if (selectedCategory?.nombre === 'Otro' && !formData.categoria_personalizada.trim()) {
       setError('Debe especificar la nueva categoría.');
+      scrollToError('categoria_personalizada');
       return false;
     }
+    const techRegex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\.\,\-\+\#]+$/;
+    const clientRegex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\.\,\-\&]+$/;
+
     if (!formData.tecnologias.trim()) {
       setError('tecnologias_error'); // Custom key to show inline
+      scrollToError('tecnologias');
+      return false;
+    } else if (!techRegex.test(formData.tecnologias)) {
+      setError('tecnologias_invalid_error');
+      scrollToError('tecnologias');
       return false;
     }
+    
+    if (formData.herramientas && !techRegex.test(formData.herramientas)) {
+      setError('herramientas_invalid_error');
+      scrollToError('herramientas');
+      return false;
+    }
+
+    if (formData.cliente && !clientRegex.test(formData.cliente)) {
+      setError('cliente_invalid_error');
+      scrollToError('cliente');
+      return false;
+    }
+
     if (!formData.github && !formData.demo) {
       setError('Debe proporcionar al menos un enlace (GitHub o Demo).');
+      scrollToError('github');
       return false;
     }
     setError(null);
@@ -227,7 +263,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay">
       <div className="modal-content max-h-[90vh] flex flex-col w-full max-w-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header shrink-0 border-b pb-4 mb-0">
           <h2>{projectToEdit ? 'Editar Proyecto' : 'Nuevo Proyecto'}</h2>
@@ -236,7 +272,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
 
         <form onSubmit={handleSubmit} className="modal-form flex flex-col overflow-hidden flex-1">
           <div className="modal-body flex-1 overflow-y-auto p-6 space-y-4">
-            {error && error !== 'tecnologias_error' && (
+            {error && !['tecnologias_error', 'categoria_id_error', 'tecnologias_invalid_error', 'herramientas_invalid_error', 'cliente_invalid_error'].includes(error) && (
               <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-md flex items-center gap-2 text-sm border border-red-200 dark:border-red-800">
                 <AlertCircle size={16} />
                 <span>{error}</span>
@@ -257,10 +293,13 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
             <div className="grid grid-cols-2 gap-4">
               <div className="form-group flex flex-col justify-start">
                 <label className="form-label">Categoría <span className="text-red-500">*</span></label>
-                <select name="categoria_id" className="form-select" value={formData.categoria_id} onChange={handleChange}>
+                <select name="categoria_id" className={`form-select ${error === 'categoria_id_error' ? 'border-red-500 focus:ring-red-500' : ''}`} value={formData.categoria_id} onChange={handleChange}>
                   <option value="" disabled>Seleccione una categoría</option>
                   {categories.map(cat => (<option key={cat.id} value={cat.id}>{cat.nombre}</option>))}
                 </select>
+                {error === 'categoria_id_error' && (
+                  <span className="text-xs text-red-500 mt-1 inline-flex items-center gap-1"><AlertCircle size={12}/> Debe seleccionar una categoría</span>
+                )}
                 {categories.find(c => c.id.toString() === formData.categoria_id)?.nombre === 'Otro' && (
                   <input 
                     type="text" 
@@ -281,9 +320,11 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
 
             <div className="form-group">
               <label className="form-label">Tecnologías <span className="text-red-500">*</span></label>
-              <input type="text" name="tecnologias" className={`form-input ${error === 'tecnologias_error' ? 'border-red-500 focus:ring-red-500' : ''}`} value={formData.tecnologias} onChange={handleChange} placeholder="Ej: React, Laravel, Tailwind CSS" />
+              <input type="text" name="tecnologias" className={`form-input ${(error === 'tecnologias_error' || error === 'tecnologias_invalid_error') ? 'border-red-500 focus:ring-red-500' : ''}`} value={formData.tecnologias} onChange={handleChange} placeholder="Ej: React, Laravel, Tailwind CSS" />
               {error === 'tecnologias_error' ? (
                 <span className="text-xs text-red-500 mt-1 inline-flex items-center gap-1"><AlertCircle size={12}/> Debe agregar al menos una tecnología</span>
+              ) : error === 'tecnologias_invalid_error' ? (
+                <span className="text-xs text-red-500 mt-1 inline-flex items-center gap-1"><AlertCircle size={12}/> Contiene caracteres no permitidos</span>
               ) : (
                 <span className="form-hint text-xs text-gray-500">Separa las tecnologías con comas</span>
               )}
@@ -291,12 +332,18 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
 
             <div className="form-group">
               <label className="form-label">Herramientas</label>
-              <input type="text" name="herramientas" className="form-input" value={formData.herramientas} onChange={handleChange} placeholder="Ej: Figma, Docker, Postman" />
+              <input type="text" name="herramientas" className={`form-input ${error === 'herramientas_invalid_error' ? 'border-red-500 focus:ring-red-500' : ''}`} value={formData.herramientas} onChange={handleChange} placeholder="Ej: Figma, Docker, Postman" />
+              {error === 'herramientas_invalid_error' && (
+                <span className="text-xs text-red-500 mt-1 inline-flex items-center gap-1"><AlertCircle size={12}/> Contiene caracteres no permitidos</span>
+              )}
             </div>
 
             <div className="form-group">
               <label className="form-label">Cliente</label>
-              <input type="text" name="cliente" className="form-input" value={formData.cliente} onChange={handleChange} />
+              <input type="text" name="cliente" className={`form-input ${error === 'cliente_invalid_error' ? 'border-red-500 focus:ring-red-500' : ''}`} value={formData.cliente} onChange={handleChange} />
+              {error === 'cliente_invalid_error' && (
+                <span className="text-xs text-red-500 mt-1 inline-flex items-center gap-1"><AlertCircle size={12}/> Contiene caracteres no permitidos</span>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -323,8 +370,8 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
                   onClick={() => fileInputRef.current?.click()}
                 >
                   {imagePreview ? (
-                    <div className="relative w-full h-full">
-                      <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                    <div className="relative w-full h-full p-2 bg-gray-100 dark:bg-slate-800 rounded-lg">
+                      <img src={imagePreview} alt="Preview" className="w-full h-full object-contain" />
                       <button 
                         type="button" 
                         onClick={(e) => { 

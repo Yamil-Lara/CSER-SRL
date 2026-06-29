@@ -9,7 +9,7 @@ import { Skill } from "../hooks/useSkill"; // Importamos la interfaz unificada
 type Props = {
   show: boolean;
   onClose: () => void;
-  onSave: (skill: Partial<Skill>) => void;
+  onSave: (skill: Partial<Skill>) => Promise<void>;
   editingSkill?: Skill | null;
   skills: Skill[];
 };
@@ -47,7 +47,7 @@ const SkillForm: React.FC<Props> = ({ show, onClose, onSave, editingSkill, skill
     return "";
   };
 
-  const handleSubmit = (e?: React.FormEvent) => {
+  const handleSubmit = async (e?: React.FormEvent) => {
     if (e && e.preventDefault) e.preventDefault();
 
     const validationError = validate();
@@ -56,7 +56,12 @@ const SkillForm: React.FC<Props> = ({ show, onClose, onSave, editingSkill, skill
       return;
     }
 
-    onSave({ id: editingSkill?.id, name: name.trim(), type, level });
+    try {
+      await onSave({ id: editingSkill?.id, name: name.trim(), type, level });
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || err.message || 'Error al guardar la habilidad';
+      setError(errorMessage);
+    }
   };
 
   return (
