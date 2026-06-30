@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../utils/api';
 
 export function useUserDashboardStats() {
@@ -6,20 +6,21 @@ export function useUserDashboardStats() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await api.get('/user/dashboard/stats');
-        setStats(response.data.data);
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Error fetching dashboard stats');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
+  const fetchStats = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/user/dashboard/stats');
+      setStats(response.data.data);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Error fetching dashboard stats');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  return { stats, loading, error };
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
+
+  return { stats, loading, error, refetch: fetchStats };
 }

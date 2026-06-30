@@ -165,6 +165,10 @@ class UserOffersController extends Controller
             ->where('estado', 'nuevo')
             ->count();
             
+        $mensajesAceptadosReclutadores = OfertaReclutador::where('usuario_id', $user->id)
+            ->whereIn('estado', ['aceptado', 'en_conversacion'])
+            ->count();
+            
         $totalReclutadores = OfertaReclutador::where('usuario_id', $user->id)->count();
         
         // Ultimos reclutadores para la vista mini
@@ -192,6 +196,7 @@ class UserOffersController extends Controller
             'apariciones_busqueda' => $user->apariciones_busqueda ?? 0,
             'comentarios_por_responder' => $comentariosPorResponder,
             'mensajes_reclutadores_nuevos' => $mensajesNuevosReclutadores,
+            'mensajes_reclutadores_aceptados' => $mensajesAceptadosReclutadores,
             'mensajes_reclutadores_total' => $totalReclutadores,
             'ultimas_ofertas' => $ultimosReclutadores
         ]);

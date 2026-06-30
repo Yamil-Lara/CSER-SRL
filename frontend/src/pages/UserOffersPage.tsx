@@ -15,7 +15,7 @@ export function UserOffersPage() {
   const [modalidadFilter, setModalidadFilter] = useState('Todas');
   const [searchQuery, setSearchQuery] = useState('');
   
-  const { stats: dashboardStats } = useUserDashboardStats();
+  const { stats: dashboardStats, refetch: refetchStats } = useUserDashboardStats();
 
   const fetchOfertas = async () => {
     try {
@@ -40,14 +40,15 @@ export function UserOffersPage() {
       await api.put(`/user/ofertas/${id}/estado`, { estado: newStatus });
       toast.success('Estado actualizado');
       fetchOfertas();
+      if (refetchStats) refetchStats();
     } catch (err) {
       toast.error('Error al actualizar');
     }
   };
 
   const handleReplyClick = async (oferta: any) => {
-    if (oferta.estado === 'nuevo') {
-      await updateStatus(oferta.id, 'visto');
+    if (oferta.estado !== 'en_conversacion') {
+      await updateStatus(oferta.id, 'en_conversacion');
     }
   };
 
@@ -69,6 +70,10 @@ export function UserOffersPage() {
            <div className="flex flex-col items-center justify-center px-4 border-r border-muted">
              <span className="text-xl font-bold text-primary">{dashboardStats?.mensajes_reclutadores_nuevos || 0}</span>
              <span className="text-[10px] font-bold text-sidebar/50 uppercase tracking-wider">NUEVOS</span>
+           </div>
+           <div className="flex flex-col items-center justify-center px-4 border-r border-muted">
+             <span className="text-xl font-bold text-emerald-500">{dashboardStats?.mensajes_reclutadores_aceptados || 0}</span>
+             <span className="text-[10px] font-bold text-sidebar/50 uppercase tracking-wider">ACEPTADOS</span>
            </div>
            <div className="flex flex-col items-center justify-center px-4">
              <span className="text-xl font-bold text-sidebar">{dashboardStats?.mensajes_reclutadores_total || 0}</span>
@@ -100,6 +105,7 @@ export function UserOffersPage() {
                <option value="nuevo">Nuevos</option>
                <option value="visto">Vistos</option>
                <option value="aceptado">Aceptados</option>
+               <option value="en_conversacion">En Conversación</option>
                <option value="rechazado">Rechazados</option>
              </select>
              
@@ -120,10 +126,16 @@ export function UserOffersPage() {
           <div className="flex justify-center items-center py-16">
             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
-        ) : ofertas.length > 0 ? (
+        ) : ofertas.filter(o => {
+          if (filter === 'Todos') return o.estado !== 'rechazado';
+          return o.estado === filter;
+        }).length > 0 ? (
           <div className="space-y-4">
-            {ofertas.map((oferta) => (
-              <div key={oferta.id} className="border border-muted rounded-xl p-5 hover:border-primary/40 transition-colors group relative overflow-hidden bg-white dark:bg-card">
+            {ofertas.filter(o => {
+              if (filter === 'Todos') return o.estado !== 'rechazado';
+              return o.estado === filter;
+            }).map((oferta) => (
+              <div key={oferta.id} className={`border ${oferta.estado === 'aceptado' ? 'border-emerald-200 bg-emerald-50/10' : oferta.estado === 'en_conversacion' ? 'border-blue-200 bg-blue-50/10' : 'border-muted bg-white'} rounded-xl p-5 hover:border-primary/40 transition-colors group relative overflow-hidden dark:bg-card`}>
                 
                 {/* Nuevo indicador */}
                 {oferta.estado === 'nuevo' && (
@@ -191,27 +203,34 @@ export function UserOffersPage() {
 
                     <div className="flex flex-col gap-2 mt-auto">
                        <a href={getMailtoLink(oferta)} target="_blank" rel="noopener noreferrer" onClick={() => handleReplyClick(oferta)} className="w-full block">
-                         <Button variant="primary" className="w-full gap-2 shadow-sm cursor-pointer">
-                            <Mail size={16} /> Responder vía Email
+                         <Button variant={oferta.estado === 'en_conversacion' ? 'outline' : 'primary'} className={`w-full gap-2 shadow-sm cursor-pointer ${oferta.estado === 'en_conversacion' ? 'border-blue-200 text-blue-600 bg-blue-50 hover:bg-blue-100' : ''}`}>
+                            <Mail size={16} /> {oferta.estado === 'en_conversacion' ? '✓ Ya Respondiste' : 'Responder vía Email'}
                          </Button>
                        </a>
                        
-                       <div className="grid grid-cols-2 gap-2 mt-2">
-                          <Button 
-                            variant={oferta.estado === 'aceptado' ? 'ghost' : 'ghost'} 
-                            className={`w-full text-xs font-semibold ${oferta.estado === 'aceptado' ? 'bg-emerald-100 text-emerald-700' : 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'}`}
-                            onClick={() => updateStatus(oferta.id, 'aceptado')}
-                          >
-                             Aceptar
-                          </Button>
-                          <Button 
-                            variant={oferta.estado === 'rechazado' ? 'ghost' : 'ghost'} 
-                            className={`w-full text-xs font-semibold ${oferta.estado === 'rechazado' ? 'bg-rose-100 text-rose-700' : 'text-rose-600 bg-rose-50 hover:bg-rose-100'}`}
-                            onClick={() => updateStatus(oferta.id, 'rechazado')}
-                          >
-                             Rechazar
-                          </Button>
-                       </div>
+                       {oferta.estado !== 'en_conversacion' && oferta.estado !== 'rechazado' && (
+                         <div className="grid grid-cols-2 gap-2 mt-2">
+                            <Button 
+                              variant="ghost" 
+                              className={`w-full text-xs font-semibold ${oferta.estado === 'aceptado' ? 'bg-emerald-100 text-emerald-700' : 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'}`}
+                              onClick={() => updateStatus(oferta.id, 'aceptado')}
+                            >
+                               {oferta.estado === 'aceptado' ? '✓ Guardado' : 'Aceptar'}
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              className="w-full text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100"
+                              onClick={() => updateStatus(oferta.id, 'rechazado')}
+                            >
+                               Rechazar
+                            </Button>
+                         </div>
+                       )}
+                       {oferta.estado === 'rechazado' && (
+                          <div className="mt-2 text-center text-xs text-rose-500 font-medium">
+                            Oferta rechazada.
+                          </div>
+                       )}
                     </div>
                   </div>
 
