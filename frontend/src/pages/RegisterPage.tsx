@@ -44,6 +44,9 @@ export function RegisterPage() {
   const validateStep1 = () => {
     const e: Record<string, string> = {}
     if (!step1.nombre.trim()) e.nombre = 'El nombre completo es obligatorio'
+    else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(step1.nombre.trim())) {
+      e.nombre = 'El nombre completo solo debe contener letras y espacios'
+    }
     if (!step1.email.trim()) e.email = 'El correo electrónico es obligatorio'
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(step1.email)) e.email = 'Ingresa un correo válido'
     if (!step1.password) e.password = 'La contraseña es obligatoria'
