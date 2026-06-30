@@ -35,18 +35,15 @@ class UserOffersController extends Controller
 
         $ofertas = $query->orderBy('created_at', 'desc')->get();
 
-        // Cargar las habilidades y proyectos del usuario para calcular el Match en vivo
+        // Asegúrate de que estas relaciones existan en App\Models\User
         $user->load(['skills', 'proyectos', 'experiencias']);
         
-        // Recopilar el set de tecnologías del usuario
         $userTechSet = collect();
         
-        // 1. De los skills
         foreach ($user->skills as $skill) {
             $userTechSet->push(Str::lower($skill->name));
         }
 
-        // 2. De los proyectos
         foreach ($user->proyectos as $proyecto) {
             if (!empty($proyecto->tecnologias)) {
                 $techs = explode(',', $proyecto->tecnologias);
@@ -59,7 +56,8 @@ class UserOffersController extends Controller
         $userTechSet = $userTechSet->unique();
 
         $ofertasTransformadas = $ofertas->map(function($oferta) use ($userTechSet) {
-            $reqTechs = explode(',', $oferta->tecnologias);
+            // FIX 1: Prevenir errores si 'tecnologias' está vacío o es null
+            $reqTechs = !empty($oferta->tecnologias) ? explode(',', $oferta->tecnologias) : [];
             $reqTechs = array_map(function($t) { return Str::lower(trim($t)); }, $reqTechs);
             $reqTechs = array_filter($reqTechs);
             
@@ -67,7 +65,6 @@ class UserOffersController extends Controller
             $matchedTechs = [];
 
             foreach ($reqTechs as $req) {
-                // Si la tecnología requerida está en el set del usuario
                 if ($userTechSet->contains($req)) {
                     $matchCount++;
                     $matchedTechs[] = $req;
@@ -95,7 +92,8 @@ class UserOffersController extends Controller
                 'matched_techs' => $matchedTechs,
                 'total_techs_required' => $totalReq,
                 'created_at' => $oferta->created_at,
-                'tiempo' => $oferta->created_at->diffForHumans(),
+                // FIX 2: Validación de null para created_at
+                'tiempo' => $oferta->created_at ? $oferta->created_at->diffForHumans() : 'Reciente',
             ];
         });
 
@@ -145,18 +143,18 @@ class UserOffersController extends Controller
         })
         ->count();
         
+        // Asegúrate de que las relaciones 'respuestas' e 'interacciones' 
+        // existan de verdad en el modelo App\Models\Comentario
         $comentariosPorResponder = \App\Models\Comentario::whereHas('proyecto', function($q) use ($user) {
             $q->where('usuario_id', $user->id);
         })
         ->where('aprobado', 1)
-        ->whereNull('parent_id') // Solo comentarios principales
-        ->where('usuario_id', '!=', $user->id) // Que no sean míos
+        ->whereNull('parent_id') 
+        ->where('usuario_id', '!=', $user->id) 
         ->whereDoesntHave('respuestas', function ($q) use ($user) {
-            // Que no tengan una respuesta mía
             $q->where('usuario_id', $user->id);
         })
         ->whereDoesntHave('interacciones', function ($q) use ($user) {
-            // Que no tengan una interacción mía (like o dislike)
             $q->where('usuario_id', $user->id);
         })
         ->count();
@@ -167,13 +165,10 @@ class UserOffersController extends Controller
             
         $totalReclutadores = OfertaReclutador::where('usuario_id', $user->id)->count();
         
-        // Ultimos reclutadores para la vista mini
         $ultimosReclutadores = OfertaReclutador::where('usuario_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->take(3)
             ->get()->map(function($of) {
-                // Para las mini cards, enviamos lo basico (el match se enviaria si se calculara, pero en la DB esta en 0. 
-                // Lo enviamos como 0 por defecto, o podemos llamar al controlador
                 return [
                     'id' => $of->id,
                     'nombre' => $of->nombre,
@@ -181,7 +176,8 @@ class UserOffersController extends Controller
                     'modalidad' => $of->modalidad,
                     'titulo_puesto' => $of->titulo_puesto,
                     'estado' => $of->estado,
-                    'created_at' => $of->created_at->format('d/m/Y'),
+                    // FIX 3: Validación de null para created_at
+                    'created_at' => $of->created_at ? $of->created_at->format('d/m/Y') : 'N/A',
                 ];
             });
 

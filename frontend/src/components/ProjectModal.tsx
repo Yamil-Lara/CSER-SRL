@@ -185,6 +185,11 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
       scrollToError('descripcion');
       return false;
     }
+    if (!formData.fecha_proyecto) {
+      setError('fecha_error');
+      scrollToError('fecha_proyecto');
+      return false;
+    }
     if (!formData.categoria_id) {
       setError('categoria_id_error');
       scrollToError('categoria_id');
@@ -222,7 +227,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
     }
 
     if (!formData.github && !formData.demo) {
-      setError('Debe proporcionar al menos un enlace (GitHub o Demo).');
+      setError('enlaces_error'); // Cambiamos el texto por una clave
       scrollToError('github');
       return false;
     }
@@ -272,7 +277,7 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
 
         <form onSubmit={handleSubmit} className="modal-form flex flex-col overflow-hidden flex-1">
           <div className="modal-body flex-1 overflow-y-auto p-6 space-y-4">
-            {error && !['tecnologias_error', 'categoria_id_error', 'tecnologias_invalid_error', 'herramientas_invalid_error', 'cliente_invalid_error'].includes(error) && (
+            {error && !['tecnologias_error', 'categoria_id_error', 'tecnologias_invalid_error', 'herramientas_invalid_error', 'cliente_invalid_error', 'enlaces_error', 'fecha_error'].includes(error) && (
               <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-md flex items-center gap-2 text-sm border border-red-200 dark:border-red-800">
                 <AlertCircle size={16} />
                 <span>{error}</span>
@@ -312,9 +317,23 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
                   />
                 )}
               </div>
-              <div className="form-group">
-                <label className="form-label">Fecha de Realización</label>
-                <input type="date" name="fecha_proyecto" className="form-input" value={formData.fecha_proyecto} onChange={handleChange} max={new Date().toISOString().split("T")[0]} />
+              <div className="form-group flex flex-col justify-start">
+                <label className="form-label">
+                  Fecha de Realización <span className="text-red-500">*</span>
+                </label>
+                <input 
+                  type="date" 
+                  name="fecha_proyecto" 
+                  className={`form-input ${error === 'fecha_error' ? 'border-red-500 focus:ring-red-500' : ''}`} 
+                  value={formData.fecha_proyecto} 
+                  onChange={handleChange} 
+                  max={new Intl.DateTimeFormat('fr-CA').format(new Date())} 
+                />
+                {error === 'fecha_error' && (
+                  <span className="text-xs text-red-500 mt-1 inline-flex items-center gap-1">
+                    <AlertCircle size={12}/> Debe seleccionar una fecha
+                  </span>
+                )}
               </div>
             </div>
 
@@ -346,15 +365,38 @@ export default function ProjectModal({ onClose, onSave, projectToEdit }: Project
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="form-group">
-                <label className="form-label">URL de GitHub</label>
-                <input type="url" name="github" className="form-input" value={formData.github} onChange={handleChange} />
+            <div className="form-group-wrapper">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="form-group mb-0">
+                  <label className="form-label">
+                    URL de GitHub <span className="text-red-500">*</span>
+                  </label>
+                  <input 
+                    type="url" 
+                    name="github" 
+                    className={`form-input ${error === 'enlaces_error' ? 'border-red-500 focus:ring-red-500' : ''}`} 
+                    value={formData.github} 
+                    onChange={handleChange} 
+                  />
+                </div>
+                <div className="form-group mb-0">
+                  <label className="form-label">
+                    URL de Demo <span className="text-red-500">*</span>
+                  </label>
+                  <input 
+                    type="url" 
+                    name="demo" 
+                    className={`form-input ${error === 'enlaces_error' ? 'border-red-500 focus:ring-red-500' : ''}`} 
+                    value={formData.demo} 
+                    onChange={handleChange} 
+                  />
+                </div>
               </div>
-              <div className="form-group">
-                <label className="form-label">URL de Demo</label>
-                <input type="url" name="demo" className="form-input" value={formData.demo} onChange={handleChange} />
-              </div>
+              {error === 'enlaces_error' && (
+                <span className="text-xs text-red-500 mt-2 inline-flex items-center gap-1">
+                  <AlertCircle size={12}/> Debe proporcionar al menos un enlace (GitHub o Demo).
+                </span>
+              )}
             </div>
 
             {/* Campo de Imagen CON DRAG & DROP sin parpadeo */}
