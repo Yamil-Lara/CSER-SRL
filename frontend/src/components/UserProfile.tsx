@@ -93,6 +93,11 @@ const UserProfile: React.FC = () => {
         errorMsg = 'Solo se aceptan letras, números y los símbolos .,-&°#\'/()';
       }
     }
+    if (name === 'biografia') {
+      if (/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s()&\-.,!?':;\"]/g.test(val)) {
+        errorMsg = "Solo se aceptan letras, números y los símbolos: () & - . , ! ? ' : ;";
+      }
+    }
     if (name === 'universidad') {
       if (/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\.,\-]/g.test(val)) {
         errorMsg = 'Solo se aceptan letras, números, puntos y comas.';
@@ -465,14 +470,17 @@ const response = await api.post(`/profile`, formData, {
           </div>
 
           <div className="mt-2">
-            <Textarea 
-              label="Biografía" 
-              name="biografia" 
-              placeholder="Apasionada por crear experiencias web increíbles..." 
-              value={profile.biografia || ''} 
-              onChange={handleChange} 
+            <Textarea
+              label="Biografía"
+              name="biografia"
+              placeholder="Apasionada por crear experiencias web increíbles..."
+              value={profile.biografia || ''}
+              onChange={handleChange}
               rows={4}
             />
+            {errors.biografia && (
+              <p className="mt-1 text-sm text-destructive">{errors.biografia}</p>
+            )}
           </div>
         </Card>
 
