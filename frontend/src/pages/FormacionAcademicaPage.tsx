@@ -157,12 +157,29 @@ export function FormacionAcademicaPage() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.cargo_titulo.trim()) newErrors.cargo_titulo = 'El título/carrera es obligatorio';
-    if (!formData.institucion_empresa.trim()) newErrors.institucion_empresa = 'La institución es obligatoria';
+    
+    // Expresión regular: Solo letras (con acentos/ñ), espacios y &
+    const textRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\&]+$/;
+
+    // Validación de Título / Carrera
+    if (!formData.cargo_titulo.trim()) {
+      newErrors.cargo_titulo = 'El título/carrera es obligatorio';
+    } else if (!textRegex.test(formData.cargo_titulo.trim())) {
+      newErrors.cargo_titulo = 'El título/carrera solo puede contener letras, espacios y el símbolo &';
+    }
+
+    // Validación de Institución
+    if (!formData.institucion_empresa.trim()) {
+      newErrors.institucion_empresa = 'La institución es obligatoria';
+    } else if (!textRegex.test(formData.institucion_empresa.trim())) {
+      newErrors.institucion_empresa = 'La institución solo puede contener letras, espacios y el símbolo &';
+    }
+
     if (!formData.fecha_inicio) newErrors.fecha_inicio = 'La fecha de inicio es obligatoria';
     if (!formData.actual && !formData.fecha_fin) newErrors.fecha_fin = 'La fecha de fin es obligatoria si no está en curso';
     if (formData.fecha_fin && formData.fecha_inicio && formData.fecha_fin < formData.fecha_inicio)
       newErrors.fecha_fin = 'La fecha de fin no puede ser anterior a la de inicio';
+      
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
