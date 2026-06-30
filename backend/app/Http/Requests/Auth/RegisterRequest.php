@@ -22,7 +22,7 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre'    => 'required|string|max:255',
+            'nombre'    => 'required|string|max:255|regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/',
             'username'  => 'required|string|max:255|unique:usuarios,username',
             'email'     => 'required|string|email|max:255|unique:usuarios,email',
             'password'  => [
@@ -51,6 +51,7 @@ class RegisterRequest extends FormRequest
         return [
             'nombre.required' => 'El nombre es obligatorio',
             'nombre.max' => 'El nombre no puede superar los 255 caracteres',
+            'nombre.regex' => 'El nombre solo puede contener letras y espacios',
             
             'username.required' => 'El nombre de usuario es obligatorio',
             'username.unique' => 'Este nombre de usuario ya está en uso',
