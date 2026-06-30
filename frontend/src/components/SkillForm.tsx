@@ -37,13 +37,6 @@ const SkillForm: React.FC<Props> = ({ show, onClose, onSave, editingSkill, skill
 
   const validate = () => {
     if (!name.trim()) return "El nombre es obligatorio";
-    
-    // Nueva validación Regex: Solo letras (incluyendo acentos/ñ), espacios y el símbolo &
-    const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\&]+$/;
-    if (!nameRegex.test(name.trim())) {
-      return "El nombre solo puede contener letras, espacios y el símbolo &";
-    }
-
     if (level < 1 || level > 100) return "El nivel debe estar entre 1 y 100";
 
     const duplicate = skills.find(
@@ -86,6 +79,10 @@ const SkillForm: React.FC<Props> = ({ show, onClose, onSave, editingSkill, skill
       }
     >
       <form onSubmit={handleSubmit} className="space-y-6">
+        {error && (
+          <Alert type="error" message={error} className="mb-4" />
+        )}
+
         <Input
           label="Nombre de la Habilidad *"
           placeholder="Ej: React, Liderazgo, Comunicación"
