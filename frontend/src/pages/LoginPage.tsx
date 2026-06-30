@@ -169,15 +169,6 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* Credenciales de prueba */}
-          <div className="mt-4 p-3 bg-muted dark:bg-slate-900/60 rounded-lg border border-muted dark:border-slate-700">
-            <p className="text-xs opacity-60 text-center">
-              <span className="font-semibold">Credenciales de prueba:</span><br />
-              Admin: admin@cser.com / Admin@2026<br />
-              Usuario: maria.garcia@cser.com / Usuario@2026
-            </p>
-          </div>
-
           <div className="text-center space-y-2">
             <Link to="/forgot-password" className="block text-sm text-primary hover:text-primary-hover">
               ¿Olvidaste tu contraseña?
